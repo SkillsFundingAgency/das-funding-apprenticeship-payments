@@ -11,11 +11,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
     {
         [FunctionName(nameof(EarningsGeneratedEventServiceBusTrigger))]
         public async Task EarningsGeneratedEventServiceBusTrigger(
-            [NServiceBusTrigger(Endpoint = QueueNames.EarningsGenerated)] EarningsGeneratedEvent apprenticeshipCreatedEvent,
+            [NServiceBusTrigger(Endpoint = QueueNames.EarningsGenerated)] EarningsGeneratedEvent earningsGeneratedEvent,
             [DurableClient] IDurableEntityClient client,
             ILogger log)
         {
-            log.LogInformation($"{nameof(EarningsGeneratedEventServiceBusTrigger)} processing...");
+            var entityId = new EntityId(nameof(ApprenticeshipEntity), earningsGeneratedEvent.ApprenticeshipKey.ToString());
+            await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsGeneratedEvent), earningsGeneratedEvent);
         }
     }
 }
