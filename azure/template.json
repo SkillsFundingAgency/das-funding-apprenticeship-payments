@@ -135,6 +135,9 @@
                     "appServicePlanName": {
                         "value": "[variables('appServicePlanName')]"
                     },
+                    "nonASETier": {
+                        "value": "[parameters('appServicePlanTier')]"
+                    },
                     "aspSize": {
                         "value": "[parameters('appServicePlanSize')]"
                     },
