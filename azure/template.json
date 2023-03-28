@@ -47,6 +47,10 @@
         "workerAccessRestrictions": {
             "type": "array"
         },
+        "appServicePlanTier": {
+            "type": "string",
+            "defaultValue": "Basic"
+        },
         "appServicePlanInstances": {
             "type": "int",
             "defaultValue": 1
