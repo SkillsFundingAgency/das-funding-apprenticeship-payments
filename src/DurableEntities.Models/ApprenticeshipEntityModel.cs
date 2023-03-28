@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-
-namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class ApprenticeshipEntityModel
     {
-        [JsonProperty] public Guid ApprenticeshipKey { get; set; }
+        public Guid ApprenticeshipKey { get; set; }
+        public List<EarningEntityModel> Earnings { get; set; }
+        public List<PaymentEntityModel> Payments { get; set; }
     }
 }

@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
@@ -55,6 +57,10 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddCommandServices().AddEventServices();
+        
+        builder.Services.AddSingleton<IPaymentsGeneratedEventBuilder, PaymentsGeneratedEventBuilder>();
+        builder.Services.AddScoped<ICalculateApprenticeshipPaymentsCommandHandler, CalculateApprenticeshipPaymentsCommandHandler>();
+        builder.Services.AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>();
     }
 
     private static void EnsureConfig(ApplicationSettings applicationSettings)
