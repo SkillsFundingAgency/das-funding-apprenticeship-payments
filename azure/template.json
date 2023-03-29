@@ -47,10 +47,6 @@
         "workerAccessRestrictions": {
             "type": "array"
         },
-        "appServicePlanTier": {
-            "type": "string",
-            "defaultValue": "Basic"
-        },
         "appServicePlanInstances": {
             "type": "int",
             "defaultValue": 1
@@ -138,9 +134,6 @@
                 "parameters": {
                     "appServicePlanName": {
                         "value": "[variables('appServicePlanName')]"
-                    },
-                    "nonASETier": {
-                        "value": "[parameters('appServicePlanTier')]"
                     },
                     "aspSize": {
                         "value": "[parameters('appServicePlanSize')]"
