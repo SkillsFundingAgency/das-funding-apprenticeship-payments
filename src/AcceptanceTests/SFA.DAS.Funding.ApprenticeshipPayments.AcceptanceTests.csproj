@@ -36,10 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Bindings\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Features\" />
-    <Folder Include="Functions\" />
-    <Folder Include="Handlers\" />
   </ItemGroup>
 
 </Project>
