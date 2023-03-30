@@ -8,6 +8,15 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
     {
         public static IServiceCollection AddEventServices(this IServiceCollection serviceCollection)
         {
+            serviceCollection.Scan(scan =>
+                {
+                    scan.FromAssembliesOf(typeof(ServiceCollectionExtensions))
+                        .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventHandler<>)))
+                        .AsImplementedInterfaces()
+                        .WithTransientLifetime();
+                })
+                .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+
             return serviceCollection;
         }
     }
