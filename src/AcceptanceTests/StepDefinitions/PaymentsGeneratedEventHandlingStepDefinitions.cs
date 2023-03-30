@@ -41,6 +41,6 @@ public class PaymentsGeneratedEventHandlingStepDefinitions
     {
         return paymentsGeneratedEvent.ApprenticeshipKey == (Guid) _scenarioContext["apprenticeshipKey"] &&
                paymentsGeneratedEvent.Payments.Count() == (int) _scenarioContext["numberOfPayments"] &&
-               paymentsGeneratedEvent.Payments.All(x => x.Amount == (decimal) _scenarioContext["paymentAmount"]);
+               paymentsGeneratedEvent.Payments.All(x => x.Amount == (int) _scenarioContext["paymentAmount"]);
     }
 }
