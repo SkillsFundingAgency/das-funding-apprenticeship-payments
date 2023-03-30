@@ -7,7 +7,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddEventServices(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddDomainServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.Scan(scan =>
                 {

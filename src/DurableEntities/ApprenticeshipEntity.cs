@@ -31,10 +31,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             var apprenticeship = await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
             Model.Payments = MapPaymentsToModel(apprenticeship.Payments);
-            foreach (dynamic domainEvent in apprenticeship.FlushEvents())
-            {
-                await _domainEventDispatcher.Send(domainEvent);
-            }
         }
 
         [FunctionName(nameof(ApprenticeshipEntity))]
