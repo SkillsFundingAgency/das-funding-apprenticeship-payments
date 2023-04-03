@@ -18,19 +18,32 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         private readonly List<Payment> _payments;
         public ReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
-        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount)
-        {
-            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount));
-        }
-
         public void CalculatePayments()
         {
             _payments.Clear();
             foreach (var earning in Earnings)
             {
-                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.AcademicYear, earning.DeliveryPeriod);
+                var collectionDate = DetermineCollectionDate(earning);
+                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionDate.Year, (byte)collectionDate.Month);
                 _payments.Add(payment);
             }
+        }
+
+        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth)
+        {
+            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
+        }
+
+        private static DateTime DetermineCollectionDate(Earning earning)
+        {
+            var censusDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
+            var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1);
+            if (collectionDate < censusDate)
+            {
+                collectionDate = censusDate;
+            }
+
+            return collectionDate;
         }
     }
 }
