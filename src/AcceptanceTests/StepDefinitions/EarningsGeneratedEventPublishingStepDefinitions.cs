@@ -41,6 +41,55 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     [Given(@"all of the earnings are due in the future")]
     public void GivenAllEarningsAreDueInTheFuture()
     {
+        _earningsGeneratedEvent = new EarningsGeneratedEvent
+        {
+            ApprenticeshipKey = Guid.NewGuid(),
+            FundingPeriods = new List<FundingPeriod>
+            {
+                new()
+                {
+                    DeliveryPeriods = new List<DeliveryPeriod>
+                    {
+                        new() { AcademicYear = 2324, Period = 1, CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 },
+                        new() { AcademicYear = 2324, Period = 2, CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 }
+                    }
+                },
+                new()
+                {
+                    DeliveryPeriods = new List<DeliveryPeriod>
+                    {
+                        new() { AcademicYear = 2324, Period = 3, CalenderYear = (short)DateTime.Now.AddMonths(2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(2).Month, LearningAmount = 1000 }
+                    }
+                }
+            }
+        };
+    }
+
+    [Given(@"two of the earnings are due in a past month")]
+    public void GivenSomeEarningsAreDueInThePast()
+    {
+        _earningsGeneratedEvent = new EarningsGeneratedEvent
+        {
+            ApprenticeshipKey = Guid.NewGuid(),
+            FundingPeriods = new List<FundingPeriod>
+            {
+                new()
+                {
+                    DeliveryPeriods = new List<DeliveryPeriod>
+                    {
+                        new() { AcademicYear = 2324, Period = 1, CalenderYear = (short)DateTime.Now.AddMonths(-2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-2).Month, LearningAmount = 1000 },
+                        new() { AcademicYear = 2324, Period = 2, CalenderYear = (short)DateTime.Now.AddMonths(-1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-1).Month, LearningAmount = 1000 }
+                    }
+                },
+                new()
+                {
+                    DeliveryPeriods = new List<DeliveryPeriod>
+                    {
+                        new() { AcademicYear = 2324, Period = 3, CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }
+                    }
+                }
+            }
+        };
     }
 
     [Given(@"no payments have previously been generated")]
@@ -51,28 +100,6 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     [When (@"payments are calculated")]
     public async Task PublishApprenticeshipCreatedEvent()
     {
-        _earningsGeneratedEvent = new EarningsGeneratedEvent
-        {
-            ApprenticeshipKey = Guid.NewGuid(),
-            FundingPeriods = new List<FundingPeriod>
-            {
-                new FundingPeriod
-                {
-                    DeliveryPeriods = new List<DeliveryPeriod>
-                    {
-                        new DeliveryPeriod { AcademicYear = 2324, Period = 1, CalenderYear = 2023, CalendarMonth = 8, LearningAmount = 1000 },
-                        new DeliveryPeriod { AcademicYear = 2324, Period = 2, CalenderYear = 2023, CalendarMonth = 9, LearningAmount = 1000 }
-                    }
-                },
-                new FundingPeriod
-                {
-                    DeliveryPeriods = new List<DeliveryPeriod>
-                    {
-                        new DeliveryPeriod { AcademicYear = 2324, Period = 3, CalenderYear = 2023, CalendarMonth = 10, LearningAmount = 1000 }
-                    }
-                }
-            }
-		};
         _scenarioContext["apprenticeshipKey"] = _earningsGeneratedEvent.ApprenticeshipKey;
         _scenarioContext["numberOfPayments"] = 3;
         _scenarioContext["paymentAmount"] = 1000;
