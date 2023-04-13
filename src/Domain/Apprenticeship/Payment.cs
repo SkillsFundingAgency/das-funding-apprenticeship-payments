@@ -9,6 +9,7 @@
             Amount = amount;
             PaymentYear = paymentYear;
             PaymentPeriod = paymentPeriod;
+            SentForPayment = false;
         }
 
         public short AcademicYear { get; }
@@ -16,5 +17,6 @@
         public decimal Amount { get; }
         public short PaymentYear { get; }
         public byte PaymentPeriod { get; }
+        public bool SentForPayment { get; }
     }
 }

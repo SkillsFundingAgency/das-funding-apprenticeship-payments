@@ -46,7 +46,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                     {
                         AcademicYear = y.AcademicYear,
                         Amount = y.LearningAmount, 
-                        DeliveryPeriod = y.Period
+                        DeliveryPeriod = y.Period,
+                        CollectionMonth = y.CalendarMonth,
+                        CollectionYear = y.CalenderYear
                     }).ToList()
             };
         }
@@ -59,7 +61,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 AcademicYear = x.AcademicYear,
                 Amount = x.Amount,
                 DeliveryPeriod = x.DeliveryPeriod,
-                PaymentPeriod = x.PaymentPeriod
+                PaymentPeriod = x.PaymentPeriod,
+                SentForPayment = x.SentForPayment
             }).ToList();
         }
     }

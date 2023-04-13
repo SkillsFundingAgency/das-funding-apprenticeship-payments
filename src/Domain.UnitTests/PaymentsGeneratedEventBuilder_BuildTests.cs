@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
@@ -22,10 +23,15 @@ public class PaymentsGeneratedEventBuilder_BuildTests
         _fixture = new Fixture();
 
         _apprenticeship = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid());
-        var earnings = _fixture.CreateMany<Earning>();
+        var earnings = new List<Earning>
+        {
+            new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
+            new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
+            new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
+        };
         foreach (var earning in earnings)
         {
-            _apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount);
+            _apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth);
         }
         _apprenticeship.CalculatePayments();
 
@@ -41,6 +47,6 @@ public class PaymentsGeneratedEventBuilder_BuildTests
     [Test]
     public void ShouldPopulateThePaymentsCorrectly()
     {
-        _result.Payments.Should().BeEquivalentTo(_apprenticeship.Payments);
+        _result.Payments.Should().BeEquivalentTo(_apprenticeship.Payments, opts => opts.ExcludingMissingMembers());
     }
 }
