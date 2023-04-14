@@ -28,9 +28,20 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             _payments.Clear();
             foreach (var earning in Earnings)
             {
-                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.AcademicYear, earning.DeliveryPeriod);
+                var paymentPeriod = GetPaymentPeriod(earning.AcademicYear, earning.DeliveryPeriod);
+                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, paymentPeriod.AcademicYear, paymentPeriod.Period);
                 _payments.Add(payment);
             }
+        }
+
+        private (short AcademicYear, byte Period) GetPaymentPeriod(short earningAcademicYear, byte deliveryPeriod)
+        {
+            if (deliveryPeriod < 12)
+                return (earningAcademicYear, (byte)(deliveryPeriod + 1));
+
+            var lastTwo = short.Parse($"{earningAcademicYear}".Substring(2, 2));
+
+            return (short.Parse($"{lastTwo}{lastTwo + 1}"), 1);
         }
     }
 }
