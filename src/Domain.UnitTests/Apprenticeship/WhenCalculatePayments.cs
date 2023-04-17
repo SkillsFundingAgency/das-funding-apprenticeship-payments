@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
@@ -45,7 +46,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
                 _sut.Payments[i].PaymentPeriod.Should().Be(earnings[i].CollectionMonth);
             }
         }
-        
+
         [Test]
         public void WhenEarningInAPreviousMonthThenPaymentAllocatedToCurrentMonth()
         {
@@ -80,6 +81,19 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
                 _sut.Payments[i].AcademicYear.Should().Be(earnings[i].AcademicYear);
                 _sut.Payments[i].Amount.Should().Be(earnings[i].Amount);
             }
+        }
+
+        [TestCase(2223, 1, 2223, 2, 2223, 2)]
+        [TestCase(2223, 12, 2324, 1, 2324, 1)]
+        public void PaymentPeriodShouldBeOneMonthAfterDeliveryPeriod(short earningAcademicYear, byte deliveryPeriod, short paymentAcademicYear, byte paymentPeriod, short collectionYear, byte collectionMonth)
+        {
+            _sut.AddEarning(earningAcademicYear, deliveryPeriod, _fixture.Create<decimal>(), collectionYear, collectionMonth);
+
+            _sut.CalculatePayments();
+
+            _sut.Payments.Count.Should().Be(1);
+            _sut.Payments.Single().PaymentYear.Should().Be(paymentAcademicYear);
+            _sut.Payments.Single().PaymentPeriod.Should().Be(paymentPeriod);
         }
     }
 }
