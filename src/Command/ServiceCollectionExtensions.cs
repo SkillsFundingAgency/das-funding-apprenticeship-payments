@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command
 {
@@ -8,11 +9,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command
     {
         public static IServiceCollection AddCommandServices(this IServiceCollection serviceCollection)
         {
-return serviceCollection;
-        }
-
-        private static IServiceCollection AddPersistenceServices(this IServiceCollection serviceCollection)
-        {
+            serviceCollection.AddSingleton<IPaymentsGeneratedEventBuilder, PaymentsGeneratedEventBuilder>();
+            serviceCollection.AddScoped<ICalculateApprenticeshipPaymentsCommandHandler, CalculateApprenticeshipPaymentsCommandHandler>();
             return serviceCollection;
         }
     }

@@ -2,5 +2,6 @@
 {
     public class QueueNames
     {
+        public const string EarningsGenerated = "das-funding-payments-earnings-generated";
     }
 }

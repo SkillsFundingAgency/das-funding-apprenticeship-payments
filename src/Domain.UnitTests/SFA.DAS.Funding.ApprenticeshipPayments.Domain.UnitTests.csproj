@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Command\SFA.DAS.Funding.ApprenticeshipPayments.Command.csproj" />
     <ProjectReference Include="..\Domain\SFA.DAS.Funding.ApprenticeshipPayments.Domain.csproj" />
+    <ProjectReference Include="..\TestHelpers\SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Funding.ApprenticeshipPayments.Types.csproj" />
   </ItemGroup>
 
