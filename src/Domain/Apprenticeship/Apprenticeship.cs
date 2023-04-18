@@ -38,15 +38,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         {
             var censusDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
             var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1);
-            if (collectionDate < censusDate)
-            {
-                collectionDate = censusDate;
-            }
-            else
+            if (collectionDate >= censusDate)
             {
                 return GetPaymentPeriod(earning.AcademicYear, earning.DeliveryPeriod);
             }
 
+            collectionDate = censusDate;
             return CollectionDateToPeriod(collectionDate);
         }
 
@@ -65,7 +62,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             else
                 academicYear = short.Parse($"{year}{year + 1}");
 
-            return (academicYear, (byte)period);
+            return GetPaymentPeriod(academicYear, (byte)period);
         }
 
         private (short AcademicYear, byte Period) GetPaymentPeriod(short earningAcademicYear, byte deliveryPeriod)
