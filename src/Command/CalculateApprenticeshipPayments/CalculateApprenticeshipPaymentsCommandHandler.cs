@@ -20,7 +20,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
         public async Task<Apprenticeship> Calculate(CalculateApprenticeshipPaymentsCommand command)
         {
             var apprenticeship = _apprenticeshipFactory.CreateNew(command.ApprenticeshipEntity);
-            apprenticeship.CalculatePayments();
+            apprenticeship.CalculatePayments(DateTime.Now);
             await _messageSession.Publish(_paymentsGeneratedEventBuilder.Build(apprenticeship));
             return apprenticeship;
         }

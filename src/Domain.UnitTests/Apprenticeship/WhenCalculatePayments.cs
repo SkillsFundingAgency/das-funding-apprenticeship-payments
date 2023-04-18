@@ -5,6 +5,7 @@ using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
 {
@@ -26,74 +27,68 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         {
             var earnings = new List<Earning>
             {
-                new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
-                new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
-                new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
+                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
+                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
+                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
             };
             foreach (var earning in earnings)
             {
                 _sut.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth);
             }
 
-            _sut.CalculatePayments();
+            _sut.CalculatePayments(DateTime.Now);
 
-            for (int i = 0; i < _sut.Payments.Count; i++)
-            {
-                _sut.Payments[i].DeliveryPeriod.Should().Be(earnings[i].DeliveryPeriod);
-                _sut.Payments[i].AcademicYear.Should().Be(earnings[i].AcademicYear);
-                _sut.Payments[i].Amount.Should().Be(earnings[i].Amount);
-                _sut.Payments[i].PaymentYear.Should().Be(earnings[i].CollectionYear);
-                _sut.Payments[i].PaymentPeriod.Should().Be(earnings[i].CollectionMonth);
-            }
+            _sut.Payments.Should().BeEquivalentTo(earnings, opts => opts.ExcludingMissingMembers());
+        }
+        
+        [Test]
+        public void PaymentPeriodShouldBeOneMonthAfterDeliveryPeriodIfInTheFuture_SameAcademicYear()
+        {
+            _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month);
+
+            _sut.CalculatePayments(DateTime.Now);
+
+            _sut.Payments.Count.Should().Be(1);
+            _sut.Payments.Single().PaymentYear.Should().Be(2324);
+            _sut.Payments.Single().PaymentPeriod.Should().Be(2);
         }
 
         [Test]
-        public void WhenEarningInAPreviousMonthThenPaymentAllocatedToCurrentMonth()
+        public void PaymentPeriodShouldBeOneMonthAfterDeliveryPeriodIfInTheFuture_FollowingAcademicYear()
         {
-            var earnings = new List<Earning>
-            {
-                new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(-2).Year, (byte)DateTime.Now.AddMonths(-2).Month),
-                new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(-1).Year, (byte)DateTime.Now.AddMonths(-1).Month),
-                new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
-                new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
-                new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
-            };
-            foreach (var earning in earnings)
-            {
-                _sut.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth);
-            }
+            _sut.AddEarning(2223, 12, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month);
 
-            _sut.CalculatePayments();
-
-            _sut.Payments[0].PaymentYear.Should().Be((short)DateTime.Now.Year);
-            _sut.Payments[0].PaymentPeriod.Should().Be((byte)DateTime.Now.Month);
-            _sut.Payments[1].PaymentYear.Should().Be((short)DateTime.Now.Year);
-            _sut.Payments[1].PaymentPeriod.Should().Be((byte)DateTime.Now.Month);
-            _sut.Payments[2].PaymentYear.Should().Be((short)DateTime.Now.Year);
-            _sut.Payments[2].PaymentPeriod.Should().Be((byte)DateTime.Now.Month);
-            _sut.Payments[3].PaymentYear.Should().Be(earnings[3].CollectionYear);
-            _sut.Payments[3].PaymentPeriod.Should().Be(earnings[3].CollectionMonth);
-            _sut.Payments[4].PaymentYear.Should().Be(earnings[4].CollectionYear);
-            _sut.Payments[4].PaymentPeriod.Should().Be(earnings[4].CollectionMonth);
-            for (int i = 0; i < _sut.Payments.Count; i++)
-            {
-                _sut.Payments[i].DeliveryPeriod.Should().Be(earnings[i].DeliveryPeriod);
-                _sut.Payments[i].AcademicYear.Should().Be(earnings[i].AcademicYear);
-                _sut.Payments[i].Amount.Should().Be(earnings[i].Amount);
-            }
-        }
-
-        [TestCase(2223, 1, 2223, 2, 2223, 2)]
-        [TestCase(2223, 12, 2324, 1, 2324, 1)]
-        public void PaymentPeriodShouldBeOneMonthAfterDeliveryPeriod(short earningAcademicYear, byte deliveryPeriod, short paymentAcademicYear, byte paymentPeriod, short collectionYear, byte collectionMonth)
-        {
-            _sut.AddEarning(earningAcademicYear, deliveryPeriod, _fixture.Create<decimal>(), collectionYear, collectionMonth);
-
-            _sut.CalculatePayments();
+            _sut.CalculatePayments(DateTime.Now);
 
             _sut.Payments.Count.Should().Be(1);
-            _sut.Payments.Single().PaymentYear.Should().Be(paymentAcademicYear);
-            _sut.Payments.Single().PaymentPeriod.Should().Be(paymentPeriod);
+            _sut.Payments.Single().PaymentYear.Should().Be(2324);
+            _sut.Payments.Single().PaymentPeriod.Should().Be(1);
+        }
+
+        [Test]
+        public void PaymentPeriodShouldBeCurrentPeriodIfInThePast_BeforeAugust()
+        {
+            var now = new DateTime(2023, 7, 1);
+            _sut.AddEarning(2223, 11, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month);
+
+            _sut.CalculatePayments(now);
+
+            _sut.Payments.Count.Should().Be(1);
+            _sut.Payments.Single().PaymentYear.Should().Be(2223);
+            _sut.Payments.Single().PaymentPeriod.Should().Be(12);
+        }
+
+        [Test]
+        public void PaymentPeriodShouldBeCurrentPeriodIfInThePast_AfterAugust()
+        {
+            var now = new DateTime(2023, 8, 1);
+            _sut.AddEarning(2223, 12, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month);
+
+            _sut.CalculatePayments(now);
+
+            _sut.Payments.Count.Should().Be(1);
+            _sut.Payments.Single().PaymentYear.Should().Be(2324);
+            _sut.Payments.Single().PaymentPeriod.Should().Be(1);
         }
     }
 }
