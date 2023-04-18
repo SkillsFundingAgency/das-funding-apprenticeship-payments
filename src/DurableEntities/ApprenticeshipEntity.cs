@@ -6,6 +6,7 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Newtonsoft.Json;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
@@ -19,11 +20,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         private readonly ICalculateApprenticeshipPaymentsCommandHandler _calculateApprenticeshipPaymentsCommandHandler;
         private readonly IDomainEventDispatcher _domainEventDispatcher;
+        private readonly IProcessUnfundedPaymentsCommandHandler _processUnfundedPaymentsCommandHandler;
 
-        public ApprenticeshipEntity(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler, IDomainEventDispatcher domainEventDispatcher)
+        public ApprenticeshipEntity(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler, IDomainEventDispatcher domainEventDispatcher, IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler)
         {
             _calculateApprenticeshipPaymentsCommandHandler = calculateApprenticeshipPaymentsCommandHandler;
             _domainEventDispatcher = domainEventDispatcher;
+            _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
         }
 
         public async Task HandleEarningsGeneratedEvent(EarningsGeneratedEvent earningsGeneratedEvent)
@@ -31,6 +34,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             var apprenticeship = await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
             Model.Payments = MapPaymentsToModel(apprenticeship.Payments);
+        }
+        public async Task ReleasePaymentsForCollectionMonth(byte collectionMonth)
+        {
+            await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(collectionMonth, Model));
         }
 
         [FunctionName(nameof(ApprenticeshipEntity))]

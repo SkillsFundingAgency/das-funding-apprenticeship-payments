@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{694AAE59
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Queries.UnitTests", "SFA.DAS.Funding.ApprenticeshipPayments.Queries.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.Queries.UnitTests.csproj", "{DF4CC130-1AC4-4991-A89E-8D8EB4444B80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests", "SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests.csproj", "{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{DF4CC130-1AC4-4991-A89E-8D8EB4444B80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF4CC130-1AC4-4991-A89E-8D8EB4444B80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF4CC130-1AC4-4991-A89E-8D8EB4444B80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +99,7 @@ Global
 		{44B8941D-9B56-4024-A04B-E819AFCECA1F} = {694AAE59-8442-4592-8FA1-C7A8E7FD9A32}
 		{C46F6030-5DFD-4688-98D8-428F3E035DAD} = {694AAE59-8442-4592-8FA1-C7A8E7FD9A32}
 		{DF4CC130-1AC4-4991-A89E-8D8EB4444B80} = {694AAE59-8442-4592-8FA1-C7A8E7FD9A32}
+		{5EE196A8-BD5C-4141-BF88-1993E6EF37FD} = {694AAE59-8442-4592-8FA1-C7A8E7FD9A32}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0A244BDC-EE6C-4218-8982-87E249BFFA07}
