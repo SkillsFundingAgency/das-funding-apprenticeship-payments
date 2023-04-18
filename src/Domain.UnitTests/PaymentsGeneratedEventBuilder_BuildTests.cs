@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests;
@@ -23,7 +24,7 @@ public class PaymentsGeneratedEventBuilder_BuildTests
         _fixture = new Fixture();
 
         _apprenticeship = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid());
-        var earnings = new List<Earning>
+        var earnings = new List<Earning>()
         {
             new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
             new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
