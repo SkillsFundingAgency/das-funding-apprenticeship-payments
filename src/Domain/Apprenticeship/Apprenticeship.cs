@@ -23,8 +23,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             _payments.Clear();
             foreach (var earning in Earnings)
             {
-                var collectionDate = DetermineCollectionDate(earning);
-                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionDate.Year, (byte)collectionDate.Month);
+                var collectionPeriod = DetermineCollectionPeriod(earning);
+                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionPeriod.AcademicYear, (byte)collectionPeriod.Period);
                 _payments.Add(payment);
             }
         }
@@ -34,7 +34,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
         }
 
-        private static DateTime DetermineCollectionDate(Earning earning)
+        private (short AcademicYear, byte Period) DetermineCollectionPeriod(Earning earning)
         {
             var censusDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
             var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1);
@@ -43,7 +43,25 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
                 collectionDate = censusDate;
             }
 
-            return collectionDate;
+            return CollectionDateToPeriod(collectionDate);
+        }
+
+        private (short AcademicYear, byte Period) CollectionDateToPeriod(DateTime collectionDate)
+        {
+            var period = collectionDate.Month - 7;
+            if (period <= 0)
+            {
+                period = 7 + period;
+            }
+
+            short academicYear;
+            var year = short.Parse($"{collectionDate.Year}".Substring(2, 2));
+            if (collectionDate.Month < 8)
+                academicYear = short.Parse($"{year - 1}{year}");
+            else
+                academicYear = short.Parse($"{year}{year + 1}");
+
+            return (academicYear, (byte)period);
         }
     }
 }
