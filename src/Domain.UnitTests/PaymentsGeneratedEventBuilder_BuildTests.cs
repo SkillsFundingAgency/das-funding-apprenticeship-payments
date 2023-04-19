@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests;
@@ -25,15 +26,15 @@ public class PaymentsGeneratedEventBuilder_BuildTests
         _apprenticeship = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid());
         var earnings = new List<Earning>
         {
-            new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
-            new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
-            new (_fixture.Create<short>(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
+            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
+            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
+            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
         };
         foreach (var earning in earnings)
         {
             _apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth);
         }
-        _apprenticeship.CalculatePayments();
+        _apprenticeship.CalculatePayments(DateTime.Now);
 
         _result = _sut.Build(_apprenticeship);
     }

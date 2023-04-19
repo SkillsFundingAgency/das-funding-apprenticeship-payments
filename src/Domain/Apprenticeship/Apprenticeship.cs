@@ -18,13 +18,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         private readonly List<Payment> _payments;
         public ReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
-        public void CalculatePayments()
+        public void CalculatePayments(DateTime now)
         {
             _payments.Clear();
             foreach (var earning in Earnings)
             {
-                var collectionDate = DetermineCollectionDate(earning);
-                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionDate.Year, (byte)collectionDate.Month);
+                var collectionPeriod = DeterminePaymentPeriod(earning, now);
+                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionPeriod.AcademicYear, (byte)collectionPeriod.Period);
                 _payments.Add(payment);
             }
         }
@@ -34,16 +34,45 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
         }
 
-        private static DateTime DetermineCollectionDate(Earning earning)
+        private (short AcademicYear, byte Period) DeterminePaymentPeriod(Earning earning, DateTime now)
         {
-            var censusDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
+            var censusDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
             var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1);
-            if (collectionDate < censusDate)
+            if (collectionDate >= censusDate)
             {
-                collectionDate = censusDate;
+                return GetPaymentPeriod(earning.AcademicYear, earning.DeliveryPeriod);
             }
 
-            return collectionDate;
+            collectionDate = censusDate;
+            return CollectionDateToPeriod(collectionDate);
+        }
+
+        private (short AcademicYear, byte Period) CollectionDateToPeriod(DateTime collectionDate)
+        {
+            var period = collectionDate.Month - 7;
+            if (period <= 0)
+            {
+                period = 12 + period;
+            }
+
+            short academicYear;
+            var year = short.Parse($"{collectionDate.Year}".Substring(2, 2));
+            if (collectionDate.Month < 8)
+                academicYear = short.Parse($"{year - 1}{year}");
+            else
+                academicYear = short.Parse($"{year}{year + 1}");
+
+            return GetPaymentPeriod(academicYear, (byte)period);
+        }
+
+        private (short AcademicYear, byte Period) GetPaymentPeriod(short earningAcademicYear, byte deliveryPeriod)
+        {
+            if (deliveryPeriod < 12)
+                return (earningAcademicYear, (byte)(deliveryPeriod + 1));
+
+            var lastTwo = short.Parse($"{earningAcademicYear}".Substring(2, 2));
+
+            return (short.Parse($"{lastTwo}{lastTwo + 1}"), 1);
         }
     }
 }

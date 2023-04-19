@@ -11,6 +11,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPaym
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
 {
@@ -30,6 +31,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
             _fixture = new Fixture();
 
             _earningsGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
+            _earningsGeneratedEvent.FundingPeriods.ForEach(f => f.DeliveryPeriods.ForEach(d => d.AcademicYear = AcademicYearHelper.GetRandomValidAcademicYear()));
 
             _expectedEarnings = _earningsGeneratedEvent.FundingPeriods.SelectMany(x => x.DeliveryPeriods).Select(y =>
                 new EarningEntityModel
