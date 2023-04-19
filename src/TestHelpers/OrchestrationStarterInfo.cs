@@ -16,7 +16,7 @@ public class OrchestrationStarterInfo
         string expectedCustomStatus = null)
     {
         if (string.IsNullOrEmpty(starterName)) throw new ArgumentException("Missing starter name");
-        if (string.IsNullOrEmpty(orchestrationName)) throw new ArgumentException("Missing starter name");
+        if (string.IsNullOrEmpty(orchestrationName)) throw new ArgumentException("Missing orchestration name");
 
         StarterName = starterName;
         OrchestrationName = orchestrationName;
