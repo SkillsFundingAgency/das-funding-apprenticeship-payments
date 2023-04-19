@@ -38,15 +38,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
                 {
                     DeliveryPeriod = y.Period,
                     AcademicYear = y.AcademicYear,
-                    Amount = y.LearningAmount
+                    Amount = y.LearningAmount,
+                    CollectionMonth = y.CalendarMonth,
+                    CollectionYear = y.CalenderYear
                 });
 
-            _apprenticeship = new Apprenticeship(Guid.NewGuid());
-            foreach (var earning in _expectedEarnings)
-            {
-                _apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount);
-            }
-            _apprenticeship.CalculatePayments();
+            _apprenticeship = _fixture.Create<Apprenticeship>();
 
             _calculateApprenticeshipPaymentsCommandHandler = new Mock<ICalculateApprenticeshipPaymentsCommandHandler>();
             _domainEventDispatcher = new Mock<IDomainEventDispatcher>();

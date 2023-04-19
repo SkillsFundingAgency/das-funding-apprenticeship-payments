@@ -46,7 +46,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                     {
                         AcademicYear = y.AcademicYear,
                         Amount = y.LearningAmount, 
-                        DeliveryPeriod = y.Period
+                        DeliveryPeriod = y.Period,
+                        CollectionMonth = y.CalendarMonth,
+                        CollectionYear = y.CalenderYear
                     }).ToList()
             };
         }

@@ -24,17 +24,17 @@ public class PaymentsGeneratedEventBuilder_BuildTests
         _fixture = new Fixture();
 
         _apprenticeship = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid());
-        var earnings = new List<Earning>()
+        var earnings = new List<Earning>
         {
-            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>()),
-            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>()),
-            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>())
+            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
+            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
+            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
         };
         foreach (var earning in earnings)
         {
-            _apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount);
+            _apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth);
         }
-        _apprenticeship.CalculatePayments();
+        _apprenticeship.CalculatePayments(DateTime.Now);
 
         _result = _sut.Build(_apprenticeship);
     }

@@ -31,16 +31,29 @@ public class PaymentsGeneratedEventHandlingStepDefinitions
             .ConfigureAwait(false);
     }
 
-    [Then(@"Payments are generated with the correct learning amounts")]
-    public async Task AssertEarningsGeneratedEvent()
+    [Then(@"payments are generated with the correct learning amounts")]
+    public async Task AssertFutureEarningsGeneratedEvent()
     {
-        await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(EventMatchesExpectation), "Failed to find published PaymentsGenerated event");
+        await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(FuturePaymentsMatchExpectation), "Failed to find published PaymentsGenerated event");
     }
 
-    private bool EventMatchesExpectation(PaymentsGeneratedEvent paymentsGeneratedEvent)
+    [Then(@"the past earnings are allocated to the current month")]
+    public async Task AssertPastEarningsGeneratedEvent()
+    {
+        await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(PastPaymentsMatchExpectation), "Failed to find published PaymentsGenerated event");
+    }
+
+    private bool FuturePaymentsMatchExpectation(PaymentsGeneratedEvent paymentsGeneratedEvent)
     {
         return paymentsGeneratedEvent.ApprenticeshipKey == (Guid) _scenarioContext["apprenticeshipKey"] &&
                paymentsGeneratedEvent.Payments.Count() == (int) _scenarioContext["numberOfPayments"] &&
                paymentsGeneratedEvent.Payments.All(x => x.Amount == (int) _scenarioContext["paymentAmount"]);
+    }
+
+    private bool PastPaymentsMatchExpectation(PaymentsGeneratedEvent paymentsGeneratedEvent)
+    {
+        return paymentsGeneratedEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
+               paymentsGeneratedEvent.Payments.Count() == (int)_scenarioContext["numberOfPayments"] &&
+               paymentsGeneratedEvent.Payments.All(x => x.Amount == (int)_scenarioContext["paymentAmount"]);
     }
 }
