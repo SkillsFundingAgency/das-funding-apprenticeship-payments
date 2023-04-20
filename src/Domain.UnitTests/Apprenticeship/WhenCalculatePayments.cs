@@ -27,9 +27,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         {
             var earnings = new List<Earning>()
             {
-                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>()),
-                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>()),
-                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>())
+                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
+                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
+                new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
             };
             foreach (var earning in earnings)
             {
@@ -43,8 +43,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
                 _sut.Payments[i].DeliveryPeriod.Should().Be(earnings[i].DeliveryPeriod);
                 _sut.Payments[i].AcademicYear.Should().Be(earnings[i].AcademicYear);
                 _sut.Payments[i].Amount.Should().Be(earnings[i].Amount);
-                _sut.Payments[i].PaymentYear.Should().Be(earnings[i].CollectionYear);
-                _sut.Payments[i].PaymentPeriod.Should().Be(earnings[i].CollectionMonth);
+                _sut.Payments[i].CollectionYear.Should().Be(earnings[i].CollectionYear);
+                _sut.Payments[i].CollectionPeriod.Should().Be(earnings[i].CollectionMonth);
             }
         }
         
@@ -66,16 +66,16 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
 
             _sut.CalculatePayments();
 
-            _sut.Payments[0].PaymentYear.Should().Be((short)DateTime.Now.Year);
-            _sut.Payments[0].PaymentPeriod.Should().Be((byte)DateTime.Now.Month);
-            _sut.Payments[1].PaymentYear.Should().Be((short)DateTime.Now.Year);
-            _sut.Payments[1].PaymentPeriod.Should().Be((byte)DateTime.Now.Month);
-            _sut.Payments[2].PaymentYear.Should().Be((short)DateTime.Now.Year);
-            _sut.Payments[2].PaymentPeriod.Should().Be((byte)DateTime.Now.Month);
-            _sut.Payments[3].PaymentYear.Should().Be(earnings[3].CollectionYear);
-            _sut.Payments[3].PaymentPeriod.Should().Be(earnings[3].CollectionMonth);
-            _sut.Payments[4].PaymentYear.Should().Be(earnings[4].CollectionYear);
-            _sut.Payments[4].PaymentPeriod.Should().Be(earnings[4].CollectionMonth);
+            _sut.Payments[0].CollectionYear.Should().Be((short)DateTime.Now.Year);
+            _sut.Payments[0].CollectionPeriod.Should().Be((byte)DateTime.Now.Month);
+            _sut.Payments[1].CollectionYear.Should().Be((short)DateTime.Now.Year);
+            _sut.Payments[1].CollectionPeriod.Should().Be((byte)DateTime.Now.Month);
+            _sut.Payments[2].CollectionYear.Should().Be((short)DateTime.Now.Year);
+            _sut.Payments[2].CollectionPeriod.Should().Be((byte)DateTime.Now.Month);
+            _sut.Payments[3].CollectionYear.Should().Be(earnings[3].CollectionYear);
+            _sut.Payments[3].CollectionPeriod.Should().Be(earnings[3].CollectionMonth);
+            _sut.Payments[4].CollectionYear.Should().Be(earnings[4].CollectionYear);
+            _sut.Payments[4].CollectionPeriod.Should().Be(earnings[4].CollectionMonth);
             for (int i = 0; i < _sut.Payments.Count; i++)
             {
                 _sut.Payments[i].DeliveryPeriod.Should().Be(earnings[i].DeliveryPeriod);

@@ -54,6 +54,6 @@ public class PaymentsGeneratedEventHandlingStepDefinitions
     private bool PastPaymentsMatchExpectation(PaymentsGeneratedEvent paymentsGeneratedEvent)
     {
         return paymentsGeneratedEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               paymentsGeneratedEvent.Payments.All(x => x.PaymentPeriod == DateTime.Now.Month && x.PaymentYear == DateTime.Now.Year);
+               paymentsGeneratedEvent.Payments.All(x => x.CollectionPeriod == DateTime.Now.Month && x.CollectionYear == DateTime.Now.Year);
     }
 }

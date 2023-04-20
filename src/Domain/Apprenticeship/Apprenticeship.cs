@@ -18,25 +18,25 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         private readonly List<Payment> _payments;
         public ReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
+        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth)
+        {
+            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
+        }
+
         public void CalculatePayments()
         {
             _payments.Clear();
             foreach (var earning in Earnings)
             {
-                var paymentPeriod = GetPaymentPeriod(earning.AcademicYear, earning.DeliveryPeriod);
-                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, paymentPeriod.AcademicYear, paymentPeriod.Period);
+                var collectionDate = DetermineCollectionDate(earning);
+                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionDate.Year, (byte)collectionDate.Month);
                 _payments.Add(payment);
             }
         }
 
-        private (short AcademicYear, byte Period) GetPaymentPeriod(short earningAcademicYear, byte deliveryPeriod)
+        private static DateTime DetermineCollectionDate(Earning earning)
         {
-            if (deliveryPeriod < 12)
-                return (earningAcademicYear, (byte)(deliveryPeriod + 1));
-
-            var lastTwo = short.Parse($"{earningAcademicYear}".Substring(2, 2));
-
-            return (short.Parse($"{lastTwo}{lastTwo + 1}"), 1);
+            var censusDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
             var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1);
             if (collectionDate < censusDate)
             {
