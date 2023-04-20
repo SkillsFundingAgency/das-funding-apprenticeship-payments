@@ -5,9 +5,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments
 public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCommandHandler
 {
     private readonly IMessageSession _messageSession;
-    private readonly ICalculatedOnProgrammeFundingEventBuilder _eventBuilder;
+    private readonly IFinalisedOnProgammeLearningPaymentEventBuilder _eventBuilder;
 
-    public ProcessUnfundedPaymentsCommandHandler(IMessageSession messageSession, ICalculatedOnProgrammeFundingEventBuilder eventBuilder)
+    public ProcessUnfundedPaymentsCommandHandler(IMessageSession messageSession, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder)
     {
         _messageSession = messageSession;
         _eventBuilder = eventBuilder;

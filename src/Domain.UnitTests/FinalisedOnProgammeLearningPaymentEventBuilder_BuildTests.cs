@@ -8,10 +8,10 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests;
 
-public class CalculatedOnProgrammeFundingEventBuilder_BuildTests
+public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
 {
-    private CalculatedOnProgrammeFundingEventBuilder _sut;
-    private CalculatedOnProgrammeFundingEvent _result;
+    private FinalisedOnProgammeLearningPaymentEventBuilder _sut;
+    private FinalisedOnProgammeLearningPaymentEvent _result;
     private Fixture _fixture;
     private PaymentEntityModel _paymentEntityModel;
     private Guid _apprenticeshipKey;
@@ -19,7 +19,7 @@ public class CalculatedOnProgrammeFundingEventBuilder_BuildTests
     [SetUp]
     public void SetUp()
     {
-        _sut = new CalculatedOnProgrammeFundingEventBuilder();
+        _sut = new FinalisedOnProgammeLearningPaymentEventBuilder();
         _fixture = new Fixture();
 
         _paymentEntityModel = _fixture.Create<PaymentEntityModel>();

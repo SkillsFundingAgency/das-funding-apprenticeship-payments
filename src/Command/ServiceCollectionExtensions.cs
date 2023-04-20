@@ -11,7 +11,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command
         public static IServiceCollection AddCommandServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<IPaymentsGeneratedEventBuilder, PaymentsGeneratedEventBuilder>();
-            serviceCollection.AddSingleton<ICalculatedOnProgrammeFundingEventBuilder, CalculatedOnProgrammeFundingEventBuilder>();
+            serviceCollection.AddSingleton<IFinalisedOnProgammeLearningPaymentEventBuilder, FinalisedOnProgammeLearningPaymentEventBuilder>();
             serviceCollection.AddScoped<ICalculateApprenticeshipPaymentsCommandHandler, CalculateApprenticeshipPaymentsCommandHandler>();
             serviceCollection.AddScoped<IProcessUnfundedPaymentsCommandHandler, ProcessUnfundedPaymentsCommandHandler>();
             return serviceCollection;

@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
-public class CalculatedOnProgrammeFundingEvent
+public class FinalisedOnProgammeLearningPaymentEvent
 {
     public Guid ApprenticeshipKey { get; set; }
     public byte CollectionMonth { get; set; }

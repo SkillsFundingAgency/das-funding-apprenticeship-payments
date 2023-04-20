@@ -7,12 +7,12 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
-public class CalculatedOnProgrammeFundingEventHandlingStepDefinitions
+public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
     private static IEndpointInstance _endpointInstance;
 
-    public CalculatedOnProgrammeFundingEventHandlingStepDefinitions(ScenarioContext scenarioContext)
+    public FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions(ScenarioContext scenarioContext)
     {
         _scenarioContext = scenarioContext;
     }
@@ -21,7 +21,7 @@ public class CalculatedOnProgrammeFundingEventHandlingStepDefinitions
     public static async Task StartEndpoint()
     {
         _endpointInstance = await EndpointHelper
-            .StartEndpoint("Test.Funding.ApprenticeshipPayments", false, new[] { typeof(CalculatedOnProgrammeFundingEvent) });
+            .StartEndpoint("Test.Funding.ApprenticeshipPayments", false, new[] { typeof(FinalisedOnProgammeLearningPaymentEvent) });
     }
 
     [AfterTestRun]
@@ -34,12 +34,12 @@ public class CalculatedOnProgrammeFundingEventHandlingStepDefinitions
     [Then("the correct payments are released")]
     public async Task AssertCorrectPaymentsAreReleased()
     {
-        await WaitHelper.WaitForIt(() => CalculatedOnProgrammeFundingEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesExpectation), "Failed to find published CalculatedOnProgrammeFunding event");
+        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesExpectation), "Failed to find published CalculatedOnProgrammeFunding event");
     }
 
-    private bool ReleasedPaymentMatchesExpectation(CalculatedOnProgrammeFundingEvent calculatedOnProgrammeFundingEvent)
+    private bool ReleasedPaymentMatchesExpectation(FinalisedOnProgammeLearningPaymentEvent finalisedOnProgammeLearningPaymentEvent)
     {
-        return calculatedOnProgrammeFundingEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               calculatedOnProgrammeFundingEvent.CollectionMonth == 2;
+        return finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
+               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == 2;
     }
 }

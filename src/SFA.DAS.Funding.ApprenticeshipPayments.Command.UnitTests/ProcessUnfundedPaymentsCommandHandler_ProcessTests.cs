@@ -13,8 +13,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         private Fixture _fixture;
         private byte _paymentPeriod;
         private Mock<IMessageSession> _messageSession;
-        private Mock<ICalculatedOnProgrammeFundingEventBuilder> _eventBuilder;
-        private CalculatedOnProgrammeFundingEvent _expectedEvent;
+        private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder;
+        private FinalisedOnProgammeLearningPaymentEvent _expectedEvent;
         private ProcessUnfundedPaymentsCommandHandler _sut;
 
         [SetUp]
@@ -30,10 +30,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
                 new PaymentEntityModel { Amount = 300, PaymentPeriod = (byte)(_paymentPeriod + 1), SentForPayment = false } //wrong period
             };
 
-            _expectedEvent = _fixture.Create<CalculatedOnProgrammeFundingEvent>();
+            _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
             _messageSession = new Mock<IMessageSession>();
-            _eventBuilder = new Mock<ICalculatedOnProgrammeFundingEventBuilder>();
+            _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
             _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), It.IsAny<Guid>())).Returns(_expectedEvent);
             _sut = new ProcessUnfundedPaymentsCommandHandler(_messageSession.Object, _eventBuilder.Object);
 
