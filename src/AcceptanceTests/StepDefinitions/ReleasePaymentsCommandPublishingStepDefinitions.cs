@@ -36,7 +36,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     {
         _releasePaymentsCommand = new ReleasePaymentsCommand
         {
-            CollectionMonth = 2
+            CollectionMonth = 5
         };
         await _endpointInstance.Publish(_releasePaymentsCommand);
     }

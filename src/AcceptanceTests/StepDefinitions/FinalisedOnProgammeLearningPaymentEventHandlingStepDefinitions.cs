@@ -34,12 +34,12 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
     [Then("the correct payments are released")]
     public async Task AssertCorrectPaymentsAreReleased()
     {
-        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesExpectation), "Failed to find published CalculatedOnProgrammeFunding event");
+        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesExpectation), "Failed to find published FinalisedOnProgammeLearningPaymentEvent");
     }
 
     private bool ReleasedPaymentMatchesExpectation(FinalisedOnProgammeLearningPaymentEvent finalisedOnProgammeLearningPaymentEvent)
     {
         return finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == 2;
+               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == 5;
     }
 }
