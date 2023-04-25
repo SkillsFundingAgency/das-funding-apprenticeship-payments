@@ -4,6 +4,7 @@ using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using FluentAssertions;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
 {
@@ -46,5 +47,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
             _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount == 100), It.IsAny<Guid>()));
             _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount != 100), It.IsAny<Guid>()), Times.Never);
         }
+
+        [Test]
+        public void ThenOnlyExpectedPaymentIsMarkedAsSent()
+        {
+            _command.Model.Payments.Single(x => x.Amount == 100).SentForPayment.Should().BeTrue();
+        }
+
     }
 }

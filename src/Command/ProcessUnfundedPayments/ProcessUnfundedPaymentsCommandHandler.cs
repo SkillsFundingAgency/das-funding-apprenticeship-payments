@@ -19,6 +19,7 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         foreach (var payment in paymentsToSend)
         {
             await _messageSession.Publish(_eventBuilder.Build(payment, command.Model.ApprenticeshipKey));
+            payment.SentForPayment = true;
         }
     }
 }
