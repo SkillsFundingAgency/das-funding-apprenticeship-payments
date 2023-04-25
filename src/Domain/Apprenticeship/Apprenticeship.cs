@@ -18,11 +18,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         private readonly List<Payment> _payments;
         public ReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
-        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth)
-        {
-            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
-        }
-
         public void CalculatePayments(DateTime now)
         {
             _payments.Clear();
@@ -34,13 +29,18 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             }
         }
 
+        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth)
+        {
+            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
+        }
+
         private (short AcademicYear, byte Period) DeterminePaymentPeriod(Earning earning, DateTime now)
         {
             var censusDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
             var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1);
             if (collectionDate >= censusDate)
             {
-                return (earning.CollectionYear, earning.CollectionMonth);
+                return GetPaymentPeriod(earning.AcademicYear, earning.DeliveryPeriod);
             }
 
             collectionDate = censusDate;
@@ -62,7 +62,17 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             else
                 academicYear = short.Parse($"{year}{year + 1}");
 
-            return (academicYear, (byte)period);
+            return GetPaymentPeriod(academicYear, (byte)period);
+        }
+
+        private (short AcademicYear, byte Period) GetPaymentPeriod(short earningAcademicYear, byte deliveryPeriod)
+        {
+            if (deliveryPeriod < 12)
+                return (earningAcademicYear, (byte)(deliveryPeriod + 1));
+
+            var lastTwo = short.Parse($"{earningAcademicYear}".Substring(2, 2));
+
+            return (short.Parse($"{lastTwo}{lastTwo + 1}"), 1);
         }
     }
 }

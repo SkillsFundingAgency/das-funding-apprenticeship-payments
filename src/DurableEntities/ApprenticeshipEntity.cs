@@ -64,11 +64,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         {
             return apprenticeshipPayments.Select(x => new PaymentEntityModel
             {
-                PaymentYear = x.CollectionYear,
+                PaymentYear = x.PaymentYear,
                 AcademicYear = x.AcademicYear,
                 Amount = x.Amount,
                 DeliveryPeriod = x.DeliveryPeriod,
-                PaymentPeriod = x.CollectionPeriod,
+                PaymentPeriod = x.PaymentPeriod,
                 SentForPayment = x.SentForPayment
             }).ToList();
         }
