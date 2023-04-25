@@ -37,7 +37,6 @@ public class TestFunction : IDisposable
 
 
         var config = new ConfigurationBuilder()
-            //.SetBasePath()
             .AddJsonFile("local.settings.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
