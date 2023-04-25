@@ -7,5 +7,6 @@
         public decimal Amount { get; set; }
         public short PaymentYear { get; set; }
         public byte PaymentPeriod { get; set; }
+        public bool SentForPayment { get; set; }
     }
 }

@@ -48,6 +48,6 @@ public class PaymentsGeneratedEventBuilder_BuildTests
     [Test]
     public void ShouldPopulateThePaymentsCorrectly()
     {
-        _result.Payments.Should().BeEquivalentTo(_apprenticeship.Payments);
+        _result.Payments.Should().BeEquivalentTo(_apprenticeship.Payments, opts => opts.ExcludingMissingMembers());
     }
 }
