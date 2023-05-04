@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using AutoFixture;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
@@ -25,7 +26,7 @@ public class ApprenticeshipEntity_ReleaseTests
         _collectionPeriod = _fixture.Create<byte>();
 
         _processUnfundedPaymentsCommandHandler = new Mock<IProcessUnfundedPaymentsCommandHandler>();
-        _sut = new ApprenticeshipEntity(Mock.Of<ICalculateApprenticeshipPaymentsCommandHandler>(), Mock.Of<IDomainEventDispatcher>(), _processUnfundedPaymentsCommandHandler.Object);
+        _sut = new ApprenticeshipEntity(Mock.Of<ICalculateApprenticeshipPaymentsCommandHandler>(), Mock.Of<IDomainEventDispatcher>(), _processUnfundedPaymentsCommandHandler.Object, Mock.Of<ILogger<ApprenticeshipEntity>>());
         _sut.Model = _fixture.Create<ApprenticeshipEntityModel>();
 
         await _sut.ReleasePaymentsForCollectionMonth(_collectionPeriod);

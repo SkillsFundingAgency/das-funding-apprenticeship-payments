@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Grpc.Core.Logging;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
@@ -21,16 +23,22 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         private readonly ICalculateApprenticeshipPaymentsCommandHandler _calculateApprenticeshipPaymentsCommandHandler;
         private readonly IDomainEventDispatcher _domainEventDispatcher;
         private readonly IProcessUnfundedPaymentsCommandHandler _processUnfundedPaymentsCommandHandler;
+        private readonly ILogger<ApprenticeshipEntity> _logger;
 
-        public ApprenticeshipEntity(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler, IDomainEventDispatcher domainEventDispatcher, IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler)
+        public ApprenticeshipEntity(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler,
+            IDomainEventDispatcher domainEventDispatcher,
+            IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler,
+            ILogger<ApprenticeshipEntity> logger)
         {
             _calculateApprenticeshipPaymentsCommandHandler = calculateApprenticeshipPaymentsCommandHandler;
             _domainEventDispatcher = domainEventDispatcher;
             _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
+            _logger = logger;
         }
 
         public async Task HandleEarningsGeneratedEvent(EarningsGeneratedEvent earningsGeneratedEvent)
         {
+            _logger.LogInformation($"Handling Earnings Generated Event For Apprenticeship Key: {Model.ApprenticeshipKey}");
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
