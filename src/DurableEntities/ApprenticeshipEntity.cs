@@ -38,7 +38,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         public async Task HandleEarningsGeneratedEvent(EarningsGeneratedEvent earningsGeneratedEvent)
         {
-            _logger.LogInformation($"Handling Earnings Generated Event For Apprenticeship Key: {Model.ApprenticeshipKey}");
+            _logger.LogInformation($"Handling Earnings Generated Event For Apprenticeship Key: {earningsGeneratedEvent.ApprenticeshipKey}");
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
