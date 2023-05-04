@@ -75,11 +75,5 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         {
             _calculateApprenticeshipPaymentsCommandHandler.Verify(x => x.Calculate(It.Is<CalculateApprenticeshipPaymentsCommand>(y => y.ApprenticeshipEntity == _sut.Model)));
         }
-
-        [Test]
-        public void ShouldMapCalculatedPaymentsToEntity()
-        {
-            _sut.Model.Payments.Should().BeEquivalentTo(_apprenticeship.Payments);
-        }
     }
 }

@@ -32,8 +32,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         public async Task HandleEarningsGeneratedEvent(EarningsGeneratedEvent earningsGeneratedEvent)
         {
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
-            var apprenticeship = await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
-            Model.Payments = MapPaymentsToModel(apprenticeship.Payments);
+            await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
         public async Task ReleasePaymentsForCollectionMonth(byte collectionMonth)
         {
@@ -58,19 +57,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                         CollectionYear = y.CalenderYear
                     }).ToList()
             };
-        }
-
-        private List<PaymentEntityModel> MapPaymentsToModel(IReadOnlyCollection<Payment> apprenticeshipPayments)
-        {
-            return apprenticeshipPayments.Select(x => new PaymentEntityModel
-            {
-                PaymentYear = x.PaymentYear,
-                AcademicYear = x.AcademicYear,
-                Amount = x.Amount,
-                DeliveryPeriod = x.DeliveryPeriod,
-                PaymentPeriod = x.PaymentPeriod,
-                SentForPayment = x.SentForPayment
-            }).ToList();
         }
     }
 }
