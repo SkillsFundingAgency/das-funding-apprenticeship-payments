@@ -5,6 +5,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
 {
@@ -36,7 +37,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
             _messageSession = new Mock<IMessageSession>();
             _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
             _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), It.IsAny<Guid>())).Returns(_expectedEvent);
-            _sut = new ProcessUnfundedPaymentsCommandHandler(_messageSession.Object, _eventBuilder.Object);
+            _sut = new ProcessUnfundedPaymentsCommandHandler(_messageSession.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
             await _sut.Process(_command);
         }
