@@ -17,9 +17,21 @@ public class PaymentsFunctions
         [DurableClient] IDurableEntityClient client,
         ILogger log)
     {
-        var allApprenticeshipEntitiesQuery = await client.ListEntitiesAsync(new EntityQuery{ EntityName = nameof(ApprenticeshipEntity)}, CancellationToken.None);
-        log.LogInformation($"Releasing payments for collection month 11 for all {allApprenticeshipEntitiesQuery.Entities.Count()} entities.");
-        var releasePaymentsTasks = allApprenticeshipEntitiesQuery.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionMonth), releasePaymentsCommand.CollectionMonth));
-        await Task.WhenAll(releasePaymentsTasks);
+        using CancellationTokenSource source = new CancellationTokenSource();
+        var token = source.Token;
+        var allApprenticeshipEntitiesQuery = new EntityQuery { EntityName = nameof(ApprenticeshipEntity) };
+        var pageCounter = 0;
+
+        do
+        {
+            pageCounter++;
+            var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
+            var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionMonth), releasePaymentsCommand.CollectionMonth));
+            log.LogInformation($"Releasing payments for collection month 11 for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
+            await Task.WhenAll(releasePaymentsTasks);
+
+        } while (allApprenticeshipEntitiesQuery.ContinuationToken != null);
+
+        log.LogInformation($"Releasing payments for collection month 11 complete.");
     }
 }
