@@ -19,7 +19,7 @@ public class PaymentsFunctions
     {
         using CancellationTokenSource source = new CancellationTokenSource();
         var token = source.Token;
-        var allApprenticeshipEntitiesQuery = new EntityQuery { EntityName = nameof(ApprenticeshipEntity) };
+        var allApprenticeshipEntitiesQuery = new EntityQuery { EntityName = nameof(ApprenticeshipEntity) }; //default page size is 100, we may wish to tweak this in future to improve performance
         var pageCounter = 0;
 
         do
