@@ -61,7 +61,7 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddLogging((options) =>
         {
-            options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
+            //options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
             options.SetMinimumLevel(LogLevel.Trace);
         });
     }
