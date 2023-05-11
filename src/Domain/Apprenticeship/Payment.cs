@@ -2,13 +2,13 @@
 {
     public class Payment
     {
-        internal Payment(short academicYear, byte deliveryPeriod, decimal amount, short paymentYear, byte paymentPeriod)
+        internal Payment(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionPeriod)
         {
             AcademicYear = academicYear;
             DeliveryPeriod = deliveryPeriod;
             Amount = amount;
-            PaymentYear = paymentYear;
-            PaymentPeriod = paymentPeriod;
+            PaymentYear = collectionYear;
+            PaymentPeriod = collectionPeriod;
             SentForPayment = false;
         }
 

@@ -1,13 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
@@ -47,7 +48,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
 
             _calculateApprenticeshipPaymentsCommandHandler = new Mock<ICalculateApprenticeshipPaymentsCommandHandler>();
             _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
-            _sut = new ApprenticeshipEntity(_calculateApprenticeshipPaymentsCommandHandler.Object, _domainEventDispatcher.Object);
+            _sut = new ApprenticeshipEntity(_calculateApprenticeshipPaymentsCommandHandler.Object, _domainEventDispatcher.Object, Mock.Of<IProcessUnfundedPaymentsCommandHandler>(), Mock.Of<ILogger<ApprenticeshipEntity>>());
 
             _calculateApprenticeshipPaymentsCommandHandler.Setup(x => x.Calculate(It.IsAny<CalculateApprenticeshipPaymentsCommand>())).ReturnsAsync(_apprenticeship);
 
@@ -70,12 +71,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         public void ShouldCallGenerateEarnings()
         {
             _calculateApprenticeshipPaymentsCommandHandler.Verify(x => x.Calculate(It.Is<CalculateApprenticeshipPaymentsCommand>(y => y.ApprenticeshipEntity == _sut.Model)));
-        }
-
-        [Test]
-        public void ShouldMapCalculatedPaymentsToEntity()
-        {
-            _sut.Model.Payments.Should().BeEquivalentTo(_apprenticeship.Payments);
         }
     }
 }

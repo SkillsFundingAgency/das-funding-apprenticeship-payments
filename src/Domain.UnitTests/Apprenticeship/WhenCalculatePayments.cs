@@ -40,7 +40,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
 
             _sut.Payments.Should().BeEquivalentTo(earnings, opts => opts.ExcludingMissingMembers());
         }
-        
+
         [Test]
         public void PaymentPeriodShouldBeOneMonthAfterDeliveryPeriodIfInTheFuture_SameAcademicYear()
         {

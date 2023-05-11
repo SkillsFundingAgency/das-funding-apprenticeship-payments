@@ -1,4 +1,5 @@
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command;
@@ -20,8 +21,8 @@ public class PaymentsGeneratedEventBuilder : IPaymentsGeneratedEventBuilder
                 AcademicYear = x.AcademicYear,
                 Amount = x.Amount,
                 DeliveryPeriod = x.DeliveryPeriod,
-                PaymentPeriod = x.PaymentPeriod,
-                PaymentYear = x.PaymentYear
+                CollectionPeriod = x.PaymentPeriod,
+                CollectionYear = x.PaymentYear
             }).ToList()
         };
     }

@@ -5,6 +5,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
@@ -57,6 +58,12 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddCommandServices().AddDomainServices();
+
+        builder.Services.AddLogging((options) =>
+        {
+            options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
+            options.SetMinimumLevel(LogLevel.Trace);
+        });
     }
 
     private static void EnsureConfig(ApplicationSettings applicationSettings)

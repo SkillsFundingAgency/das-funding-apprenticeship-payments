@@ -24,7 +24,7 @@ public class PaymentsGeneratedEventBuilder_BuildTests
         _fixture = new Fixture();
 
         _apprenticeship = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid());
-        var earnings = new List<Earning>
+        var earnings = new List<Earning>()
         {
             new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
             new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
