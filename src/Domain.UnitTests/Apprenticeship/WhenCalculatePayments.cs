@@ -42,21 +42,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         }
 
         [Test]
-        public void PaymentPeriodShouldBeOneMonthAfterDeliveryPeriodIfInTheFuture_SameAcademicYear()
+        public void PaymentPeriodShouldBeDeliveryPeriodIfInTheFuture()
         {
             _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month);
-
-            _sut.CalculatePayments(DateTime.Now);
-
-            _sut.Payments.Count.Should().Be(1);
-            _sut.Payments.Single().PaymentYear.Should().Be(2324);
-            _sut.Payments.Single().PaymentPeriod.Should().Be(2);
-        }
-
-        [Test]
-        public void PaymentPeriodShouldBeOneMonthAfterDeliveryPeriodIfInTheFuture_FollowingAcademicYear()
-        {
-            _sut.AddEarning(2223, 12, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month);
 
             _sut.CalculatePayments(DateTime.Now);
 
