@@ -54,7 +54,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         }
 
         [Test]
-        public void PaymentPeriodShouldBeCurrentPeriodIfInThePast_BeforeAugust()
+        public void PaymentPeriodShouldBeCurrentPeriodIfInThePast()
         {
             var now = new DateTime(2023, 6, 25);
             _sut.AddEarning(2223, 11, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month);
@@ -63,20 +63,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
 
             _sut.Payments.Count.Should().Be(1);
             _sut.Payments.Single().PaymentYear.Should().Be(2223);
-            _sut.Payments.Single().PaymentPeriod.Should().Be(12);
-        }
-
-        [Test]
-        public void PaymentPeriodShouldBeCurrentPeriodIfInThePast_AfterAugust()
-        {
-            var now = new DateTime(2023, 7, 20);
-            _sut.AddEarning(2223, 12, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month);
-
-            _sut.CalculatePayments(now);
-
-            _sut.Payments.Count.Should().Be(1);
-            _sut.Payments.Single().PaymentYear.Should().Be(2324);
-            _sut.Payments.Single().PaymentPeriod.Should().Be(1);
+            _sut.Payments.Single().PaymentPeriod.Should().Be(11);
         }
     }
 }
