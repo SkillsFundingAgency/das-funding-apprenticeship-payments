@@ -14,8 +14,8 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
     {
         return new FinalisedOnProgammeLearningPaymentEvent
         {
-            CollectionYear = payment.PaymentYear,
-            CollectionMonth = payment.PaymentPeriod,
+            CollectionYear = payment.CollectionYear,
+            CollectionMonth = payment.CollectionPeriod,
             Amount = payment.Amount,
             ApprenticeshipKey = apprenticeshipKey
         };

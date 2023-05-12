@@ -29,12 +29,12 @@ public class ApprenticeshipEntity_ReleaseTests
         _sut = new ApprenticeshipEntity(Mock.Of<ICalculateApprenticeshipPaymentsCommandHandler>(), Mock.Of<IDomainEventDispatcher>(), _processUnfundedPaymentsCommandHandler.Object, Mock.Of<ILogger<ApprenticeshipEntity>>());
         _sut.Model = _fixture.Create<ApprenticeshipEntityModel>();
 
-        await _sut.ReleasePaymentsForCollectionMonth(_collectionPeriod);
+        await _sut.ReleasePaymentsForCollectionPeriod(_collectionPeriod);
     }
 
     [Test]
     public void ThenPaymentsShouldBeReleased()
     {
-        _processUnfundedPaymentsCommandHandler.Verify(x => x.Process(It.Is<ProcessUnfundedPaymentsCommand>(y => y.CollectionMonth == _collectionPeriod && y.Model == _sut.Model)));
+        _processUnfundedPaymentsCommandHandler.Verify(x => x.Process(It.Is<ProcessUnfundedPaymentsCommand>(y => y.CollectionPeriod == _collectionPeriod && y.Model == _sut.Model)));
     }
 }

@@ -37,13 +37,13 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     [Test]
     public void ShouldPopulateTheCollectionYearCorrectly()
     {
-        _result.CollectionYear.Should().Be(_paymentEntityModel.PaymentYear);
+        _result.CollectionYear.Should().Be(_paymentEntityModel.CollectionYear);
     }
 
     [Test]
     public void ShouldPopulateTheCollectionMonthCorrectly()
     {
-        _result.CollectionMonth.Should().Be(_paymentEntityModel.PaymentPeriod);
+        _result.CollectionMonth.Should().Be(_paymentEntityModel.CollectionPeriod);
     }
 
     [Test]

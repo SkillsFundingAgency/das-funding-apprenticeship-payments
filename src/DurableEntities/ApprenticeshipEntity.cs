@@ -42,9 +42,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
-        public async Task ReleasePaymentsForCollectionMonth(byte collectionMonth)
+        public async Task ReleasePaymentsForCollectionPeriod(byte collectionPeriod)
         {
-            await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(collectionMonth, Model));
+            await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(collectionPeriod, Model));
         }
 
         [FunctionName(nameof(ApprenticeshipEntity))]
