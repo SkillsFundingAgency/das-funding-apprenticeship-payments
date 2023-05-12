@@ -39,11 +39,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
         {
             return apprenticeshipPayments.Select(x => new PaymentEntityModel
             {
-                PaymentYear = x.PaymentYear,
+                CollectionYear = x.CollectionYear,
                 AcademicYear = x.AcademicYear,
                 Amount = x.Amount,
                 DeliveryPeriod = x.DeliveryPeriod,
-                PaymentPeriod = x.PaymentPeriod,
+                CollectionPeriod = x.CollectionPeriod,
                 SentForPayment = x.SentForPayment
             }).ToList();
         }

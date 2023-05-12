@@ -5,8 +5,8 @@
         public short AcademicYear { get; set; }
         public byte DeliveryPeriod { get; set; }
         public decimal Amount { get; set; }
-        public short PaymentYear { get; set; }
-        public byte PaymentPeriod { get; set; }
+        public short CollectionYear { get; set; }
+        public byte CollectionPeriod { get; set; }
         public bool SentForPayment { get; set; }
     }
 }

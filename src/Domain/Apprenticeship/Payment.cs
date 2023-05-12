@@ -7,16 +7,16 @@
             AcademicYear = academicYear;
             DeliveryPeriod = deliveryPeriod;
             Amount = amount;
-            PaymentYear = collectionYear;
-            PaymentPeriod = collectionPeriod;
+            CollectionYear = collectionYear;
+            CollectionPeriod = collectionPeriod;
             SentForPayment = false;
         }
 
         public short AcademicYear { get; }
         public byte DeliveryPeriod { get; }
         public decimal Amount { get; }
-        public short PaymentYear { get; }
-        public byte PaymentPeriod { get; }
+        public short CollectionYear { get; }
+        public byte CollectionPeriod { get; }
         public bool SentForPayment { get; }
     }
 }

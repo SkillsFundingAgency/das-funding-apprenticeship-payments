@@ -23,7 +23,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             _payments.Clear();
             foreach (var earning in Earnings)
             {
-                var collectionPeriod = DeterminePaymentPeriod(earning, now);
+                var collectionPeriod = DetermineCollectionPeriod(earning, now);
                 var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionPeriod.AcademicYear, (byte)collectionPeriod.Period);
                 _payments.Add(payment);
             }
@@ -34,7 +34,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
         }
 
-        private (short AcademicYear, byte Period) DeterminePaymentPeriod(Earning earning, DateTime now)
+        private (short AcademicYear, byte Period) DetermineCollectionPeriod(Earning earning, DateTime now)
         {
             var censusDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
             var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1);

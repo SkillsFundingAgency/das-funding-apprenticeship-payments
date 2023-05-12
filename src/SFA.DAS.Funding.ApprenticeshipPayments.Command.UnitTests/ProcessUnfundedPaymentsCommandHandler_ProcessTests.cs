@@ -13,7 +13,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
     {
         private ProcessUnfundedPaymentsCommand _command;
         private Fixture _fixture;
-        private byte _paymentPeriod;
+        private byte _collectionPeriod;
         private Mock<IMessageSession> _messageSession;
         private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder;
         private FinalisedOnProgammeLearningPaymentEvent _expectedEvent;
@@ -23,13 +23,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         public async Task Setup()
         {
             _fixture = new Fixture();
-            _paymentPeriod = _fixture.Create<byte>();
-            _command = new ProcessUnfundedPaymentsCommand(_paymentPeriod, _fixture.Create<ApprenticeshipEntityModel>());
+            _collectionPeriod = _fixture.Create<byte>();
+            _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _fixture.Create<ApprenticeshipEntityModel>());
             _command.Model.Payments = new List<PaymentEntityModel>
             {
-                new PaymentEntityModel { Amount = 100, PaymentPeriod = _paymentPeriod, SentForPayment = false }, //to be sent
-                new PaymentEntityModel { Amount = 200, PaymentPeriod = _paymentPeriod, SentForPayment = true }, //already sent
-                new PaymentEntityModel { Amount = 300, PaymentPeriod = (byte)(_paymentPeriod + 1), SentForPayment = false } //wrong period
+                new PaymentEntityModel { Amount = 100, CollectionPeriod = _collectionPeriod, SentForPayment = false }, //to be sent
+                new PaymentEntityModel { Amount = 200, CollectionPeriod = _collectionPeriod, SentForPayment = true }, //already sent
+                new PaymentEntityModel { Amount = 300, CollectionPeriod = (byte)(_collectionPeriod + 1), SentForPayment = false } //wrong period
             };
 
             _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
