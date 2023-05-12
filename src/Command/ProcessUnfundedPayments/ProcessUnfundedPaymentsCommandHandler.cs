@@ -18,9 +18,9 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
     public async Task Process(ProcessUnfundedPaymentsCommand command)
     {
-        var paymentsToSend = command.Model.Payments.Where(x => x.CollectionPeriod == command.CollectionMonth && x.SentForPayment == false);
+        var paymentsToSend = command.Model.Payments.Where(x => x.CollectionPeriod == command.CollectionPeriod && x.SentForPayment == false);
 
-        _logger.LogInformation($"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing { paymentsToSend.Count() } payments for collection period { command.CollectionMonth }");
+        _logger.LogInformation($"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing { paymentsToSend.Count() } payments for collection period { command.CollectionPeriod }");
 
         foreach (var payment in paymentsToSend)
         {

@@ -2,6 +2,6 @@
 {
     public class ReleasePaymentsCommand
     {
-        public byte CollectionMonth { get; set; }
+        public byte CollectionPeriod { get; set; }
     }
 }

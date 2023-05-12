@@ -26,15 +26,15 @@ public class PaymentsFunctions
         {
             pageCounter++;
             var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
-            var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionMonth), releasePaymentsCommand.CollectionMonth));
+            var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), releasePaymentsCommand.CollectionPeriod));
 
             allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
 
-            log.LogInformation($"Releasing payments for collection month {releasePaymentsCommand.CollectionMonth} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
+            log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
             await Task.WhenAll(releasePaymentsTasks);
 
         } while (allApprenticeshipEntitiesQuery.ContinuationToken != null);
 
-        log.LogInformation($"Releasing payments for collection month {releasePaymentsCommand.CollectionMonth} complete.");
+        log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} complete.");
     }
 }
