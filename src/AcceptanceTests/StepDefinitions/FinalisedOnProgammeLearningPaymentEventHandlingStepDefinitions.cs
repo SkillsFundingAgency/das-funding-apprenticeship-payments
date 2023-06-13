@@ -40,6 +40,6 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
     private bool ReleasedPaymentMatchesExpectation(FinalisedOnProgammeLearningPaymentEvent finalisedOnProgammeLearningPaymentEvent)
     {
         return finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == 10;
+               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == ((byte)DateTime.Now.Month).ToDeliveryPeriod();
     }
 }
