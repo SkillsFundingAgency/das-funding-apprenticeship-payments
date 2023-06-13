@@ -25,6 +25,7 @@ public class PaymentsFunctions
         do
         {
             pageCounter++;
+            await client.CleanEntityStorageAsync(true, true, token);
             var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
             var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), releasePaymentsCommand.CollectionPeriod));
 
