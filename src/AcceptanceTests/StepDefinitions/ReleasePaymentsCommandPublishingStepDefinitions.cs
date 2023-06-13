@@ -36,7 +36,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     {
         _releasePaymentsCommand = new ReleasePaymentsCommand
         {
-            CollectionPeriod = 10
+            CollectionPeriod = ((byte)DateTime.Now.Month).ToDeliveryPeriod()
         };
         await _endpointInstance.Publish(_releasePaymentsCommand);
     }
