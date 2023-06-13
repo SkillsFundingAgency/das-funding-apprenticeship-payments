@@ -50,19 +50,21 @@ public class EarningsGeneratedEventPublishingStepDefinitions
                 {
                     DeliveryPeriods = new List<DeliveryPeriod>
                     {
-                        new() { AcademicYear = 2324, Period = 1, CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 },
-                        new() { AcademicYear = 2324, Period = 2, CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 }
+                        new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 },
+                        new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 }
                     }
                 },
                 new()
                 {
                     DeliveryPeriods = new List<DeliveryPeriod>
                     {
-                        new() { AcademicYear = 2324, Period = 3, CalenderYear = (short)DateTime.Now.AddMonths(2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(2).Month, LearningAmount = 1000 }
+                        new() { CalenderYear = (short)DateTime.Now.AddMonths(2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(2).Month, LearningAmount = 1000 }
                     }
                 }
             }
         };
+
+        _earningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
     }
 
     [Given(@"two of the earnings are due in a past month")]
@@ -77,19 +79,21 @@ public class EarningsGeneratedEventPublishingStepDefinitions
                 {
                     DeliveryPeriods = new List<DeliveryPeriod>
                     {
-                        new() { AcademicYear = 2324, Period = 1, CalenderYear = (short)DateTime.Now.AddMonths(-2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-2).Month, LearningAmount = 1000 },
-                        new() { AcademicYear = 2324, Period = 2, CalenderYear = (short)DateTime.Now.AddMonths(-1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-1).Month, LearningAmount = 1000 }
+                        new() { CalenderYear = (short)DateTime.Now.AddMonths(-2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-2).Month, LearningAmount = 1000 },
+                        new() { CalenderYear = (short)DateTime.Now.AddMonths(-1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-1).Month, LearningAmount = 1000 }
                     }
                 },
                 new()
                 {
                     DeliveryPeriods = new List<DeliveryPeriod>
                     {
-                        new() { AcademicYear = 2324, Period = 3, CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }
+                        new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }
                     }
                 }
             }
         };
+
+        _earningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
     }
 
     [Given(@"no payments have previously been generated")]
