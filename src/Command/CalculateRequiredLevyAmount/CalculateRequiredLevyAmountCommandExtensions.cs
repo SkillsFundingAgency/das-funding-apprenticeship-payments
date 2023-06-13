@@ -1,14 +1,14 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Types;
-using SFA.DAS.Payments.Model.Core.Entities;
+﻿using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
+using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount
 {
     internal static class CalculateRequiredLevyAmountCommandExtensions
     {
-        internal static CalculatedRequiredLevyAmountEvent MapToCalculatedRequiredLevyAmountEvent(this CalculateRequiredLevyAmountCommand command)
+        internal static CalculatedRequiredLevyAmount MapToCalculatedRequiredLevyAmountEvent(this CalculateRequiredLevyAmountCommand command)
         {
-            var e = new CalculatedRequiredLevyAmountEvent();
+            var e = new CalculatedRequiredLevyAmount();
             e.AccountId = command.Data.EmployerDetails.EmployingAccountId;
             e.ActualEndDate = command.Data.ActualEndDate;
             e.AgreedOnDate = null;
@@ -21,15 +21,15 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.CollectionPeriod.AcademicYear = command.Data.CollectionYear;
             // e.CollectionPeriod.Period  =  command.Data.Period // TODO: ReleasePaymentsCommand -> CollectionPeriod
             e.CompletionStatus = 1;
-            e.ContractType = "ACT1";
+            e.ContractType = ContractType.Act1;
             e.DeliveryPeriod = command.Data.ApprenticeshipEarnings.DeliveryPeriod;
             e.EarningEventId = command.Data.ApprenticeshipEarnings.ApprenticeshipEarningsId;
             e.EventId = Guid.NewGuid();
             e.EventTime = DateTime.UtcNow;
             e.IlrFileName = null;
-            e.IlrSubmissionDateTime = null;
+            //e.IlrSubmissionDateTime = null; // TODO: Modify IPaymentsEvent in PV2
             e.InstalmentAmount = command.Data.ApprenticeshipEarnings.DeliveryPeriodAmount;
-            e.JobId = "TBC";
+            e.JobId = 0; // TODO: tbc, make it configurable?
             e.Learner.ReferenceNumber = null;
             e.Learner.Uln = command.Data.ApprenticeshipEarnings.Uln;
             e.LearningAim.FrameworkCode = 0;
@@ -50,10 +50,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.ReportingAimFundingLineType = "";
             e.SfaContributionPercentage = command.Data.ApprenticeshipEarnings.GovernmentContributionPercentage;
             e.StartDate = command.Data.Apprenticeship.StartDate;
-            e.TransactionType = TransactionType.Learning;
             e.TransferSenderAccountId = command.Data.EmployerDetails.FundingAccountId;
             e.Ukprn = command.Data.ApprenticeshipEarnings.ProviderIdentifier;
-            e.EarningSource = "SubmitLearnerDataFundingPlatform";
 
             return e;
         }
