@@ -10,9 +10,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests;
 
 public class CalculateRequiredLevyAmountFunction_RunTests
 {
-    private readonly CalculateRequiredLevyAmountFunction _sut = new();
+    private readonly CalculateRequiredLevyAmountFunction _sut;
     private readonly Mock<ICalculateRequiredLevyAmountCommandHandler> _commandHandlerMock = new();
     private readonly Fixture _fixture = new();
+
+    public CalculateRequiredLevyAmountFunction_RunTests()
+    {
+        _sut = new CalculateRequiredLevyAmountFunction(_commandHandlerMock.Object);
+    }
 
     [Test]
     public async Task Run_SendsCalculateRequiredLevyAmountCommand()
@@ -21,7 +26,7 @@ public class CalculateRequiredLevyAmountFunction_RunTests
         var @event = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
         // Act
-        await _sut.Run(@event, _commandHandlerMock.Object, Mock.Of<ILogger>());
+        await _sut.Run(@event, Mock.Of<ILogger>());
 
         // Assert
         _commandHandlerMock.Verify(_ => _.Process(It.Is<CalculateRequiredLevyAmountCommand>(c => c.Data == @event)), Times.Once());
