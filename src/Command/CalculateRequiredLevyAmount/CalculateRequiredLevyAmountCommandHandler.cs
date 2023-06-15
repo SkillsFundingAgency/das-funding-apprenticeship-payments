@@ -26,6 +26,9 @@ public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyA
             @event.CollectionPeriod.Period,
             @event.CollectionPeriod.AcademicYear);
 
-        await _messageSession.Publish(@event);
+        await _messageSession.Publish(@event, new PublishOptions()
+        {
+            
+        });
     }
 }

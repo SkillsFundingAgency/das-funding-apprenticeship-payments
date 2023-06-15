@@ -9,11 +9,11 @@ namespace SFA.DAS.Payments.RequiredPayments.Messages.Events
     {
         public string EarningSource => "SubmitLearnerDataFundingPlatform"; // new field
         public int Priority { get; set; }
-        public string AgreementId { get; set; }
+        public string? AgreementId { get; set; }
         public DateTime? AgreedOnDate { get; set; }
         public decimal SfaContributionPercentage { get; set; }
         public OnProgrammeEarningType OnProgrammeEarningType { get; set; }
-        public TransactionType TransactionType => TransactionType.Learning;
+        public TransactionType TransactionType { get; set; }
         public Guid EarningEventId { get; set; }
         public Guid? ClawbackSourcePaymentEventId { get; set; }
         public string PriceEpisodeIdentifier { get; set; }

@@ -43,7 +43,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
 
         // ActualEndDate
         _messageSession.Verify(ms => ms.Publish(
-            It.Is<CalculatedRequiredLevyAmount>(e => e.ActualEndDate == _finalisedOnProgammeLearningPaymentEvent.ActualEndDate),
+            It.Is<CalculatedRequiredLevyAmount>(e => e.ActualEndDate == null),
             It.IsAny<PublishOptions>()),
             Times.Once());
 
@@ -79,7 +79,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
 
         // ApprenticeshipPriceEpisodeId
         _messageSession.Verify(ms => ms.Publish(
-            It.Is<CalculatedRequiredLevyAmount>(e => e.ApprenticeshipPriceEpisodeId == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarnings.FundingPeriodId),
+            It.Is<CalculatedRequiredLevyAmount>(e => e.ApprenticeshipPriceEpisodeId == null),
             It.IsAny<PublishOptions>()),
             Times.Once());
 

@@ -10,17 +10,18 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
         {
             var e = new CalculatedRequiredLevyAmount();
             e.AccountId = command.Data.EmployerDetails.EmployingAccountId;
-            e.ActualEndDate = command.Data.ActualEndDate;
+            e.ActualEndDate = null;
             e.AgreedOnDate = null;
             e.AgreementId = null;
             e.AmountDue = command.Data.Amount;
             e.ApprenticeshipEmployerType = 0;
             e.ApprenticeshipId = command.Data.EmployerDetails.FundingCommitmentId;
-            e.ApprenticeshipPriceEpisodeId = command.Data.ApprenticeshipEarnings.FundingPeriodId;
+            e.ApprenticeshipPriceEpisodeId = null;
             e.ClawbackSourcePaymentEventId = null;
             e.CollectionPeriod.AcademicYear = command.Data.CollectionYear;
             // e.CollectionPeriod.Period  =  command.Data.Period // TODO: ReleasePaymentsCommand -> CollectionPeriod
-            e.CompletionStatus = 1;
+            e.CompletionStatus = 1; // ongoing
+            e.CompletionAmount = 0;
             e.ContractType = ContractType.Act1;
             e.DeliveryPeriod = command.Data.ApprenticeshipEarnings.DeliveryPeriod;
             e.EarningEventId = command.Data.ApprenticeshipEarnings.ApprenticeshipEarningsId;
@@ -52,6 +53,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.StartDate = command.Data.Apprenticeship.StartDate;
             e.TransferSenderAccountId = command.Data.EmployerDetails.FundingAccountId;
             e.Ukprn = command.Data.ApprenticeshipEarnings.ProviderIdentifier;
+            e.TransactionType = TransactionType.Learning;
 
             return e;
         }
