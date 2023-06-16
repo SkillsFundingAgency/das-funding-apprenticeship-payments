@@ -1,4 +1,7 @@
-﻿Feature: Calculate payments for earnings
+﻿@EarningsGeneratedEndpoint
+@PaymentsGeneratedEndpoint
+@ReleasePaymentsEndpoint
+Feature: Calculate payments for earnings
 
 Scenario: Simple Payments Generation
 	Given earnings have been generated

@@ -1,4 +1,5 @@
-﻿@finalisedOnProgammeLearningPaymentEndpoint
+﻿@FinalisedOnProgammeLearningPaymentEndpoint
+@CalculatedRequiredLevyAmountEndpoint
 Feature: Calculate Required Levy Amount
 
 As the DfE 

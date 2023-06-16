@@ -2,23 +2,19 @@
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings
+namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
+
+[Binding]
+[Scope(Tag = "FinalisedOnProgammeLearningPaymentEndpoint")]
+public class FinalisedOnProgammeLearningPaymentEndpoint
 {
-    [Binding]
-    [Scope(Tag = "finalisedOnProgammeLearningPaymentEndpoint")]
-    public class FinalisedOnProgammeLearningPaymentEndpoint
+    [BeforeScenario]
+    public async Task StartEndpoint(TestContext context)
     {
-        [BeforeScenario]
-        public async Task StartEndpoint(TestContext context)
-        {
-            if (context.FinalisedOnProgammeLearningPaymentEndpoint is not null) return;
+        if (context.FinalisedOnProgammeLearningPaymentEndpoint is not null) return;
 
-            context.FinalisedOnProgammeLearningPaymentEndpoint = await EndpointHelper
-                .StartEndpoint(QueueNames.FinalisedOnProgammeLearningPayment, true, new[] { typeof(FinalisedOnProgammeLearningPaymentEvent) });
+        context.FinalisedOnProgammeLearningPaymentEndpoint = await EndpointHelper
+            .StartEndpoint(QueueNames.FinalisedOnProgammeLearningPayment, true, new[] { typeof(FinalisedOnProgammeLearningPaymentEvent) });
 
-        }
-
-        [AfterScenario]
-        public static void StopEndpoint(TestContext context) => context.FinalisedOnProgammeLearningPaymentEndpoint?.Stop();
     }
 }

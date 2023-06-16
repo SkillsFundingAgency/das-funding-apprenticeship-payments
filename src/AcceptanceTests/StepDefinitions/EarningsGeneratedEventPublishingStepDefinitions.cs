@@ -1,7 +1,6 @@
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
-using QueueNames = SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.QueueNames;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
@@ -11,7 +10,6 @@ public class EarningsGeneratedEventPublishingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
     private readonly TestContext _testContext;
-    private static IEndpointInstance? _endpointInstance;
     private EarningsGeneratedEvent _earningsGeneratedEvent;
 
     public EarningsGeneratedEventPublishingStepDefinitions(ScenarioContext scenarioContext, TestContext testContext)
@@ -20,19 +18,6 @@ public class EarningsGeneratedEventPublishingStepDefinitions
         _testContext = testContext;
     }
 
-    [BeforeTestRun]
-    public static async Task StartEndpoint()
-    {
-        _endpointInstance = await EndpointHelper
-            .StartEndpoint(QueueNames.EarningsGenerated, true, new[] { typeof(EarningsGeneratedEvent) });
-    }
-
-    [AfterTestRun]
-    public static async Task StopEndpoint()
-    {
-        await _endpointInstance.Stop()
-            .ConfigureAwait(false);
-    }
 
     [Given(@"earnings have been generated")]
     public void GivenEarningsHaveBeenGenerated()
@@ -108,6 +93,6 @@ public class EarningsGeneratedEventPublishingStepDefinitions
         _scenarioContext["apprenticeshipKey"] = _earningsGeneratedEvent.ApprenticeshipKey;
         _scenarioContext["numberOfPayments"] = 3;
         _scenarioContext["paymentAmount"] = 1000;
-        await _endpointInstance.Publish(_earningsGeneratedEvent);
+        await _testContext.EarningsGeneratedEndpoint.Publish(_earningsGeneratedEvent);
     }
 }
