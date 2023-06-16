@@ -11,7 +11,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
-    private static IEndpointInstance _endpointInstance;
+    private static IEndpointInstance? _endpointInstance;
 
     public FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions(ScenarioContext scenarioContext)
     {

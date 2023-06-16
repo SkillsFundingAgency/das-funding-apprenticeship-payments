@@ -5,7 +5,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
 {
     public static class EndpointHelper
     {
-        public static async Task<IEndpointInstance> StartEndpoint(string endpointName, bool isSendOnly, Type[] types)
+        public static async Task<IEndpointInstance?> StartEndpoint(string endpointName, bool isSendOnly, Type[] types)
         {
             var endpointConfiguration = new EndpointConfiguration(endpointName);
             endpointConfiguration.AssemblyScanner().ThrowExceptions = false;

@@ -5,7 +5,7 @@ using SFA.DAS.Payments.Model.Core.OnProgramme;
 
 namespace SFA.DAS.Payments.RequiredPayments.Messages.Events
 {
-    public class CalculatedRequiredLevyAmount : IPaymentsEvent
+    public class CalculatedRequiredLevyAmountEvent : IPaymentsEvent
     {
         public string EarningSource => "SubmitLearnerDataFundingPlatform"; // new field
         public int Priority { get; set; }

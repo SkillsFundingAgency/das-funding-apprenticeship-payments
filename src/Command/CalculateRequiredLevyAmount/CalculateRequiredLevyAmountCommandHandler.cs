@@ -22,7 +22,7 @@ public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyA
         _logger.LogInformation(
             "Apprenticeship Key: {ApprenticeshipKey} - Publishing {event} for CollectionPeriod: {Period}/{AcademicYear}",
             command.Data.ApprenticeshipKey,
-            nameof(CalculatedRequiredLevyAmount),
+            nameof(CalculatedRequiredLevyAmountEvent),
             @event.CollectionPeriod.Period,
             @event.CollectionPeriod.AcademicYear);
 

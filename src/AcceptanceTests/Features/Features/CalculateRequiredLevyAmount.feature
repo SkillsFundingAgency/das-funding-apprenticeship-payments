@@ -1,4 +1,5 @@
-﻿Feature: Calculate Required Levy Amount
+﻿@finalisedOnProgammeLearningPaymentEndpoint
+Feature: Calculate Required Levy Amount
 
 As the DfE 
 I want to provide sufficient flexible payment data to Payments v2
