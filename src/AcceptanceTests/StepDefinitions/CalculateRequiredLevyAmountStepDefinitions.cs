@@ -10,6 +10,7 @@ using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
+[Scope(Feature = "Calculate Required Levy Amount")]
 public class CalculateRequiredLevyAmountStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
@@ -30,6 +31,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
     }
 
     [AfterTestRun]
+    [Scope(Feature = "Calculate Required Levy Amount")]
     public static void StopEndpoint() => _endpointInstance?.Stop();
 
     [Given(@"an apprentice record has been approved by both the training provider & employer")]

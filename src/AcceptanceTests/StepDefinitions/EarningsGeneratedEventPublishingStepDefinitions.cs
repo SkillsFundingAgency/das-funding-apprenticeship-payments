@@ -6,6 +6,7 @@ using QueueNames = SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.QueueN
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
+[Scope(Feature = "Calculate payments for earnings")]
 public class EarningsGeneratedEventPublishingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;

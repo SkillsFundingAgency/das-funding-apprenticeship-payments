@@ -7,6 +7,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
+[Scope(Feature = "Calculate payments for earnings")]
 public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
