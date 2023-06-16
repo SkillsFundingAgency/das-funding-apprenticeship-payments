@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
@@ -35,6 +36,7 @@ public class TestFunction : IDisposable
 
         _testContext = testContext;
 
+        EndpointHelper.ClearEventStorage();
 
         var config = new ConfigurationBuilder()
             .AddJsonFile("local.settings.json", optional: true)

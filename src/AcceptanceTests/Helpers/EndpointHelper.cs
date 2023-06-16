@@ -5,6 +5,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
 {
     public static class EndpointHelper
     {
+        public static string EventStorageFolder => Path.Combine(Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)], @"src\.learningtransport");
+        
         public static async Task<IEndpointInstance?> StartEndpoint(string endpointName, bool isSendOnly, Type[] types)
         {
             var endpointConfiguration = new EndpointConfiguration(endpointName);
@@ -16,10 +18,26 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
             endpointConfiguration.Conventions().DefiningEventsAs(types.Contains);
 
             var transport = endpointConfiguration.UseTransport<LearningTransport>();
-            transport.StorageDirectory(Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"src\.learningtransport"));
+            var eventStorageFolder = Path.Combine(Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)], @"src\.learningtransport");
+            transport.StorageDirectory(eventStorageFolder);
 
             return await Endpoint.Start(endpointConfiguration)
                 .ConfigureAwait(false);
+        }
+
+        public static void ClearEventStorage()
+        {
+            var di = new DirectoryInfo(EventStorageFolder);
+
+            foreach (var file in di.GetFiles())
+            {
+                file.Delete();
+            }
+
+            foreach (var dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
         }
     }
 }

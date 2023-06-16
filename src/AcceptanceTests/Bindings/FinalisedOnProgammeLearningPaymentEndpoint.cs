@@ -14,7 +14,7 @@ public class FinalisedOnProgammeLearningPaymentEndpoint
         if (context.FinalisedOnProgammeLearningPaymentEndpoint is not null) return;
 
         context.FinalisedOnProgammeLearningPaymentEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.FinalisedOnProgammeLearningPayment, true, new[] { typeof(FinalisedOnProgammeLearningPaymentEvent) });
+            .StartEndpoint(QueueNames.FinalisedOnProgammeLearningPayment, false, new[] { typeof(FinalisedOnProgammeLearningPaymentEvent) });
 
     }
 }

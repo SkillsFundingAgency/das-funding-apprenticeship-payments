@@ -14,7 +14,7 @@ public class EarningsGeneratedEndpoint
         if (context.EarningsGeneratedEndpoint is not null) return;
 
         context.EarningsGeneratedEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.EarningsGenerated, true, new[] { typeof(EarningsGeneratedEvent) });
+            .StartEndpoint(QueueNames.EarningsGenerated, false, new[] { typeof(EarningsGeneratedEvent) });
 
     }
 }
