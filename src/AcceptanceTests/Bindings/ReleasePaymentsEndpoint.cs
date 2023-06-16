@@ -14,6 +14,6 @@ public class ReleasePaymentsEndpoint
         if (context.ReleasePaymentsEndpoint is not null) return;
 
         context.ReleasePaymentsEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.ReleasePayments, false, new[] { typeof(ReleasePaymentsCommand) });
+            .StartEndpoint(QueueNames.ReleasePayments, true, new[] { typeof(ReleasePaymentsCommand) });
     }
 }

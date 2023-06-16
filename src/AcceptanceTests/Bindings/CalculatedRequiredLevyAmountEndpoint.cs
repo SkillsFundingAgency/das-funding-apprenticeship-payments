@@ -14,6 +14,9 @@ public class CalculatedRequiredLevyAmountEndpoint
         if (context.CalculatedRequiredLevyAmountEndpoint is not null) return;
 
         context.CalculatedRequiredLevyAmountEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.CalculatedRequiredLevyAmount, false, new[] { typeof(CalculatedRequiredLevyAmount) });
+            .StartEndpoint(QueueNames.CalculatedRequiredLevyAmount, false, new[]
+            {
+                typeof(CalculatedRequiredLevyAmount)
+            });
     }
 }

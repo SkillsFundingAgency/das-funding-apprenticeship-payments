@@ -1,6 +1,11 @@
 ﻿@EarningsGeneratedEndpoint
 @PaymentsGeneratedEndpoint
 @ReleasePaymentsEndpoint
+@EarningsGeneratedEndpoint
+@FinalisedOnProgammeLearningPaymentEndpoint
+@PaymentsGeneratedEndpoint
+@ReleasePaymentsEndpoint
+
 Feature: Calculate payments for earnings
 
 Scenario: Simple Payments Generation

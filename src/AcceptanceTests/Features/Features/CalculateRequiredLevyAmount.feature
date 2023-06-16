@@ -1,4 +1,4 @@
-﻿@FinalisedOnProgammeLearningPaymentEndpoint
+﻿@FinalisedOnProgammeLearningPaymentSendOnlyEndpoint
 @CalculatedRequiredLevyAmountEndpoint
 Feature: Calculate Required Levy Amount
 

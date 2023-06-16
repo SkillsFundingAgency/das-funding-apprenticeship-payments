@@ -1,5 +1,4 @@
 ﻿using NServiceBus;
-using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
 {
@@ -11,12 +10,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
         public IEndpointInstance? PaymentsGeneratedEndpoint { get; set; }
         public IEndpointInstance? ReleasePaymentsEndpoint { get; set; }
         public IEndpointInstance? CalculatedRequiredLevyAmountEndpoint { get; set; }
+        public IEndpointInstance? FinalisedOnProgammeLearningPaymentSendOnlyEndpoint { get; set; }
 
         public AutoFixture.Fixture Fixture = new();
 
         public void Dispose()
         {
             FinalisedOnProgammeLearningPaymentEndpoint?.Stop();
+            FinalisedOnProgammeLearningPaymentSendOnlyEndpoint?.Stop();
             EarningsGeneratedEndpoint?.Stop();
             PaymentsGeneratedEndpoint?.Stop();
             ReleasePaymentsEndpoint?.Stop();
