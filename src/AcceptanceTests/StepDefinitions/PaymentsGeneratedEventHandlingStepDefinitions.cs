@@ -6,6 +6,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 
 [Binding]
 [Scope(Feature = "Calculate payments for earnings")]
+[Scope(Feature = "Payments Release")]
 public class PaymentsGeneratedEventHandlingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;

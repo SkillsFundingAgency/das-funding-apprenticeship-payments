@@ -8,6 +8,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
+using SFA.DAS.Testing.AzureStorageEmulator;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
@@ -31,6 +32,7 @@ public class TestFunction : IDisposable
 
     public TestFunction(TestContext testContext, string hubName)
     {
+        AzureStorageEmulatorManager.StartStorageEmulator();
         HubName = hubName;
         _orchestrationData = new OrchestrationData();
 

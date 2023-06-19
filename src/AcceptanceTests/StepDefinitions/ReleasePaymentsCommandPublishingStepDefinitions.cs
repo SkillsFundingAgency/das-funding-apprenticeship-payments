@@ -5,7 +5,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
-[Scope(Feature = "Calculate payments for earnings")]
+[Scope(Feature = "Payments Release")]
 public class ReleasePaymentsCommandPublishingStepDefinitions
 {
     private readonly TestContext _testContext;
