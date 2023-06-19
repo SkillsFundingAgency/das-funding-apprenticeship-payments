@@ -14,6 +14,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
 public class Settings
 {
+    public string DCServiceBusConnectionString;
     public string AzureWebJobsStorage { get; set; }
     public string NServiceBusConnectionString { get; set; }
     public string TopicPath { get; set; }
@@ -53,6 +54,7 @@ public class TestFunction : IDisposable
             { "EnvironmentName", "LOCAL_ACCEPTANCE_TESTS" },
             { "AzureWebJobsStorage", settings.AzureWebJobsStorage },
             { "NServiceBusConnectionString", settings.NServiceBusConnectionString ?? "UseLearningEndpoint=true" },
+            { "DCServiceBusConnectionString", settings.DCServiceBusConnectionString ?? "UseLearningEndpoint=true" },
             { "TopicPath", settings.TopicPath },
             { "QueueName", settings.QueueName },
             { "ApplicationSettings:LogLevel", "DEBUG" }
@@ -96,6 +98,7 @@ public class TestFunction : IDisposable
                         a.QueueName = appConfig["QueueName"];
                         a.TopicPath = appConfig["TopicPath"];
                         a.ServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
+                        a.DCServiceBusConnectionString = appConfig["DCServiceBusConnectionString"];
                     });
 
                     new Startup().Configure(builder);
@@ -103,10 +106,6 @@ public class TestFunction : IDisposable
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
                 })
             )
-            .ConfigureServices(s =>
-            {
-                s.AddHostedService<PurgeBackgroundJob>();
-            })
             .Build();
     }
 

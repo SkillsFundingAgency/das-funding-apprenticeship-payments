@@ -10,6 +10,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration
         public string QueueName { get; set; }
         public string TopicPath { get; set; }
         public string NServiceBusConnectionString { get; set; }
+        public string DCServiceBusConnectionString { get; set; }
         public string NServiceBusLicense { get; set; }
     }
 }

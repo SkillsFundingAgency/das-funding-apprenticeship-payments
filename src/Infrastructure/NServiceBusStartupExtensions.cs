@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
-using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using NServiceBus;
 using NServiceBus.ObjectBuilder.MSDependencyInjection;
@@ -9,6 +7,8 @@ using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.NServiceBus.Configuration;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
@@ -16,13 +16,59 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 public static class NServiceBusStartupExtensions
 {
     public static IServiceCollection AddNServiceBus(
-            this IServiceCollection serviceCollection,
-            ApplicationSettings applicationSettings)
+        this IServiceCollection serviceCollection,
+        ApplicationSettings applicationSettings)
     {
         var webBuilder = serviceCollection.AddWebJobs(x => { });
         webBuilder.AddExecutionContextBinding();
         webBuilder.AddExtension(new NServiceBusExtensionConfigProvider());
 
+        ConfigurePV2ServiceBus(serviceCollection, applicationSettings);
+        ConfigureServiceBus(serviceCollection, applicationSettings);
+
+        return serviceCollection;
+    }
+
+    private static void ConfigurePV2ServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
+    {
+        var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Funding.PaymentsV2")
+                 .UseMessageConventions()
+                 .UseNewtonsoftJsonSerializer();
+
+        endpointConfiguration.SendOnly();
+
+        if (applicationSettings.DCServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
+        {
+            var learningTransportFolder =
+                Path.Combine(
+                    Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)],
+                    @"src\.learningtransport");
+            endpointConfiguration
+                .UseTransport<LearningTransport>()
+                .StorageDirectory(learningTransportFolder);
+            endpointConfiguration.UseLearningTransport();
+            Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", learningTransportFolder, EnvironmentVariableTarget.Process);
+        }
+        else
+        {
+            endpointConfiguration
+                .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString);
+        }
+
+        if (!string.IsNullOrEmpty(applicationSettings.NServiceBusLicense))
+        {
+            endpointConfiguration.License(applicationSettings.NServiceBusLicense);
+        }
+
+
+        var paymentsV2EndpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
+        paymentsV2EndpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
+
+        serviceCollection.AddSingleton(typeof(IPaymentsV2ServiceBusEndpoint), new PaymentsV2ServiceBusEndpoint(paymentsV2EndpointWithExternallyManagedServiceProvider));
+    }
+
+    private static void ConfigureServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
+    {
         var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Funding.ApprenticeshipPayments")
             .UseMessageConventions()
             .UseNewtonsoftJsonSerializer();
@@ -57,8 +103,6 @@ public static class NServiceBusStartupExtensions
         var endpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
         endpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
         serviceCollection.AddSingleton(p => endpointWithExternallyManagedServiceProvider.MessageSession.Value);
-
-        return serviceCollection;
     }
 
     private static void ExcludeTestAssemblies(AssemblyScannerConfiguration scanner)
@@ -79,3 +123,45 @@ public static class NServiceBusStartupExtensions
         }
     }
 }
+
+    public class PaymentsV2ServiceBusEndpoint : IPaymentsV2ServiceBusEndpoint
+    {
+        private readonly IStartableEndpointWithExternallyManagedContainer _endpointInstance;
+
+        public PaymentsV2ServiceBusEndpoint(IStartableEndpointWithExternallyManagedContainer endpointInstance)
+        {
+            _endpointInstance = endpointInstance;
+        }
+        public async Task Publish(object message)
+        {
+            await _endpointInstance.MessageSession.Value.Publish(message);
+        }
+    }
+
+    public interface IPaymentsV2ServiceBusEndpoint
+    {
+        public Task Publish(object message);
+    }
+//public class ServiceBusEndpoint : IServiceBusEndpoint
+//{
+//    private readonly IMessageSession _messageSession;
+
+//    public ServiceBusEndpoint(IMessageSession messageSession)
+//    {
+//        _messageSession = messageSession;
+//    }
+
+//    public async Task Publish(object message)
+//    {
+//       await _messageSession.Publish(message);
+//    }
+//}
+
+//public interface IServiceBusEndpoint
+//{
+//    Task Publish(object message);
+//}
+
+//public interface IFundingServiceBusEndpoint : IServiceBusEndpoint { }
+//public interface IPaymentsV2ServiceBusEndpoint : IServiceBusEndpoint { }
+
