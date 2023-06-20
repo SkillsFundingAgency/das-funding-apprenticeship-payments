@@ -28,5 +28,7 @@
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.2" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
   </ItemGroup>
-
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
+  </ItemGroup>
 </Project>

@@ -40,5 +40,8 @@
   <ItemGroup>
     <Folder Include="Extensions\" />
   </ItemGroup>
-
+	
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
+  </ItemGroup>
 </Project>

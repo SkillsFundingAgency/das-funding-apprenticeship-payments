@@ -124,8 +124,8 @@ public static class NServiceBusStartupExtensions
         }
     }
 }
-
-    public class PaymentsV2ServiceBusEndpoint : IPaymentsV2ServiceBusEndpoint
+[ExcludeFromCodeCoverage]
+public class PaymentsV2ServiceBusEndpoint : IPaymentsV2ServiceBusEndpoint
     {
         private readonly IStartableEndpointWithExternallyManagedContainer _endpointInstance;
 
@@ -139,7 +139,7 @@ public static class NServiceBusStartupExtensions
         }
     }
 
-    public interface IPaymentsV2ServiceBusEndpoint
+public interface IPaymentsV2ServiceBusEndpoint
     {
         public Task Publish(object message);
     }
