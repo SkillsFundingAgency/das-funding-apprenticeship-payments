@@ -15,4 +15,8 @@
     <PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SFA.DAS.Payments.RequiredPayments.Messages.Events\" />
+  </ItemGroup>
+
 </Project>

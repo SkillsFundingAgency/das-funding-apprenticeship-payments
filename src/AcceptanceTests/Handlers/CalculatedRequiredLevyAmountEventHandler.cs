@@ -1,14 +1,14 @@
 ﻿using NServiceBus;
-using SFA.DAS.Payments.RequiredPayments.Messages.Events;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using System.Collections.Concurrent;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 
-public class CalculatedRequiredLevyAmountEventHandler : IHandleMessages<CalculatedRequiredLevyAmount>
+public class CalculatedRequiredLevyAmountEventHandler : IHandleMessages<CalculatedRequiredLevyAmountEvent>
 {
-    public static ConcurrentBag<CalculatedRequiredLevyAmount> ReceivedEvents { get; } = new();
+    public static ConcurrentBag<CalculatedRequiredLevyAmountEvent> ReceivedEvents { get; } = new();
 
-    public Task Handle(CalculatedRequiredLevyAmount message, IMessageHandlerContext context)
+    public Task Handle(CalculatedRequiredLevyAmountEvent message, IMessageHandlerContext context)
     {
         ReceivedEvents.Add(message);
         return Task.CompletedTask;

@@ -5,7 +5,6 @@ using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
-using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
@@ -43,7 +42,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         await WaitHelper.WaitForIt(() => CalculatedRequiredLevyAmountEventHandler.ReceivedEvents.Any(CalculatedRequiredLevyAmountEventExpectation), "Failed to find published event");
     }
 
-    private bool CalculatedRequiredLevyAmountEventExpectation(CalculatedRequiredLevyAmount outboundEvent)
+    private bool CalculatedRequiredLevyAmountEventExpectation(CalculatedRequiredLevyAmountEvent outboundEvent)
     {
         var inboundEvent = (FinalisedOnProgammeLearningPaymentEvent)_scenarioContext[nameof(FinalisedOnProgammeLearningPaymentEvent)];
 
