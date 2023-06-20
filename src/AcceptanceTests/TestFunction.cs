@@ -14,9 +14,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
 public class Settings
 {
-    public string DCServiceBusConnectionString;
+    public string DCServiceBusConnectionString = "http://das-demo-shared-ns.servicebus.windows.net";
     public string AzureWebJobsStorage { get; set; }
-    public string NServiceBusConnectionString { get; set; }
+    public string NServiceBusConnectionString { get; set; } = "http://das-demo-shared-ns.servicebus.windows.net";
     public string TopicPath { get; set; }
     public string QueueName { get; set; }
 }
@@ -98,7 +98,7 @@ public class TestFunction : IDisposable
                         a.QueueName = appConfig["QueueName"];
                         a.TopicPath = appConfig["TopicPath"];
                         a.ServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
-                        a.DCServiceBusConnectionString = appConfig["DCServiceBusConnectionString"];
+                        //a.DCServiceBusConnectionString = appConfig["DCServiceBusConnectionString"];
                     });
 
                     new Startup().Configure(builder);
