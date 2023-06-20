@@ -52,7 +52,8 @@ public static class NServiceBusStartupExtensions
         else
         {
             endpointConfiguration
-                .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString);
+                //.UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString); TODO: Setup config
+                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString);
         }
 
         if (!string.IsNullOrEmpty(applicationSettings.NServiceBusLicense))
