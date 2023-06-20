@@ -1,14 +1,14 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Types;
-using SFA.DAS.Payments.Model.Core.Entities;
+﻿using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
+using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount
 {
     internal static class CalculateRequiredLevyAmountCommandExtensions
     {
-        internal static CalculatedRequiredLevyAmountEvent MapToCalculatedRequiredLevyAmountEvent(this CalculateRequiredLevyAmountCommand command)
+        internal static CalculatedRequiredLevyAmount MapToCalculatedRequiredLevyAmountEvent(this CalculateRequiredLevyAmountCommand command)
         {
-            var e = new CalculatedRequiredLevyAmountEvent();
+            var e = new CalculatedRequiredLevyAmount();
             e.AccountId = command.Data.EmployerDetails.EmployingAccountId;
             e.ActualEndDate = null;
             e.AgreedOnDate = null;
@@ -18,6 +18,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.ApprenticeshipId = command.Data.EmployerDetails.FundingCommitmentId;
             e.ApprenticeshipPriceEpisodeId = null;
             e.ClawbackSourcePaymentEventId = null;
+            e.CollectionPeriod = new();
             e.CollectionPeriod.AcademicYear = command.Data.CollectionYear;
             // e.CollectionPeriod.Period  =  command.Data.Period // TODO: ReleasePaymentsCommand -> CollectionPeriod
             e.CompletionStatus = 1; // ongoing
@@ -31,8 +32,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             //e.IlrSubmissionDateTime = null; // TODO: Modify IPaymentsEvent in PV2
             e.InstalmentAmount = command.Data.ApprenticeshipEarnings.DeliveryPeriodAmount;
             e.JobId = 0; // TODO: tbc, make it configurable?
+            e.Learner = new();
             e.Learner.ReferenceNumber = null;
             e.Learner.Uln = command.Data.ApprenticeshipEarnings.Uln;
+            e.LearningAim = new();
             e.LearningAim.FrameworkCode = 0;
             e.LearningAim.FundingLineType = command.Data.ApprenticeshipEarnings.FundingLineType;
             e.LearningAim.PathwayCode = 0;

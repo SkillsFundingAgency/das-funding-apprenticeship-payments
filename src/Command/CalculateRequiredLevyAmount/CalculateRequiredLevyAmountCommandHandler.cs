@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
-using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using SFA.DAS.Payments.RequiredPayments.Messages.Events;
+
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 
 public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyAmountCommandHandler
@@ -21,7 +22,7 @@ public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyA
         _logger.LogInformation(
             "Apprenticeship Key: {ApprenticeshipKey} - Publishing {event} for CollectionPeriod: {Period}/{AcademicYear}",
             command.Data.ApprenticeshipKey,
-            nameof(CalculatedRequiredLevyAmountEvent),
+            nameof(CalculatedRequiredLevyAmount),
             @event.CollectionPeriod.Period,
             @event.CollectionPeriod.AcademicYear);
 
