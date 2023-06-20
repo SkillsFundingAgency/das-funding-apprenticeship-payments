@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
-using SFA.DAS.Payments.RequiredPayments.Messages.Events;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
 
@@ -16,7 +16,7 @@ public class CalculatedRequiredLevyAmountEndpoint
         context.CalculatedRequiredLevyAmountEndpoint = await EndpointHelper
             .StartEndpoint(QueueNames.CalculatedRequiredLevyAmount, false, new[]
             {
-                typeof(CalculatedRequiredLevyAmount)
+                typeof(CalculatedRequiredLevyAmountEvent)
             });
     }
 }

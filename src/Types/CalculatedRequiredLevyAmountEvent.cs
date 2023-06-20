@@ -3,9 +3,9 @@ using SFA.DAS.Payments.Model.Core;
 using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
 
-namespace SFA.DAS.Payments.RequiredPayments.Messages.Events;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
-public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent
+public class CalculatedRequiredLevyAmountEvent
 {
     public string EarningSource => "SubmitLearnerDataFundingPlatform"; // new field
     public int Priority { get; set; }

@@ -1,14 +1,14 @@
-﻿using SFA.DAS.Payments.Model.Core.Entities;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
-using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount
 {
     internal static class CalculateRequiredLevyAmountCommandExtensions
     {
-        internal static CalculatedRequiredLevyAmount MapToCalculatedRequiredLevyAmountEvent(this CalculateRequiredLevyAmountCommand command)
+        internal static CalculatedRequiredLevyAmountEvent MapToCalculatedRequiredLevyAmountEvent(this CalculateRequiredLevyAmountCommand command)
         {
-            var e = new CalculatedRequiredLevyAmount();
+            var e = new CalculatedRequiredLevyAmountEvent();
             e.AccountId = command.Data.EmployerDetails.EmployingAccountId;
             e.ActualEndDate = null;
             e.AgreedOnDate = null;
