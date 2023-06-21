@@ -14,9 +14,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
 public class Settings
 {
-    public string DCServiceBusConnectionString = "http://das-demo-shared-ns.servicebus.windows.net";
+    public string DCServiceBusConnectionString = "das-demo-shared-ns.servicebus.windows.net";
     public string AzureWebJobsStorage { get; set; }
-    public string NServiceBusConnectionString { get; set; } = "http://das-demo-shared-ns.servicebus.windows.net";
+    public string NServiceBusConnectionString { get; set; }// = "das-at-shared-ns.servicebus.windows.net";
     public string TopicPath { get; set; }
     public string QueueName { get; set; }
 }
@@ -63,8 +63,8 @@ public class TestFunction : IDisposable
         _testContext = testContext;
 
         Environment.SetEnvironmentVariable("AzureWebJobsStorage", "UseDevelopmentStorage=true", EnvironmentVariableTarget.Process);
-        Environment.SetEnvironmentVariable("NServiceBusConnectionString", "UseLearningEndpoint=true", EnvironmentVariableTarget.Process);
-        Environment.SetEnvironmentVariable("ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true", EnvironmentVariableTarget.Process);
+        Environment.SetEnvironmentVariable("NServiceBusConnectionString", settings.NServiceBusConnectionString, EnvironmentVariableTarget.Process);
+        Environment.SetEnvironmentVariable("ApplicationSettings:NServiceBusConnectionString", settings.NServiceBusConnectionString, EnvironmentVariableTarget.Process);
         Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"src\.learningtransport"), EnvironmentVariableTarget.Process);
         Environment.SetEnvironmentVariable("EnvironmentName", "LOCAL_ACCEPTANCE_TESTS", EnvironmentVariableTarget.Process);
 
@@ -92,7 +92,7 @@ public class TestFunction : IDisposable
                         options.SetMinimumLevel(LogLevel.Trace);
                         options.AddConsole();
                     });
-                    s.Configure<ApplicationSettings>(a =>
+                    s.Configure<ApplicationSettings>(a => 
                     {
                         a.AzureWebJobsStorage = appConfig["AzureWebJobsStorage"];
                         a.QueueName = appConfig["QueueName"];
