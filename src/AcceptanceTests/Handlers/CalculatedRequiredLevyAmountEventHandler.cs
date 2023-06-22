@@ -4,11 +4,11 @@ using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 
-public class CalculatedRequiredLevyAmountHandler : IHandleMessages<CalculatedRequiredLevyAmount2>
+public class CalculatedRequiredLevyAmountHandler : IHandleMessages<CalculatedRequiredLevyAmount>
 {
-    public static ConcurrentBag<CalculatedRequiredLevyAmount2> ReceivedEvents { get; } = new();
+    public static ConcurrentBag<CalculatedRequiredLevyAmount> ReceivedEvents { get; } = new();
 
-    public Task Handle(CalculatedRequiredLevyAmount2 message, IMessageHandlerContext context)
+    public Task Handle(CalculatedRequiredLevyAmount message, IMessageHandlerContext context)
     {
         ReceivedEvents.Add(message);
         return Task.CompletedTask;

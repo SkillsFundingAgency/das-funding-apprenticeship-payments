@@ -17,7 +17,7 @@ public class CalculatedRequiredLevyAmountEndpoint
         context.CalculatedRequiredLevyAmountEndpoint = await EndpointHelper
             .StartEndpoint(QueueNames.CalculatedRequiredLevyAmount, false, new[]
             {
-                typeof(CalculatedRequiredLevyAmount2)
+                typeof(CalculatedRequiredLevyAmount)
             });
     }
 }

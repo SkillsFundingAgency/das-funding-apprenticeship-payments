@@ -7,7 +7,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure
     {
         public static void AddRouting(this RoutingSettings settings)
         {
-            settings.RouteToEndpoint(typeof(CalculatedRequiredLevyAmount2), QueueNames.CalculatedRequiredLevyAmount);
+            settings.RouteToEndpoint(typeof(CalculatedRequiredLevyAmount), QueueNames.CalculatedRequiredLevyAmount);
         }
     }
 }

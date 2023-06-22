@@ -10,6 +10,8 @@ using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using NServiceBus.Routing;
+using SFA.DAS.Payments.Messages.Core.Events;
+using SFA.DAS.Payments.Messages.Core;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
@@ -37,6 +39,8 @@ public static class NServiceBusStartupExtensions
                  .UseNewtonsoftJsonSerializer();
 
         endpointConfiguration.SendOnly();
+
+        endpointConfiguration.Conventions().DefiningEventsAs(type => type.IsEvent<IPaymentsEvent>());
 
         if (applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
         {

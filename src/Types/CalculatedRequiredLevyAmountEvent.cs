@@ -1,4 +1,5 @@
-﻿using NServiceBus;
+﻿
+using NServiceBus;
 using SFA.DAS.Payments.Messages.Core;
 using SFA.DAS.Payments.Messages.Core.Events;
 using SFA.DAS.Payments.Model.Core;
@@ -10,7 +11,7 @@ using System;
 #nullable enable
 namespace SFA.DAS.Payments.RequiredPayments.Messages.Events
 {
-    public class CalculatedRequiredLevyAmount2 :
+    public class CalculatedRequiredLevyAmount :
       IPaymentsEvent,
       IJobMessage,
       IPaymentsMessage,
