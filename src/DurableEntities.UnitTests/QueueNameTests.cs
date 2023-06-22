@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
 {

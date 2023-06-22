@@ -4,6 +4,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using System.Threading.Tasks;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 {

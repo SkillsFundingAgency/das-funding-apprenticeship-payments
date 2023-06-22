@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure
 {
     public class QueueNames
     {

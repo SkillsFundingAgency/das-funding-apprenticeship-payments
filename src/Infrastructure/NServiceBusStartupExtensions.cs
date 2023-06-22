@@ -9,6 +9,7 @@ using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using NServiceBus.Routing;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
@@ -31,7 +32,7 @@ public static class NServiceBusStartupExtensions
 
     private static void ConfigurePV2ServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
     {
-        var endpointConfiguration = new EndpointConfiguration("bundle-1")
+        var endpointConfiguration = new EndpointConfiguration("sfa.das.funding.payments.calculatedlevyamount")
                 // .UseMessageConventions()
                  .UseNewtonsoftJsonSerializer();
 
@@ -53,7 +54,7 @@ public static class NServiceBusStartupExtensions
         {
             endpointConfiguration
                 //.UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString); TODO: Setup config
-                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString);
+                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString, r => r.AddRouting());
         }
 
         if (!string.IsNullOrEmpty(applicationSettings.NServiceBusLicense))
@@ -61,6 +62,8 @@ public static class NServiceBusStartupExtensions
             endpointConfiguration.License(applicationSettings.NServiceBusLicense);
         }
 
+
+       // var endpointInstance = Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
 
         var paymentsV2EndpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
         paymentsV2EndpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
@@ -124,45 +127,24 @@ public static class NServiceBusStartupExtensions
         }
     }
 }
+
 [ExcludeFromCodeCoverage]
 public class PaymentsV2ServiceBusEndpoint : IPaymentsV2ServiceBusEndpoint
-    {
-        private readonly IStartableEndpointWithExternallyManagedContainer _endpointInstance;
+{
+    private readonly IStartableEndpointWithExternallyManagedContainer _endpointInstance;
 
-        public PaymentsV2ServiceBusEndpoint(IStartableEndpointWithExternallyManagedContainer endpointInstance)
-        {
-            _endpointInstance = endpointInstance;
-        }
-        public async Task Publish(object message)
-        {
-            await _endpointInstance.MessageSession.Value.Publish(message);
-        }
+    public PaymentsV2ServiceBusEndpoint(IStartableEndpointWithExternallyManagedContainer endpointInstance)
+    {
+        _endpointInstance = endpointInstance;
     }
+
+    public async Task Publish(object message)
+    {
+        await _endpointInstance.MessageSession.Value.Publish(message);
+    }
+}
 
 public interface IPaymentsV2ServiceBusEndpoint
-    {
-        public Task Publish(object message);
-    }
-//public class ServiceBusEndpoint : IServiceBusEndpoint
-//{
-//    private readonly IMessageSession _messageSession;
-
-//    public ServiceBusEndpoint(IMessageSession messageSession)
-//    {
-//        _messageSession = messageSession;
-//    }
-
-//    public async Task Publish(object message)
-//    {
-//       await _messageSession.Publish(message);
-//    }
-//}
-
-//public interface IServiceBusEndpoint
-//{
-//    Task Publish(object message);
-//}
-
-//public interface IFundingServiceBusEndpoint : IServiceBusEndpoint { }
-//public interface IPaymentsV2ServiceBusEndpoint : IServiceBusEndpoint { }
-
+{
+    public Task Publish(object message);
+}
