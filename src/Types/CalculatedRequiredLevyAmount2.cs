@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: SFA.DAS.Payments.RequiredPayments.Messages.Events.CalculatedRequiredLevyAmount
-// Assembly: SFA.DAS.Funding.ApprenticeshipPayments.Types, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: C9822C04-38CC-4FE7-B709-3E7675EB0D3E
-// Assembly location: C:\Users\rusla\.nuget\packages\sfa.das.funding.apprenticeshippayments.types\0.1.8-prerelease-27\lib\net6.0\SFA.DAS.Funding.ApprenticeshipPayments.Types.dll
-
-using NServiceBus;
+﻿using NServiceBus;
 using SFA.DAS.Payments.Messages.Core;
 using SFA.DAS.Payments.Messages.Core.Events;
 using SFA.DAS.Payments.Model.Core;
@@ -16,7 +10,7 @@ using System;
 #nullable enable
 namespace SFA.DAS.Payments.RequiredPayments.Messages.Events
 {
-    public class CalculatedRequiredLevyAmount :
+    public class CalculatedRequiredLevyAmount2 :
       IPaymentsEvent,
       IJobMessage,
       IPaymentsMessage,

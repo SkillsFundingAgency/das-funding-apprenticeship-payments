@@ -43,7 +43,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         await WaitHelper.WaitForIt(() => CalculatedRequiredLevyAmountHandler.ReceivedEvents.Any(CalculatedRequiredLevyAmountExpectation), "Failed to find published event");
     }
 
-    private bool CalculatedRequiredLevyAmountExpectation(CalculatedRequiredLevyAmount outboundEvent)
+    private bool CalculatedRequiredLevyAmountExpectation(CalculatedRequiredLevyAmount2 outboundEvent)
     {
         var inboundEvent = (FinalisedOnProgammeLearningPaymentEvent)_scenarioContext[nameof(FinalisedOnProgammeLearningPaymentEvent)];
 
