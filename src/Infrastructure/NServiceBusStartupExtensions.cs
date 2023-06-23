@@ -106,7 +106,7 @@ public static class NServiceBusStartupExtensions
         endpointConfiguration
             .UseTransport<LearningTransport>()
             .StorageDirectory(learningTransportFolder);
-        endpointConfiguration.UseLearningTransport();
+        endpointConfiguration.UseLearningTransport(r => r.AddRouting().DoNotEnforceBestPractices());
         Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", learningTransportFolder, EnvironmentVariableTarget.Process);
     }
 

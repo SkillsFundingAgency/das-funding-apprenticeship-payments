@@ -21,6 +21,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
             endpointConfiguration.Conventions().DefiningMessagesAs(type => type == typeof(CalculatedRequiredLevyAmount)); // Treat CalculatedRequiredLevyAmount as a message
 
             var transport = endpointConfiguration.UseTransport<LearningTransport>();
+            transport.Routing().DoNotEnforceBestPractices();
+
             var eventStorageFolder = Path.Combine(Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)], @"src\.learningtransport");
             transport.StorageDirectory(eventStorageFolder);
 

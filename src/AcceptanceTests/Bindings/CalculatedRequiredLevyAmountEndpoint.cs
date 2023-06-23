@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
