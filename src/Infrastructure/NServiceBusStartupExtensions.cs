@@ -7,11 +7,9 @@ using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.NServiceBus.Configuration;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
+using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using NServiceBus.Routing;
-using SFA.DAS.Payments.Messages.Core.Events;
-using SFA.DAS.Payments.Messages.Core;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
@@ -22,43 +20,34 @@ public static class NServiceBusStartupExtensions
         this IServiceCollection serviceCollection,
         ApplicationSettings applicationSettings)
     {
-        var webBuilder = serviceCollection.AddWebJobs(x => { });
+        var webBuilder = serviceCollection.AddWebJobs(_ => { });
         webBuilder.AddExecutionContextBinding();
         webBuilder.AddExtension(new NServiceBusExtensionConfigProvider());
 
-        ConfigurePV2ServiceBus(serviceCollection, applicationSettings);
-        ConfigureServiceBus(serviceCollection, applicationSettings);
+        ConfigurePv2ServiceBus(serviceCollection, applicationSettings);
+        ConfigureFundingServiceBus(serviceCollection, applicationSettings);
 
         return serviceCollection;
     }
 
-    private static void ConfigurePV2ServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
+    private static void ConfigurePv2ServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
     {
         var endpointConfiguration = new EndpointConfiguration("sfa.das.funding.payments.calculatedlevyamount")
-                // .UseMessageConventions()
                  .UseNewtonsoftJsonSerializer();
-
         endpointConfiguration.SendOnly();
 
-        endpointConfiguration.Conventions().DefiningEventsAs(type => type.IsEvent<IPaymentsEvent>());
+        var conventions = endpointConfiguration.Conventions();
+        conventions.DefiningMessagesAs(type => type == typeof(CalculatedRequiredLevyAmount)); // Treat CalculatedRequiredLevyAmount as a message
 
-        if (applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
+        if (UsingLearningTransport(applicationSettings))
         {
-            var learningTransportFolder =
-                Path.Combine(
-                    Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)],
-                    @"src\.learningtransport");
-            endpointConfiguration
-                .UseTransport<LearningTransport>()
-                .StorageDirectory(learningTransportFolder);
-            endpointConfiguration.UseLearningTransport();
-            Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", learningTransportFolder, EnvironmentVariableTarget.Process);
+            SetupLearningTrasportEndpoint(endpointConfiguration);
         }
         else
         {
             endpointConfiguration
-                //.UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString); TODO: Setup config
-                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString, r => r.AddRouting());
+                .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
+                    r => r.AddRouting().DoNotEnforceBestPractices());
         }
 
         if (!string.IsNullOrEmpty(applicationSettings.NServiceBusLicense))
@@ -66,39 +55,29 @@ public static class NServiceBusStartupExtensions
             endpointConfiguration.License(applicationSettings.NServiceBusLicense);
         }
 
-
-       // var endpointInstance = Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
-
         var paymentsV2EndpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
         paymentsV2EndpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
 
         serviceCollection.AddSingleton(typeof(IPaymentsV2ServiceBusEndpoint), new PaymentsV2ServiceBusEndpoint(paymentsV2EndpointWithExternallyManagedServiceProvider));
     }
 
-    private static void ConfigureServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
+    private static void ConfigureFundingServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
     {
         var endpointConfiguration = new EndpointConfiguration("SFA.DAS.Funding.ApprenticeshipPayments")
             .UseMessageConventions()
             .UseNewtonsoftJsonSerializer();
 
         endpointConfiguration.SendOnly();
+        var conventions = endpointConfiguration.Conventions();
+        conventions.DefiningMessagesAs(type => type == typeof(CalculatedRequiredLevyAmount)); // Treat CalculatedRequiredLevyAmount as a message
 
-        if (applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase))
+        if (UsingLearningTransport(applicationSettings))
         {
-            var learningTransportFolder =
-                Path.Combine(
-                    Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)],
-                    @"src\.learningtransport");
-            endpointConfiguration
-                .UseTransport<LearningTransport>()
-                .StorageDirectory(learningTransportFolder);
-            endpointConfiguration.UseLearningTransport();
-            Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", learningTransportFolder, EnvironmentVariableTarget.Process);
+            SetupLearningTrasportEndpoint(endpointConfiguration);
         }
         else
         {
-            endpointConfiguration
-                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString);
+            endpointConfiguration.UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString);
         }
 
         if (!string.IsNullOrEmpty(applicationSettings.NServiceBusLicense))
@@ -113,12 +92,27 @@ public static class NServiceBusStartupExtensions
         serviceCollection.AddSingleton(p => endpointWithExternallyManagedServiceProvider.MessageSession.Value);
     }
 
+    private static bool UsingLearningTransport(ApplicationSettings applicationSettings)
+    {
+        return applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    private static void SetupLearningTrasportEndpoint(EndpointConfiguration endpointConfiguration)
+    {
+        var learningTransportFolder =
+            Path.Combine(
+                Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)],
+                @"src\.learningtransport");
+        endpointConfiguration
+            .UseTransport<LearningTransport>()
+            .StorageDirectory(learningTransportFolder);
+        endpointConfiguration.UseLearningTransport();
+        Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", learningTransportFolder, EnvironmentVariableTarget.Process);
+    }
+
     private static void ExcludeTestAssemblies(AssemblyScannerConfiguration scanner)
     {
-        var excludeRegexs = new List<string>
-        {
-            @"nunit.*.dll"
-        };
+        var excludeRegexs = new List<string> { @"nunit.*.dll" };
 
         var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         foreach (var fileName in Directory.EnumerateFiles(baseDirectory, "*.dll")
@@ -130,25 +124,4 @@ public static class NServiceBusStartupExtensions
             }
         }
     }
-}
-
-[ExcludeFromCodeCoverage]
-public class PaymentsV2ServiceBusEndpoint : IPaymentsV2ServiceBusEndpoint
-{
-    private readonly IStartableEndpointWithExternallyManagedContainer _endpointInstance;
-
-    public PaymentsV2ServiceBusEndpoint(IStartableEndpointWithExternallyManagedContainer endpointInstance)
-    {
-        _endpointInstance = endpointInstance;
-    }
-
-    public async Task Publish(object message)
-    {
-        await _endpointInstance.MessageSession.Value.Publish(message);
-    }
-}
-
-public interface IPaymentsV2ServiceBusEndpoint
-{
-    public Task Publish(object message);
 }

@@ -1,10 +1,14 @@
+using AutoFixture;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using System.Threading.Tasks;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 {
@@ -25,6 +29,20 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         {
             log.LogInformation(
                 $"Triggered {nameof(CalculateRequiredLevyAmountFunction)} function for Apprenticeship: {@event.ApprenticeshipKey}");
+
+            await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
+        }
+
+        [FunctionName(nameof(CalculateRequiredLevyAmountFunctionHttpTrigger))]
+        public async Task CalculateRequiredLevyAmountFunctionHttpTrigger(
+            [HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request,
+            [DurableClient] IDurableEntityClient client,
+            ILogger log)
+        {
+            var @event = new Fixture().Create<FinalisedOnProgammeLearningPaymentEvent>();
+           
+            log.LogInformation(
+                $"Triggered {nameof(CalculateRequiredLevyAmountFunctionHttpTrigger)} function for Apprenticeship: {@event.ApprenticeshipKey}");
 
             await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
         }

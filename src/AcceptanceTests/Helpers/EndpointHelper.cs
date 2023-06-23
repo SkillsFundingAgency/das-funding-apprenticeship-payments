@@ -1,5 +1,7 @@
 ﻿using NServiceBus;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
+using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
 {
@@ -20,6 +22,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
             var transport = endpointConfiguration.UseTransport<LearningTransport>();
             var eventStorageFolder = Path.Combine(Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)], @"src\.learningtransport");
             transport.StorageDirectory(eventStorageFolder);
+
+            transport.Routing().RouteToEndpoint(typeof(CalculatedRequiredLevyAmount), QueueNames.CalculatedRequiredLevyAmount);
 
             return await Endpoint.Start(endpointConfiguration)
                 .ConfigureAwait(false);

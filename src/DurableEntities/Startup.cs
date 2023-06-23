@@ -1,19 +1,17 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
-using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
@@ -32,11 +30,11 @@ public class Startup : FunctionsStartup
         var configBuilder = new ConfigurationBuilder()
             .AddConfiguration(configuration)
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddEnvironmentVariables()
-            .AddJsonFile("local.settings.json", true);
-
-        if (!configuration["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase))
+            .AddEnvironmentVariables();
+            
+        if (NotAcceptanceTests(configuration))
         {
+            configBuilder.AddJsonFile("local.settings.json", true);
             configBuilder.AddAzureTableStorage(options =>
             {
                 options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
@@ -59,7 +57,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddCommandServices().AddDomainServices();
 
-        builder.Services.AddLogging((options) =>
+        builder.Services.AddLogging(options =>
         {
             options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
             options.SetMinimumLevel(LogLevel.Trace);
