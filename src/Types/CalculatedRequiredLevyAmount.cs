@@ -7,7 +7,7 @@ using SFA.DAS.Payments.Model.Core.OnProgramme;
 #nullable enable
 namespace SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
-public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent
+public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent, NServiceBus.IMessage
 {
     public string EarningSource { get; }
     public int Priority { get; set; }

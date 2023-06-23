@@ -18,6 +18,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
 
             endpointConfiguration.UseNewtonsoftJsonSerializer();
             endpointConfiguration.Conventions().DefiningEventsAs(types.Contains);
+            endpointConfiguration.Conventions().DefiningMessagesAs(type => type == typeof(CalculatedRequiredLevyAmount)); // Treat CalculatedRequiredLevyAmount as a message
 
             var transport = endpointConfiguration.UseTransport<LearningTransport>();
             var eventStorageFolder = Path.Combine(Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)], @"src\.learningtransport");
