@@ -35,13 +35,13 @@ public class Startup : FunctionsStartup
         if (NotAcceptanceTests(configuration))
         {
             configBuilder.AddJsonFile("local.settings.json", true);
-            //configBuilder.AddAzureTableStorage(options =>
-            //{
-            //    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-            //    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-            //    options.EnvironmentName = configuration["EnvironmentName"];
-            //    options.PreFixConfigurationKeys = false;
-            //});
+            configBuilder.AddAzureTableStorage(options =>
+            {
+                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                options.EnvironmentName = configuration["EnvironmentName"];
+                options.PreFixConfigurationKeys = false;
+            });
         }
 
         Configuration = configBuilder.Build();

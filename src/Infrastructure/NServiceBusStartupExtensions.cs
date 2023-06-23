@@ -46,7 +46,8 @@ public static class NServiceBusStartupExtensions
         else
         {
             endpointConfiguration
-                .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
+                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString,
+                // TODO: .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
                     r => r.AddRouting().DoNotEnforceBestPractices());
         }
 
