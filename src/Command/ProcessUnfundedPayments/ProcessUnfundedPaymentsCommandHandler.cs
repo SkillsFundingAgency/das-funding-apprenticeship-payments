@@ -22,7 +22,9 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
         var paymentsToSend = command.Model.Payments.Where(x => x.CollectionPeriod == command.CollectionPeriod && x.SentForPayment == false);
 
-        _logger.LogInformation($"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing { paymentsToSend.Count() } payments for collection period { command.CollectionPeriod }");
+        _logger.LogInformation(paymentsToSend.Any()
+            ? $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing {paymentsToSend.Count()} payments for collection period {command.CollectionPeriod}"
+            : $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  No payments to publish for collection period {command.CollectionPeriod}");
 
         foreach (var payment in paymentsToSend)
         {
