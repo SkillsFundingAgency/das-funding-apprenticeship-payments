@@ -18,13 +18,6 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
     public async Task Process(ProcessUnfundedPaymentsCommand command)
     {
-
-        if (command.Model is null)
-        {
-            _logger.LogInformation($"{this.GetType()} - command.Model is null");
-            return;
-        }
-
         var paymentsToSend = command.Model.Payments.Where(x => x.CollectionPeriod == command.CollectionPeriod && x.SentForPayment == false);
 
         _logger.LogInformation(paymentsToSend.Any()
