@@ -66,7 +66,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                     }).ToList(),
                 StartDate = earningsGeneratedEvent.StartDate,
                 Ukprn = earningsGeneratedEvent.ProviderId,
-                Uln = long.Parse(earningsGeneratedEvent.Uln)
+                Uln = long.Parse(earningsGeneratedEvent.Uln),
+                PlannedEndDate = earningsGeneratedEvent.ActualEndDate
             };
         }
     }

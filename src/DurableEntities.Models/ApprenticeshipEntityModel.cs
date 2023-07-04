@@ -8,5 +8,6 @@
         public long Uln { get; set; }
         public DateTime StartDate { get; set; }
         public long Ukprn { get; set; }
+        public DateTime PlannedEndDate { get; set; }
     }
 }
