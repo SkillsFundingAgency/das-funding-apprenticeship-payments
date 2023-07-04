@@ -56,12 +56,6 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddCommandServices().AddDomainServices();
-
-        builder.Services.AddLogging(options =>
-        {
-            options.AddFilter("SFA.DAS", LogLevel.Debug); // this is because all logging is filtered out by default
-            options.SetMinimumLevel(LogLevel.Trace);
-        });
     }
 
     private static void EnsureConfig(ApplicationSettings applicationSettings)
