@@ -63,7 +63,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                         DeliveryPeriod = y.Period,
                         CollectionMonth = y.CalendarMonth,
                         CollectionYear = y.CalenderYear
-                    }).ToList()
+                    }).ToList(),
+                StartDate = earningsGeneratedEvent.StartDate,
+                Ukprn = earningsGeneratedEvent.ProviderId,
+                Uln = long.Parse(earningsGeneratedEvent.Uln)
             };
         }
     }

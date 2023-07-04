@@ -33,6 +33,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
 
             _earningsGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
             _earningsGeneratedEvent.DeliveryPeriods.ForEach(d => d.AcademicYear = AcademicYearHelper.GetRandomValidAcademicYear());
+            _earningsGeneratedEvent.Uln = _fixture.Create<long>().ToString();
 
             _expectedEarnings = _earningsGeneratedEvent.DeliveryPeriods.Select(y =>
                 new EarningEntityModel
@@ -71,6 +72,24 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         public void ShouldCallGenerateEarnings()
         {
             _calculateApprenticeshipPaymentsCommandHandler.Verify(x => x.Calculate(It.Is<CalculateApprenticeshipPaymentsCommand>(y => y.ApprenticeshipEntity == _sut.Model)));
+        }
+
+        [Test]
+        public void ShouldMapStartDateToEntity()
+        {
+            _sut.Model.StartDate.Should().Be(_earningsGeneratedEvent.StartDate);
+        }
+
+        [Test]
+        public void ShouldMapUkprnToEntity()
+        {
+            _sut.Model.Ukprn.Should().Be(_earningsGeneratedEvent.ProviderId);
+        }
+
+        [Test]
+        public void ShouldMapUlnToEntity()
+        {
+            _sut.Model.Uln.Should().Be(long.Parse(_earningsGeneratedEvent.Uln));
         }
     }
 }
