@@ -55,7 +55,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model = new ApprenticeshipEntityModel
             {
                 ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey,
-                Earnings = earningsGeneratedEvent.FundingPeriods.SelectMany(x => x.DeliveryPeriods).Select(y =>
+                Earnings = earningsGeneratedEvent.DeliveryPeriods.Select(y =>
                     new EarningEntityModel
                     {
                         AcademicYear = y.AcademicYear,

@@ -24,20 +24,20 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.CompletionStatus = 1; // ongoing
             e.CompletionAmount = 0;
             e.ContractType = ContractType.Act1;
-            e.DeliveryPeriod = command.Data.ApprenticeshipEarnings.DeliveryPeriod;
-            e.EarningEventId = command.Data.ApprenticeshipEarnings.ApprenticeshipEarningsId;
+            e.DeliveryPeriod = command.Data.ApprenticeshipEarning.DeliveryPeriod;
+            e.EarningEventId = command.Data.ApprenticeshipEarning.ApprenticeshipEarningsId;
             e.EventId = Guid.NewGuid();
             e.EventTime = DateTime.UtcNow;
             e.IlrFileName = null;
             //e.IlrSubmissionDateTime = null; // TODO: Modify IPaymentsEvent in PV2
-            e.InstalmentAmount = command.Data.ApprenticeshipEarnings.DeliveryPeriodAmount;
+            e.InstalmentAmount = command.Data.ApprenticeshipEarning.DeliveryPeriodAmount;
             e.JobId = 0; // TODO: tbc, make it configurable?
             e.Learner = new();
             e.Learner.ReferenceNumber = null;
-            e.Learner.Uln = command.Data.ApprenticeshipEarnings.Uln;
+            e.Learner.Uln = command.Data.ApprenticeshipEarning.Uln;
             e.LearningAim = new();
             e.LearningAim.FrameworkCode = 0;
-            e.LearningAim.FundingLineType = command.Data.ApprenticeshipEarnings.FundingLineType;
+            e.LearningAim.FundingLineType = command.Data.ApprenticeshipEarning.FundingLineType;
             e.LearningAim.PathwayCode = 0;
             e.LearningAim.ProgrammeType = 0;
             e.LearningAim.Reference = "ZPROG001";
@@ -46,16 +46,16 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.LearningAim.StartDate = command.Data.Apprenticeship.StartDate;
             e.LearningAimSequenceNumber = 0;
             e.LearningStartDate = command.Data.Apprenticeship.StartDate;
-            e.NumberOfInstalments = command.Data.ApprenticeshipEarnings.NumberOfInstalments;
+            e.NumberOfInstalments = command.Data.ApprenticeshipEarning.NumberOfInstalments;
             e.OnProgrammeEarningType = OnProgrammeEarningType.Learning;
-            e.PlannedEndDate = command.Data.ApprenticeshipEarnings.PlannedEndDate;
+            e.PlannedEndDate = command.Data.ApprenticeshipEarning.PlannedEndDate;
             e.PriceEpisodeIdentifier = "";
             e.Priority = 0;
             e.ReportingAimFundingLineType = "";
-            e.SfaContributionPercentage = command.Data.ApprenticeshipEarnings.GovernmentContributionPercentage;
+            e.SfaContributionPercentage = command.Data.ApprenticeshipEarning.GovernmentContributionPercentage;
             e.StartDate = command.Data.Apprenticeship.StartDate;
             e.TransferSenderAccountId = command.Data.EmployerDetails.FundingAccountId;
-            e.Ukprn = command.Data.ApprenticeshipEarnings.ProviderIdentifier;
+            e.Ukprn = command.Data.ApprenticeshipEarning.ProviderIdentifier;
             e.TransactionType = TransactionType.Learning;
 
             return e;

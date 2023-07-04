@@ -12,7 +12,7 @@ public class FinalisedOnProgammeLearningPaymentEvent
     public decimal Amount { get; set; }
     public FundingType FundingType { get; set; } // Confirm if FinalisedOnProgammeLearningPayment.FundingType = EmployingApprenticeshipServiceAccount then 1
     public EmployerDetails EmployerDetails { get; set; } = new();
-    public ApprenticeshipEarning ApprenticeshipEarnings { get; set; } = new();
+    public ApprenticeshipEarning ApprenticeshipEarning { get; set; } = new();
     public Apprenticeship Apprenticeship { get; set; } = new();
     public int CourseCode { get; set; }
 }

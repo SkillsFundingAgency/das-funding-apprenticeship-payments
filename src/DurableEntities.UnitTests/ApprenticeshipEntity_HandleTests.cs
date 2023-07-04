@@ -32,9 +32,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
             _fixture = new Fixture();
 
             _earningsGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
-            _earningsGeneratedEvent.FundingPeriods.ForEach(f => f.DeliveryPeriods.ForEach(d => d.AcademicYear = AcademicYearHelper.GetRandomValidAcademicYear()));
+            _earningsGeneratedEvent.DeliveryPeriods.ForEach(d => d.AcademicYear = AcademicYearHelper.GetRandomValidAcademicYear());
 
-            _expectedEarnings = _earningsGeneratedEvent.FundingPeriods.SelectMany(x => x.DeliveryPeriods).Select(y =>
+            _expectedEarnings = _earningsGeneratedEvent.DeliveryPeriods.Select(y =>
                 new EarningEntityModel
                 {
                     DeliveryPeriod = y.Period,
