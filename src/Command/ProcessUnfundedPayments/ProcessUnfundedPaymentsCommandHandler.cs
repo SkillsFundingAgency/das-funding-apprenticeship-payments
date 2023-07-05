@@ -18,7 +18,9 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
     public async Task Process(ProcessUnfundedPaymentsCommand command)
     {
-        var paymentsToSend = command.Model.Payments.Where(x => x.CollectionPeriod == command.CollectionPeriod && x.SentForPayment == false);
+        var paymentsToSend = command.Model.Payments
+            .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.SentForPayment == false)
+            .ToArray();
 
         _logger.LogInformation(paymentsToSend.Any()
             ? $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing {paymentsToSend.Count()} payments for collection period {command.CollectionPeriod}"
@@ -26,7 +28,7 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
         foreach (var payment in paymentsToSend)
         {
-            await _messageSession.Publish(_eventBuilder.Build(payment, command.Model.ApprenticeshipKey));
+            await _messageSession.Publish(_eventBuilder.Build(payment, command.Model.ApprenticeshipKey, (short)command.Model.Payments.Count));
             payment.SentForPayment = true;
         }
     }
