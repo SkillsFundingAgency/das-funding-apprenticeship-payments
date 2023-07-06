@@ -29,6 +29,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
         public static void ClearEventStorage()
         {
             var di = new DirectoryInfo(EventStorageFolder);
+            if (!di.Exists) return;
 
             foreach (var file in di.GetFiles())
             {

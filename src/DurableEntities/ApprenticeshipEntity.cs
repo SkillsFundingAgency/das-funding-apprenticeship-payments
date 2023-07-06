@@ -52,23 +52,22 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         private void MapEarningsGeneratedEventProperties(EarningsGeneratedEvent earningsGeneratedEvent)
         {
-            Model = new ApprenticeshipEntityModel
+            Model = new ApprenticeshipEntityModel();
+            Model.ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey;
+            Model.Earnings = earningsGeneratedEvent.DeliveryPeriods.Select(y =>
             {
-                ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey,
-                Earnings = earningsGeneratedEvent.DeliveryPeriods.Select(y =>
-                    new EarningEntityModel
-                    {
-                        AcademicYear = y.AcademicYear,
-                        Amount = y.LearningAmount, 
-                        DeliveryPeriod = y.Period,
-                        CollectionMonth = y.CalendarMonth,
-                        CollectionYear = y.CalenderYear
-                    }).ToList(),
-                StartDate = earningsGeneratedEvent.StartDate,
-                Ukprn = earningsGeneratedEvent.ProviderId,
-                Uln = long.Parse(earningsGeneratedEvent.Uln),
-                PlannedEndDate = earningsGeneratedEvent.ActualEndDate
-            };
+                var model = new EarningEntityModel();
+                model.AcademicYear = y.AcademicYear;
+                model.Amount = y.LearningAmount;
+                model.DeliveryPeriod = y.Period;
+                model.CollectionMonth = y.CalendarMonth;
+                model.CollectionYear = y.CalenderYear;
+                return model;
+            }).ToList();
+            Model.StartDate = earningsGeneratedEvent.StartDate;
+            Model.Ukprn = earningsGeneratedEvent.ProviderId;
+            Model.Uln = long.Parse(earningsGeneratedEvent.Uln);
+            Model.PlannedEndDate = earningsGeneratedEvent.ActualEndDate;
         }
     }
 }

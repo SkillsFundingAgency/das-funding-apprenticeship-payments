@@ -1,3 +1,4 @@
+using AutoFixture;
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
@@ -28,16 +29,18 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     [Given(@"all of the earnings are due in the future")]
     public void GivenAllEarningsAreDueInTheFuture()
     {
-        _earningsGeneratedEvent = new EarningsGeneratedEvent
+        var periods = new List<DeliveryPeriod>
         {
-            ApprenticeshipKey = Guid.NewGuid(),
-            DeliveryPeriods = new List<DeliveryPeriod>
-            {
-                new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 },
-                new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 },
-                new() { CalenderYear = (short)DateTime.Now.AddMonths(2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(2).Month, LearningAmount = 1000 }
-            }
+            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 },
+            new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 },
+            new() { CalenderYear = (short)DateTime.Now.AddMonths(2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(2).Month, LearningAmount = 1000 }
         };
+
+        _earningsGeneratedEvent = _testContext.Fixture
+            .Build<EarningsGeneratedEvent>()
+            .With(x => x.DeliveryPeriods, periods)
+            .With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
+            .Create();
 
         _earningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
     }
@@ -45,16 +48,18 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     [Given(@"two of the earnings are due in a past month")]
     public void GivenSomeEarningsAreDueInThePast()
     {
-        _earningsGeneratedEvent = new EarningsGeneratedEvent
+        var periods = new List<DeliveryPeriod>
         {
-            ApprenticeshipKey = Guid.NewGuid(),
-            DeliveryPeriods = new List<DeliveryPeriod>
-            {
-                new() { CalenderYear = (short)DateTime.Now.AddMonths(-2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-2).Month, LearningAmount = 1000 },
-                new() { CalenderYear = (short)DateTime.Now.AddMonths(-1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-1).Month, LearningAmount = 1000 },
-                new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }
-            }
+            new() { CalenderYear = (short)DateTime.Now.AddMonths(-2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-2).Month, LearningAmount = 1000 },
+            new() { CalenderYear = (short)DateTime.Now.AddMonths(-1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-1).Month, LearningAmount = 1000 },
+            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }
         };
+
+        _earningsGeneratedEvent = _testContext.Fixture
+            .Build<EarningsGeneratedEvent>()
+            .With(x => x.DeliveryPeriods, periods)
+            .With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
+            .Create();
 
         _earningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
     }
