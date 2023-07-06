@@ -70,6 +70,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
         _scenarioContext["apprenticeshipKey"] = _earningsGeneratedEvent.ApprenticeshipKey;
         _scenarioContext["numberOfPayments"] = 3;
         _scenarioContext["paymentAmount"] = 1000;
+        _scenarioContext[ContextKeys.EarningsGeneratedEvent] = _earningsGeneratedEvent;
         await _testContext.EarningsGeneratedEndpoint.Publish(_earningsGeneratedEvent);
     }
 }

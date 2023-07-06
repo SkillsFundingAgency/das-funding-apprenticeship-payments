@@ -1,3 +1,4 @@
+using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
@@ -24,7 +25,14 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
 
     private bool ReleasedPaymentMatchesExpectation(FinalisedOnProgammeLearningPaymentEvent finalisedOnProgammeLearningPaymentEvent)
     {
+        var earningsGeneratedEvent = (EarningsGeneratedEvent)_scenarioContext[ContextKeys.EarningsGeneratedEvent];
+
         return finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == ((byte)DateTime.Now.Month).ToDeliveryPeriod();
+               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == ((byte)DateTime.Now.Month).ToDeliveryPeriod() &&
+               finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString() == earningsGeneratedEvent.Uln &&
+               finalisedOnProgammeLearningPaymentEvent.Amount == earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount &&
+               finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate == earningsGeneratedEvent.StartDate &&
+               finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate == earningsGeneratedEvent.ActualEndDate &&
+               finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier == earningsGeneratedEvent.ProviderId;
     }
 }
