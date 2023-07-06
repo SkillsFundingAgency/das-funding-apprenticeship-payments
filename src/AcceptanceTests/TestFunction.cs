@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Azure;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@ public class TestFunction : IDisposable
     {
         AzureStorageEmulatorManager.StartStorageEmulator();
         HubName = hubName;
+
         _orchestrationData = new OrchestrationData();
 
         EndpointHelper.ClearEventStorage();
@@ -82,6 +84,7 @@ public class TestFunction : IDisposable
     
     public async Task DisposeAsync()
     {
+        await Jobs.Purge();
         await Jobs.StopAsync();
         Dispose();
     }

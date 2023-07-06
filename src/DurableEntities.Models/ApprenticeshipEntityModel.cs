@@ -1,9 +1,17 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models
+﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+
+namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models
 {
     public class ApprenticeshipEntityModel
     {
         public Guid ApprenticeshipKey { get; set; }
         public List<EarningEntityModel> Earnings { get; set; }
         public List<PaymentEntityModel> Payments { get; set; }
+        public long FundingEmployerAccountId { get; set; }
+        public EmployerType EmployerType { get; set; }
+        public long FundingCommitmentId { get; set; }
+        public long? TransferSenderAccountId { get; set; }
+        public string CourseCode { get; set; }
+        public DateTime StartDate { get; set; }
     }
 }

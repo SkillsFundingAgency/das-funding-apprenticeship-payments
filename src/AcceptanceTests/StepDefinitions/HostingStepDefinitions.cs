@@ -14,7 +14,7 @@ public class HostingStepDefinitions
         _featureContext = featureContext;
     }
 
-    [BeforeScenario(Order = 3)]
+    [BeforeScenario(Order = 1)]
     public async Task CreateConfig()
     {
         var stopwatch = new Stopwatch();

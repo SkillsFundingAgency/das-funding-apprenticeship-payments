@@ -5,25 +5,35 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command;
 
 public interface IFinalisedOnProgammeLearningPaymentEventBuilder
 {
-    public FinalisedOnProgammeLearningPaymentEvent Build(PaymentEntityModel payment, Guid apprenticeshipKey, short totalNumberOfPayments);
+    public FinalisedOnProgammeLearningPaymentEvent Build(PaymentEntityModel payment, ApprenticeshipEntityModel apprenticeship);
 }
 
 public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgammeLearningPaymentEventBuilder
 {
-    public FinalisedOnProgammeLearningPaymentEvent Build(PaymentEntityModel payment, Guid apprenticeshipKey, short totalNumberOfPayments)
+    public FinalisedOnProgammeLearningPaymentEvent Build(PaymentEntityModel payment, ApprenticeshipEntityModel apprenticeship)
     {
-        return new FinalisedOnProgammeLearningPaymentEvent        
-        {
-            CollectionYear = payment.CollectionYear,
-            CollectionMonth = payment.CollectionPeriod,
-            Amount = payment.Amount,
-            ApprenticeshipKey = apprenticeshipKey,
-            ApprenticeshipEarnings = new ApprenticeshipEarning
-            {
-                GovernmentContributionPercentage = 0.95m,
-                ApprenticeshipEarningsId = Guid.NewGuid(),
-                NumberOfInstalments = totalNumberOfPayments
-            }
-        };
+        var @event = new FinalisedOnProgammeLearningPaymentEvent();
+        @event.Amount = payment.Amount;
+        @event.Apprenticeship = new Apprenticeship();
+        @event.Apprenticeship.StartDate = apprenticeship.StartDate;
+
+        @event.ApprenticeshipKey = apprenticeship.ApprenticeshipKey;
+        @event.ApprenticeshipEarnings = new ApprenticeshipEarning();
+        @event.ApprenticeshipEarnings.ApprenticeshipEarningsId = Guid.NewGuid();
+        @event.ApprenticeshipEarnings.DeliveryPeriod = payment.DeliveryPeriod;
+        @event.ApprenticeshipEarnings.DeliveryPeriodAmount = payment.Amount;
+        @event.ApprenticeshipEarnings.GovernmentContributionPercentage = 0.95m;
+        @event.ApprenticeshipEarnings.NumberOfInstalments = (short)apprenticeship.Payments.Count;
+
+        @event.CollectionYear = payment.CollectionYear;
+        @event.CollectionPeriod = payment.CollectionPeriod;
+        @event.CourseCode = apprenticeship.CourseCode;
+
+        @event.EmployerDetails = new EmployerDetails();
+        @event.EmployerDetails.EmployingAccountId = apprenticeship.FundingEmployerAccountId;
+        @event.EmployerDetails.FundingAccountId = apprenticeship.TransferSenderAccountId ?? apprenticeship.FundingEmployerAccountId;
+        @event.EmployerDetails.FundingCommitmentId = apprenticeship.FundingCommitmentId;
+
+        return @event;
     }
 }

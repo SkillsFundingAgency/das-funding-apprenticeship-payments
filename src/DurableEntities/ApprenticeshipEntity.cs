@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Grpc.Core.Logging;
-using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,8 +6,9 @@ using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 {
@@ -42,6 +39,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
+
         public async Task ReleasePaymentsForCollectionPeriod(byte collectionPeriod)
         {
             await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(collectionPeriod, Model));
@@ -55,7 +53,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model = new ApprenticeshipEntityModel
             {
                 ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey,
-                Earnings = earningsGeneratedEvent.FundingPeriods.SelectMany(x => x.DeliveryPeriods).Select(y =>
+                FundingEmployerAccountId = earningsGeneratedEvent.EmployerAccountId,
+                EmployerType = earningsGeneratedEvent.EmployerType,
+                CourseCode = earningsGeneratedEvent.TrainingCode,
+                FundingCommitmentId = earningsGeneratedEvent.CommitmentId,
+                StartDate = earningsGeneratedEvent.StartDate,
+                TransferSenderAccountId = earningsGeneratedEvent.TransferSenderEmployerId,
+                Earnings = earningsGeneratedEvent.DeliveryPeriods.Select(y =>
                     new EarningEntityModel
                     {
                         AcademicYear = y.AcademicYear,

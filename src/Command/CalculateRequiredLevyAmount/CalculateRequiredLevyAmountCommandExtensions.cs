@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Payments.Model.Core.Entities;
+﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
 using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
@@ -14,13 +15,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.AgreedOnDate = null;
             e.AgreementId = null;
             e.AmountDue = command.Data.Amount;
-            e.ApprenticeshipEmployerType = 0;
+            e.ApprenticeshipEmployerType = command.Data.ApprenticeshipEmployerType == EmployerType.Levy ? ApprenticeshipEmployerType.Levy : ApprenticeshipEmployerType.NonLevy;
             e.ApprenticeshipId = command.Data.EmployerDetails.FundingCommitmentId;
             e.ApprenticeshipPriceEpisodeId = null;
             e.ClawbackSourcePaymentEventId = null;
             e.CollectionPeriod = new();
             e.CollectionPeriod.AcademicYear = command.Data.CollectionYear;
-            // e.CollectionPeriod.Period  =  command.Data.Period // TODO: ReleasePaymentsCommand -> CollectionPeriod
+            e.CollectionPeriod.Period = command.Data.CollectionPeriod;
             e.CompletionStatus = 1; // ongoing
             e.CompletionAmount = 0;
             e.ContractType = ContractType.Act1;
@@ -42,7 +43,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.LearningAim.ProgrammeType = 0;
             e.LearningAim.Reference = "ZPROG001";
             e.LearningAim.SequenceNumber = 0;
-            e.LearningAim.StandardCode = command.Data.CourseCode;
+            e.LearningAim.StandardCode = Convert.ToInt32(command.Data.CourseCode);
             e.LearningAim.StartDate = command.Data.Apprenticeship.StartDate;
             e.LearningAimSequenceNumber = 0;
             e.LearningStartDate = command.Data.Apprenticeship.StartDate;

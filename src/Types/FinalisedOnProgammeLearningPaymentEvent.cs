@@ -4,15 +4,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 public class FinalisedOnProgammeLearningPaymentEvent
 {
-    public long AccountId { get; set; }
     public DateTime? ActualEndDate { get; set; }
     public Guid ApprenticeshipKey { get; set; }
-    public byte CollectionMonth { get; set; }
+    public byte CollectionPeriod { get; set; }
     public short CollectionYear { get; set; }
     public decimal Amount { get; set; }
-    public EmployerType FundingType { get; set; } // Confirm if FinalisedOnProgammeLearningPayment.FundingType = EmployingApprenticeshipServiceAccount then 1
+    public EmployerType ApprenticeshipEmployerType { get; set; }
     public EmployerDetails EmployerDetails { get; set; }
     public ApprenticeshipEarning ApprenticeshipEarnings { get; set; }
     public Apprenticeship Apprenticeship { get; set; }
-    public int CourseCode { get; set; }
+    public string CourseCode { get; set; }
 }

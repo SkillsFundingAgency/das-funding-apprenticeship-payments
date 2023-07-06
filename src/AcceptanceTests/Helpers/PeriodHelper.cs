@@ -6,7 +6,7 @@ public static class PeriodHelper
 {
     public static void SetDeliveryPeriodsAccordingToCalendarMonths(this EarningsGeneratedEvent earningsGeneratedEvent)
     {
-        foreach (var deliveryPeriod in earningsGeneratedEvent.FundingPeriods.SelectMany(fundingPeriod => fundingPeriod.DeliveryPeriods))
+        foreach (var deliveryPeriod in earningsGeneratedEvent.DeliveryPeriods)
         {
             deliveryPeriod.AcademicYear = deliveryPeriod.CalenderYear.ToAcademicYear(deliveryPeriod.CalendarMonth);
             deliveryPeriod.Period = deliveryPeriod.CalendarMonth.ToDeliveryPeriod();

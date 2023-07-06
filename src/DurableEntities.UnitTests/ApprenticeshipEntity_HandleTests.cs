@@ -18,13 +18,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
 {
     public class ApprenticeshipEntity_HandleTests
     {
-        private ApprenticeshipEntity _sut;
-        private EarningsGeneratedEvent _earningsGeneratedEvent;
-        private Mock<ICalculateApprenticeshipPaymentsCommandHandler> _calculateApprenticeshipPaymentsCommandHandler;
-        private Mock<IDomainEventDispatcher> _domainEventDispatcher;
-        private Fixture _fixture;
-        private Apprenticeship _apprenticeship;
-        private IEnumerable<EarningEntityModel> _expectedEarnings;
+        private ApprenticeshipEntity _sut = null!;
+        private EarningsGeneratedEvent _earningsGeneratedEvent = null!;
+        private Mock<ICalculateApprenticeshipPaymentsCommandHandler> _calculateApprenticeshipPaymentsCommandHandler = null!;
+        private Mock<IDomainEventDispatcher> _domainEventDispatcher = null!;
+        private Fixture _fixture = null!;
+        private Apprenticeship _apprenticeship = null!;
+        private IEnumerable<EarningEntityModel> _expectedEarnings = null!;
 
         [SetUp]
         public async Task SetUp()
@@ -32,9 +32,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
             _fixture = new Fixture();
 
             _earningsGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
-            _earningsGeneratedEvent.FundingPeriods.ForEach(f => f.DeliveryPeriods.ForEach(d => d.AcademicYear = AcademicYearHelper.GetRandomValidAcademicYear()));
+            _earningsGeneratedEvent.DeliveryPeriods.ForEach(d => d.AcademicYear = AcademicYearHelper.GetRandomValidAcademicYear());
 
-            _expectedEarnings = _earningsGeneratedEvent.FundingPeriods.SelectMany(x => x.DeliveryPeriods).Select(y =>
+            _expectedEarnings = _earningsGeneratedEvent.DeliveryPeriods.Select(y =>
                 new EarningEntityModel
                 {
                     DeliveryPeriod = y.Period,

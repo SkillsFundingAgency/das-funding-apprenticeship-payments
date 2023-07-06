@@ -10,12 +10,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests;
 
 public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
 {
-    private FinalisedOnProgammeLearningPaymentEventBuilder _sut;
-    private FinalisedOnProgammeLearningPaymentEvent _result;
-    private Fixture _fixture;
-    private PaymentEntityModel _paymentEntityModel;
-    private Guid _apprenticeshipKey;
-    private short _totalNumberOfPayments;
+    private FinalisedOnProgammeLearningPaymentEventBuilder _sut = null!;
+    private FinalisedOnProgammeLearningPaymentEvent _result = null!;
+    private Fixture _fixture = null!;
+    private PaymentEntityModel _paymentEntityModel = null!;
+    private ApprenticeshipEntityModel _apprenticeship = null!;
 
     [SetUp]
     public void SetUp()
@@ -24,16 +23,15 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
         _fixture = new Fixture();
 
         _paymentEntityModel = _fixture.Create<PaymentEntityModel>();
-        _apprenticeshipKey = Guid.NewGuid();
-        _totalNumberOfPayments = _fixture.Create<short>();
+        _apprenticeship = _fixture.Create<ApprenticeshipEntityModel>();
 
-        _result = _sut.Build(_paymentEntityModel, _apprenticeshipKey, _totalNumberOfPayments);
+        _result = _sut.Build(_paymentEntityModel, _apprenticeship);
     }
 
     [Test]
     public void ShouldPopulate_TheApprenticeshipKey_Correctly()
     {
-        _result.ApprenticeshipKey.Should().Be(_apprenticeshipKey);
+        _result.ApprenticeshipKey.Should().Be(_apprenticeship.ApprenticeshipKey);
     }
 
     [Test]
@@ -45,7 +43,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     [Test]
     public void ShouldPopulate_TheCollectionMonth_Correctly()
     {
-        _result.CollectionMonth.Should().Be(_paymentEntityModel.CollectionPeriod);
+        _result.CollectionPeriod.Should().Be(_paymentEntityModel.CollectionPeriod);
     }
 
     [Test]
@@ -69,19 +67,19 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     [Test]
     public void ShouldPopulate_NumberOfInstalments_Correctly()
     {
-        _result.ApprenticeshipEarnings.NumberOfInstalments.Should().Be(_totalNumberOfPayments);
+        _result.ApprenticeshipEarnings.NumberOfInstalments.Should().Be((short)_apprenticeship.Earnings.Count);
     }
 
-    [Test, Ignore("TODO")]
-    public void ShouldPopulate_AccountId_Correctly()
+    [Test]
+    public void ShouldPopulate_EmployingAccountId_Correctly()
     {
-        _result.AccountId.Should().Be(123456);
+        _result.EmployerDetails.EmployingAccountId.Should().Be(_apprenticeship.FundingEmployerAccountId);
     }
 
-    [Test, Ignore("TODO")]
+    [Test]
     public void ShouldPopulate_TransferSenderAccountId_Correctly()
     {
-        _result.EmployerDetails.FundingAccountId.Should().Be(123456);
+        _result.EmployerDetails.FundingAccountId.Should().Be(_apprenticeship.TransferSenderAccountId);
     }
 
     [Test]
@@ -90,22 +88,27 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
         _result.ApprenticeshipEarnings.DeliveryPeriodAmount.Should().Be(_paymentEntityModel.Amount);
     }
 
-
-    [Test, Ignore("TODO")]
+    [Test]
     public void ShouldPopulate_FundingCommitmentId_Correctly()
     {
-        _result.EmployerDetails.FundingCommitmentId.Should().Be(1234);
+        _result.EmployerDetails.FundingCommitmentId.Should().Be(_apprenticeship.FundingCommitmentId);
     }
 
-    [Test, Ignore("TODO")]
+    [Test]
     public void ShouldPopulate_ApprenticeshipEmployerType_Correctly()
     {
-        // ??????????????? non levy const?
+        _result.ApprenticeshipEmployerType.Should().Be(_apprenticeship.EmployerType);
     }
 
-    [Test, Ignore("TODO")]
+    [Test]
     public void ShouldPopulate_CourseCode_Correctly()
     {
-        _result.CourseCode.Should().Be(545454);
+        _result.CourseCode.Should().Be(_apprenticeship.CourseCode);
+    }
+
+    [Test]
+    public void ShouldPopulate_StartDate_Correctly()
+    {
+        _result.Apprenticeship.StartDate.Should().Be(_apprenticeship.StartDate);
     }
 }
