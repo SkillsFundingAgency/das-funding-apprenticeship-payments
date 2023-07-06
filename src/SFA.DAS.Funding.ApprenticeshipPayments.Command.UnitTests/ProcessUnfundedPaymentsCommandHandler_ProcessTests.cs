@@ -36,7 +36,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
 
             _messageSession = new Mock<IMessageSession>();
             _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
-            _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), It.IsAny<Guid>())).Returns(_expectedEvent);
+            _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), It.IsAny<ApprenticeshipEntityModel>())).Returns(_expectedEvent);
             _sut = new ProcessUnfundedPaymentsCommandHandler(_messageSession.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
             await _sut.Process(_command);
@@ -45,8 +45,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         [Test]
         public void ThenOnlyExpectedPaymentIsReleased()
         {
-            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount == 100), It.IsAny<Guid>()));
-            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount != 100), It.IsAny<Guid>()), Times.Never);
+            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount == 100), It.IsAny<ApprenticeshipEntityModel>()));
+            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount != 100), It.IsAny<ApprenticeshipEntityModel>()), Times.Never);
         }
 
         [Test]
