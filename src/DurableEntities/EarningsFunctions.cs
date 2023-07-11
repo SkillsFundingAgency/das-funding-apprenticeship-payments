@@ -17,10 +17,22 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         public async Task EarningsGeneratedEventServiceBusTrigger(
             [NServiceBusTrigger(Endpoint = QueueNames.EarningsGenerated)] EarningsGeneratedEvent earningsGeneratedEvent,
             [DurableClient] IDurableEntityClient client,
+            [DurableClient] IDurableOrchestrationClient orchestrationClient,
             ILogger log)
         {
+            await orchestrationClient.StartNewAsync("HandleEarningsGeneratedOrchestration", earningsGeneratedEvent);
+
+        }
+
+        [FunctionName("HandleEarningsGeneratedOrchestration")]
+        public static async Task Run(
+            [OrchestrationTrigger] IDurableOrchestrationContext context, EarningsGeneratedEvent earningsGeneratedEvent)
+        {
             var entityId = new EntityId(nameof(ApprenticeshipEntity), earningsGeneratedEvent.ApprenticeshipKey.ToString());
-            await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsGeneratedEvent), earningsGeneratedEvent);
+
+            await context.CallEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsGeneratedEvent), earningsGeneratedEvent);
+
+            //then publish? seperate activity?
         }
 
         [FunctionName(nameof(EarningsGeneratedEventHttpTrigger))]
