@@ -50,47 +50,48 @@ public class CalculateRequiredLevyAmountStepDefinitions
     {
         var inboundEvent = (FinalisedOnProgammeLearningPaymentEvent)_scenarioContext[nameof(FinalisedOnProgammeLearningPaymentEvent)];
 
-        return outboundEvent.ApprenticeshipId == inboundEvent.EmployerDetails.FundingCommitmentId
-               && outboundEvent.AccountId == inboundEvent.EmployerDetails.EmployingAccountId
-            && outboundEvent.ActualEndDate == null
-            && outboundEvent.AgreedOnDate == null
-            && outboundEvent.AgreementId == null
-            && outboundEvent.AmountDue == inboundEvent.Amount
-            && outboundEvent.ApprenticeshipEmployerType == (inboundEvent.ApprenticeshipEmployerType == EmployerType.Levy ? ApprenticeshipEmployerType.Levy : ApprenticeshipEmployerType.NonLevy)
-            && outboundEvent.ApprenticeshipId == inboundEvent.EmployerDetails.FundingCommitmentId
-            && outboundEvent.ApprenticeshipPriceEpisodeId == null
-            && outboundEvent.ClawbackSourcePaymentEventId == null
-            && outboundEvent.CollectionPeriod.AcademicYear == inboundEvent.CollectionYear
-            && outboundEvent.CompletionStatus == 1 // ongoing
-            && outboundEvent.CompletionAmount == 0
-            && outboundEvent.ContractType == ContractType.Act1
-            && outboundEvent.DeliveryPeriod == inboundEvent.ApprenticeshipEarning.DeliveryPeriod
-            && outboundEvent.EarningEventId == inboundEvent.ApprenticeshipEarning.ApprenticeshipEarningsId
-            && outboundEvent.IlrFileName == ""
-            && outboundEvent.InstalmentAmount == inboundEvent.ApprenticeshipEarning.DeliveryPeriodAmount
-            && outboundEvent.Learner.ReferenceNumber == null
-            && outboundEvent.Learner.Uln == inboundEvent.ApprenticeshipEarning.Uln
-            && outboundEvent.LearningAim.FrameworkCode == 0
-            && outboundEvent.LearningAim.FundingLineType == inboundEvent.ApprenticeshipEarning.FundingLineType
-            && outboundEvent.LearningAim.PathwayCode == 0
-            && outboundEvent.LearningAim.ProgrammeType == 0
-            && outboundEvent.LearningAim.Reference == "ZPROG001"
-            && outboundEvent.LearningAim.SequenceNumber == 0
-            && outboundEvent.LearningAim.StandardCode == Convert.ToInt32(inboundEvent.CourseCode)
-            && outboundEvent.LearningAim.StartDate == inboundEvent.Apprenticeship.StartDate
-            && outboundEvent.LearningAimSequenceNumber == 0
-            && outboundEvent.LearningStartDate == inboundEvent.Apprenticeship.StartDate
-            && outboundEvent.NumberOfInstalments == inboundEvent.ApprenticeshipEarning.NumberOfInstalments
-            && outboundEvent.OnProgrammeEarningType == OnProgrammeEarningType.Learning
-            && outboundEvent.PlannedEndDate == inboundEvent.ApprenticeshipEarning.PlannedEndDate
-            && outboundEvent.PriceEpisodeIdentifier == ""
-            && outboundEvent.Priority == 0
-            && outboundEvent.ReportingAimFundingLineType == ""
-            && outboundEvent.SfaContributionPercentage == inboundEvent.ApprenticeshipEarning.GovernmentContributionPercentage
-            && outboundEvent.StartDate == inboundEvent.Apprenticeship.StartDate
-            && outboundEvent.TransferSenderAccountId == inboundEvent.EmployerDetails.FundingAccountId
-            && outboundEvent.Ukprn == inboundEvent.ApprenticeshipEarning.ProviderIdentifier
-            && outboundEvent.TransactionType == TransactionType.Learning
-            ;
+        if (outboundEvent.ApprenticeshipId != inboundEvent.EmployerDetails.FundingCommitmentId) return false;
+
+        outboundEvent.AccountId.Should().Be(inboundEvent.EmployerDetails.EmployingAccountId);
+        outboundEvent.ActualEndDate.Should().Be(null);
+        outboundEvent.AgreedOnDate.Should().Be(null);
+        outboundEvent.AgreementId.Should().Be(null);
+        outboundEvent.AmountDue.Should().Be(inboundEvent.Amount);
+        outboundEvent.ApprenticeshipEmployerType.Should().Be((inboundEvent.ApprenticeshipEmployerType == EmployerType.Levy ? ApprenticeshipEmployerType.Levy : ApprenticeshipEmployerType.NonLevy));
+        outboundEvent.ApprenticeshipPriceEpisodeId.Should().Be(null);
+        outboundEvent.ClawbackSourcePaymentEventId.Should().Be(null);
+        outboundEvent.CollectionPeriod.AcademicYear.Should().Be(inboundEvent.CollectionYear);
+        outboundEvent.CompletionStatus.Should().Be(1); // ongoing
+        outboundEvent.CompletionAmount.Should().Be(0);
+        outboundEvent.ContractType.Should().Be(ContractType.Act1);
+        outboundEvent.DeliveryPeriod.Should().Be(inboundEvent.ApprenticeshipEarning.DeliveryPeriod);
+        outboundEvent.EarningEventId.Should().Be(inboundEvent.ApprenticeshipEarning.ApprenticeshipEarningsId);
+        outboundEvent.IlrFileName.Should().Be("");
+        outboundEvent.InstalmentAmount.Should().Be(inboundEvent.ApprenticeshipEarning.DeliveryPeriodAmount);
+        outboundEvent.Learner.ReferenceNumber.Should().Be(null);
+        outboundEvent.Learner.Uln.Should().Be(inboundEvent.ApprenticeshipEarning.Uln);
+        outboundEvent.LearningAim.FrameworkCode.Should().Be(0);
+        outboundEvent.LearningAim.FundingLineType.Should().Be(inboundEvent.ApprenticeshipEarning.FundingLineType);
+        outboundEvent.LearningAim.PathwayCode.Should().Be(0);
+        outboundEvent.LearningAim.ProgrammeType.Should().Be(0);
+        outboundEvent.LearningAim.Reference.Should().Be("ZPROG001");
+        outboundEvent.LearningAim.SequenceNumber.Should().Be(0);
+        outboundEvent.LearningAim.StandardCode.Should().Be(Convert.ToInt32(inboundEvent.CourseCode));
+        outboundEvent.LearningAim.StartDate.Should().Be(inboundEvent.Apprenticeship.StartDate);
+        outboundEvent.LearningAimSequenceNumber.Should().Be(0);
+        outboundEvent.LearningStartDate.Should().Be(inboundEvent.Apprenticeship.StartDate);
+        outboundEvent.NumberOfInstalments.Should().Be(inboundEvent.ApprenticeshipEarning.NumberOfInstalments);
+        outboundEvent.OnProgrammeEarningType.Should().Be(OnProgrammeEarningType.Learning);
+        outboundEvent.PlannedEndDate.Should().Be(inboundEvent.ApprenticeshipEarning.PlannedEndDate);
+        outboundEvent.PriceEpisodeIdentifier.Should().Be("");
+        outboundEvent.Priority.Should().Be(0);
+        outboundEvent.ReportingAimFundingLineType.Should().Be("");
+        outboundEvent.SfaContributionPercentage.Should().Be(inboundEvent.ApprenticeshipEarning.GovernmentContributionPercentage);
+        outboundEvent.StartDate.Should().Be(inboundEvent.Apprenticeship.StartDate);
+        outboundEvent.TransferSenderAccountId.Should().Be(inboundEvent.EmployerDetails.FundingAccountId);
+        outboundEvent.Ukprn.Should().Be(inboundEvent.ApprenticeshipEarning.ProviderIdentifier);
+        outboundEvent.TransactionType.Should().Be(TransactionType.Learning);
+
+        return true;
     }
 }

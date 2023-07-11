@@ -173,7 +173,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Sends_CalculatedRequiredLevyAmount_IlrFileName_Null()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.IlrFileName == null)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.IlrFileName == "")),
             Times.Once());
     }
 

@@ -29,7 +29,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.EarningEventId = command.Data.ApprenticeshipEarning.ApprenticeshipEarningsId;
             e.EventId = Guid.NewGuid();
             e.EventTime = DateTime.UtcNow;
-            e.IlrFileName = null;
+            e.IlrFileName = "";
             //e.IlrSubmissionDateTime = null; // TODO: Modify IPaymentsEvent in PV2
             e.InstalmentAmount = command.Data.ApprenticeshipEarning.DeliveryPeriodAmount;
             e.JobId = 0; // TODO: tbc, make it configurable?
