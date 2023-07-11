@@ -28,7 +28,7 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
         var earningsGeneratedEvent = (EarningsGeneratedEvent)_scenarioContext[ContextKeys.EarningsGeneratedEvent];
 
         return finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == ((byte)DateTime.Now.Month).ToDeliveryPeriod() &&
+               finalisedOnProgammeLearningPaymentEvent.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod() &&
                finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString() == earningsGeneratedEvent.Uln &&
                finalisedOnProgammeLearningPaymentEvent.Amount == earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount &&
                finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate == earningsGeneratedEvent.StartDate &&

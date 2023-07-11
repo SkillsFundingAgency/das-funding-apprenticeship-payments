@@ -11,7 +11,7 @@ public class FinalisedOnProgammeLearningPaymentEvent
     public decimal Amount { get; set; }
     public EmployerType ApprenticeshipEmployerType { get; set; }
     public EmployerDetails EmployerDetails { get; set; }
-    public ApprenticeshipEarning ApprenticeshipEarnings { get; set; }
+    public ApprenticeshipEarning ApprenticeshipEarning { get; set; }
     public Apprenticeship Apprenticeship { get; set; }
     public string CourseCode { get; set; }
 }

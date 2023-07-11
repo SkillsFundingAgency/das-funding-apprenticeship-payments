@@ -1,6 +1,7 @@
 using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
@@ -140,7 +141,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Sends_CalculatedRequiredLevyAmount_DeliveryPeriod_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsDeliveryPeriod()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.DeliveryPeriod == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarnings.DeliveryPeriod)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.DeliveryPeriod == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.DeliveryPeriod)),
             Times.Once());
     }
 
@@ -148,7 +149,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Sends_CalculatedRequiredLevyAmount_EarningEventId_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsId()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.EarningEventId == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarnings.ApprenticeshipEarningsId)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.EarningEventId == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ApprenticeshipEarningsId)),
             Times.Once());
     }
 
@@ -176,20 +177,19 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
             Times.Once());
     }
 
-//[Test]
-//public void Process_Sends_CalculatedRequiredLevyAmount_IlrSubmissionDateTime_Null()
-//{
-//    _busEndpoint.Verify(ms => ms.Send(
-//        It.Is<CalculatedRequiredLevyAmount>(e => e.IlrSubmissionDateTime == null)),
-//        It.IsAny<SendOptions>()),
-//       
-
+    //[Test]
+    //public void Process_Sends_CalculatedRequiredLevyAmount_IlrSubmissionDateTime_Null()
+    //{
+    //    _busEndpoint.Verify(ms => ms.Send(
+    //            It.Is<CalculatedRequiredLevyAmount>(e => e.IlrSubmissionDateTime == null)),
+    //        Times.Once());
+    //}
 
     [Test]
     public void Process_Sends_CalculatedRequiredLevyAmount_InstalmentAmount_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsDeliveryPeriodAmount()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.InstalmentAmount == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarnings.DeliveryPeriodAmount)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.InstalmentAmount == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.DeliveryPeriodAmount)),
             Times.Once());
     }
 
@@ -213,7 +213,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Sends_CalculatedRequiredLevyAmount_LearnerUln_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsUln()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.Learner.Uln == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarnings.Uln)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.Learner.Uln == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln)),
             Times.Once());
     }
 
@@ -229,7 +229,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Sends_CalculatedRequiredLevyAmount_LearningAimFundingLineType_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsFundingLineType()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.LearningAim.FundingLineType == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarnings.FundingLineType)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.LearningAim.FundingLineType == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.FundingLineType)),
             Times.Once());
     }
 
@@ -294,7 +294,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Sends_CalculatedRequiredLevyAmount_NumberOfInstalments_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsNumberOfInstalments()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.NumberOfInstalments == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarnings.NumberOfInstalments)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.NumberOfInstalments == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.NumberOfInstalments)),
             Times.Once());
     }
 
@@ -310,7 +310,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Sends_CalculatedRequiredLevyAmount_PlannedEndDate_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsPlannedEndDate()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.PlannedEndDate == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarnings.PlannedEndDate)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.PlannedEndDate == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate)),
             Times.Once());
     }
 

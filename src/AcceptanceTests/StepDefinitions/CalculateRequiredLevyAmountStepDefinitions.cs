@@ -66,7 +66,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
             && outboundEvent.ContractType == ContractType.Act1
             && outboundEvent.DeliveryPeriod == inboundEvent.ApprenticeshipEarning.DeliveryPeriod
             && outboundEvent.EarningEventId == inboundEvent.ApprenticeshipEarning.ApprenticeshipEarningsId
-            && outboundEvent.IlrFileName == null
+            && outboundEvent.IlrFileName == ""
             && outboundEvent.InstalmentAmount == inboundEvent.ApprenticeshipEarning.DeliveryPeriodAmount
             && outboundEvent.Learner.ReferenceNumber == null
             && outboundEvent.Learner.Uln == inboundEvent.ApprenticeshipEarning.Uln

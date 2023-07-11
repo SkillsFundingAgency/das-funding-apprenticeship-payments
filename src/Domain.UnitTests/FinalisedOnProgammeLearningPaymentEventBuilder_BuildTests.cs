@@ -55,19 +55,19 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     [Test]
     public void ShouldPopulate_GovernmentContributionPercentage_Correctly()
     {
-        _result.ApprenticeshipEarnings.GovernmentContributionPercentage.Should().Be(0.95m);
+        _result.ApprenticeshipEarning.GovernmentContributionPercentage.Should().Be(0.95m);
     }
 
     [Test]
     public void ShouldPopulate_EarningEventId_Correctly()
     {
-        _result.ApprenticeshipEarnings.ApprenticeshipEarningsId.Should().NotBe(Guid.Empty);
+        _result.ApprenticeshipEarning.ApprenticeshipEarningsId.Should().NotBe(Guid.Empty);
     }
 
     [Test]
     public void ShouldPopulate_NumberOfInstalments_Correctly()
     {
-        _result.ApprenticeshipEarnings.NumberOfInstalments.Should().Be((short)_apprenticeship.Earnings.Count);
+        _result.ApprenticeshipEarning.NumberOfInstalments.Should().Be((short)_apprenticeship.Earnings.Count);
     }
 
     [Test]
@@ -85,7 +85,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     [Test]
     public void ShouldPopulate_DeliveryPeriodAmount_Correctly()
     {
-        _result.ApprenticeshipEarnings.DeliveryPeriodAmount.Should().Be(_paymentEntityModel.Amount);
+        _result.ApprenticeshipEarning.DeliveryPeriodAmount.Should().Be(_paymentEntityModel.Amount);
     }
 
     [Test]

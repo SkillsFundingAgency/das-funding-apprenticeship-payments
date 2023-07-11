@@ -39,7 +39,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
-
         public async Task ReleasePaymentsForCollectionPeriod(byte collectionPeriod)
         {
             await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(collectionPeriod, Model));
@@ -53,22 +52,19 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model = new ApprenticeshipEntityModel();
             Model.ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey;
             Model.Earnings = earningsGeneratedEvent.DeliveryPeriods.Select(y =>
-                FundingEmployerAccountId = earningsGeneratedEvent.EmployerAccountId,
-                EmployerType = earningsGeneratedEvent.EmployerType,
-                CourseCode = earningsGeneratedEvent.TrainingCode,
-                FundingCommitmentId = earningsGeneratedEvent.CommitmentId,
-                StartDate = earningsGeneratedEvent.StartDate,
-                TransferSenderAccountId = earningsGeneratedEvent.TransferSenderEmployerId,
-                Earnings = earningsGeneratedEvent.DeliveryPeriods.Select(y =>
-                    new EarningEntityModel
-                    {
-                        AcademicYear = y.AcademicYear,
-                        Amount = y.LearningAmount, 
-                        DeliveryPeriod = y.Period,
-                        CollectionMonth = y.CalendarMonth,
-                        CollectionYear = y.CalenderYear
-                    }).ToList()
-            };
+            {
+                var model = new EarningEntityModel();
+                model.AcademicYear = y.AcademicYear;
+                model.Amount = y.LearningAmount;
+                model.DeliveryPeriod = y.Period;
+                model.CollectionMonth = y.CalendarMonth;
+                model.CollectionYear = y.CalenderYear;
+                return model;
+            }).ToList();
+            Model.StartDate = earningsGeneratedEvent.StartDate;
+            Model.Ukprn = earningsGeneratedEvent.ProviderId;
+            Model.Uln = long.Parse(earningsGeneratedEvent.Uln);
+            Model.PlannedEndDate = earningsGeneratedEvent.ActualEndDate;
         }
     }
 }

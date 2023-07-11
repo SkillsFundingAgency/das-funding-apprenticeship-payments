@@ -18,12 +18,12 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.Apprenticeship.StartDate = apprenticeship.StartDate;
 
         @event.ApprenticeshipKey = apprenticeship.ApprenticeshipKey;
-        @event.ApprenticeshipEarnings = new ApprenticeshipEarning();
-        @event.ApprenticeshipEarnings.ApprenticeshipEarningsId = Guid.NewGuid();
-        @event.ApprenticeshipEarnings.DeliveryPeriod = payment.DeliveryPeriod;
-        @event.ApprenticeshipEarnings.DeliveryPeriodAmount = payment.Amount;
-        @event.ApprenticeshipEarnings.GovernmentContributionPercentage = 0.95m;
-        @event.ApprenticeshipEarnings.NumberOfInstalments = (short)apprenticeship.Payments.Count;
+        @event.ApprenticeshipEarning = new ApprenticeshipEarning();
+        @event.ApprenticeshipEarning.ApprenticeshipEarningsId = Guid.NewGuid();
+        @event.ApprenticeshipEarning.DeliveryPeriod = payment.DeliveryPeriod;
+        @event.ApprenticeshipEarning.DeliveryPeriodAmount = payment.Amount;
+        @event.ApprenticeshipEarning.GovernmentContributionPercentage = 0.95m;
+        @event.ApprenticeshipEarning.NumberOfInstalments = (short)apprenticeship.Payments.Count;
 
         @event.CollectionYear = payment.CollectionYear;
         @event.CollectionPeriod = payment.CollectionPeriod;
