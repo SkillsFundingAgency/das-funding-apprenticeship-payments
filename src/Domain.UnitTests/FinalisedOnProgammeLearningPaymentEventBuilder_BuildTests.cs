@@ -111,4 +111,22 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     {
         _result.Apprenticeship.StartDate.Should().Be(_apprenticeship.StartDate);
     }
+
+    [Test]
+    public void ShouldPopulate_Uln_Correctly()
+    {
+        _result.ApprenticeshipEarning.Uln.Should().Be(_apprenticeship.Uln);
+    }
+
+    [Test]
+    public void ShouldPopulate_PlannedEndDate_Correctly()
+    {
+        _result.ApprenticeshipEarning.PlannedEndDate.Should().Be(_apprenticeship.PlannedEndDate);
+    }
+
+    [Test]
+    public void ShouldPopulate_ProviderIdentifier_Correctly()
+    {
+        _result.ApprenticeshipEarning.ProviderIdentifier.Should().Be(_apprenticeship.Ukprn);
+    }
 }

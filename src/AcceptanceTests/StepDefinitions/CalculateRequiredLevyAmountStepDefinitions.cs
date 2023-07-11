@@ -96,6 +96,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         outboundEvent.IlrSubmissionDateTime.Year.Should().Be(short.Parse($"20{inboundEvent.CollectionYear.ToString()[..2]}"));
         outboundEvent.IlrSubmissionDateTime.Month.Should().Be(8);
         outboundEvent.IlrSubmissionDateTime.Day.Should().Be(1);
+        outboundEvent.JobId.Should().Be(-1);
 
         return true;
     }

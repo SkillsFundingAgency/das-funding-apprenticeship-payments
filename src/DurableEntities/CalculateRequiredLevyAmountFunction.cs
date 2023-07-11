@@ -24,7 +24,7 @@ public class CalculateRequiredLevyAmountFunction
         ILogger log)
     {
         log.LogInformation(
-            $"Triggered {nameof(CalculateRequiredLevyAmountFunction)} function for Apprenticeship: {@event.ApprenticeshipKey}");
+            "Triggered {0} function for ApprenticeshipKey: {1}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey);
 
         await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
     }

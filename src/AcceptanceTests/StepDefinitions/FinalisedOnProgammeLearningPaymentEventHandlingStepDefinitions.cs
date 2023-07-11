@@ -27,12 +27,20 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
     {
         var earningsGeneratedEvent = (EarningsGeneratedEvent)_scenarioContext[ContextKeys.EarningsGeneratedEvent];
 
-        return finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               finalisedOnProgammeLearningPaymentEvent.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod() &&
-               finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString() == earningsGeneratedEvent.Uln &&
-               finalisedOnProgammeLearningPaymentEvent.Amount == earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount &&
-               finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate == earningsGeneratedEvent.StartDate &&
-               finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate == earningsGeneratedEvent.ActualEndDate &&
-               finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier == earningsGeneratedEvent.ProviderId;
+        if (finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey != (Guid)_scenarioContext["apprenticeshipKey"]) return false;
+
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey.Should().Be(earningsGeneratedEvent.ApprenticeshipKey);
+        finalisedOnProgammeLearningPaymentEvent.CollectionPeriod.Should().Be(((byte)DateTime.Now.Month).ToDeliveryPeriod());
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString().Should().Be(earningsGeneratedEvent.Uln);
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate.Should().Be(earningsGeneratedEvent.StartDate);
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate.Should().Be(earningsGeneratedEvent.ActualEndDate);
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier.Should().Be(earningsGeneratedEvent.ProviderId);
+
+        var expectedAmount = earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount; 
+        finalisedOnProgammeLearningPaymentEvent.Amount.Should().Be(expectedAmount);
+
+
+        return true;
+
     }
 }

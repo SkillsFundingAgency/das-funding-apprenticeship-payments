@@ -18,12 +18,14 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
     public async Task Process(ProcessUnfundedPaymentsCommand command)
     {
+        ArgumentNullException.ThrowIfNull(command.Model, "ApprenticeshipEntityModel");
+
         var paymentsToSend = command.Model.Payments
             .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.SentForPayment == false)
             .ToArray();
 
         _logger.LogInformation(paymentsToSend.Any()
-            ? $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing {paymentsToSend.Count()} payments for collection period {command.CollectionPeriod}"
+            ? $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing {paymentsToSend.Length} payments for collection period {command.CollectionPeriod}"
             : $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  No payments to publish for collection period {command.CollectionPeriod}");
 
         foreach (var payment in paymentsToSend)
