@@ -92,6 +92,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         outboundEvent.TransferSenderAccountId.Should().Be(inboundEvent.EmployerDetails.FundingAccountId);
         outboundEvent.Ukprn.Should().Be(inboundEvent.ApprenticeshipEarning.ProviderIdentifier);
         outboundEvent.TransactionType.Should().Be(TransactionType.Learning);
+        outboundEvent.JobId.Should().Be(-1);
 
         return true;
     }
