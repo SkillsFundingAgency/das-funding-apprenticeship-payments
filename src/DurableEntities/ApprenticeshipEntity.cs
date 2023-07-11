@@ -50,9 +50,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         private void MapEarningsGeneratedEventProperties(EarningsGeneratedEvent earningsGeneratedEvent)
         {
-            Model = new ApprenticeshipEntityModel
-            {
-                ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey,
+            Model = new ApprenticeshipEntityModel();
+            Model.ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey;
+            Model.Earnings = earningsGeneratedEvent.DeliveryPeriods.Select(y =>
                 FundingEmployerAccountId = earningsGeneratedEvent.EmployerAccountId,
                 EmployerType = earningsGeneratedEvent.EmployerType,
                 CourseCode = earningsGeneratedEvent.TrainingCode,

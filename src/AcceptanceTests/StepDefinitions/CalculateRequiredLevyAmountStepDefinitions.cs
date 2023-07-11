@@ -64,14 +64,14 @@ public class CalculateRequiredLevyAmountStepDefinitions
             && outboundEvent.CompletionStatus == 1 // ongoing
             && outboundEvent.CompletionAmount == 0
             && outboundEvent.ContractType == ContractType.Act1
-            && outboundEvent.DeliveryPeriod == inboundEvent.ApprenticeshipEarnings.DeliveryPeriod
-            && outboundEvent.EarningEventId == inboundEvent.ApprenticeshipEarnings.ApprenticeshipEarningsId
+            && outboundEvent.DeliveryPeriod == inboundEvent.ApprenticeshipEarning.DeliveryPeriod
+            && outboundEvent.EarningEventId == inboundEvent.ApprenticeshipEarning.ApprenticeshipEarningsId
             && outboundEvent.IlrFileName == null
-            && outboundEvent.InstalmentAmount == inboundEvent.ApprenticeshipEarnings.DeliveryPeriodAmount
+            && outboundEvent.InstalmentAmount == inboundEvent.ApprenticeshipEarning.DeliveryPeriodAmount
             && outboundEvent.Learner.ReferenceNumber == null
-            && outboundEvent.Learner.Uln == inboundEvent.ApprenticeshipEarnings.Uln
+            && outboundEvent.Learner.Uln == inboundEvent.ApprenticeshipEarning.Uln
             && outboundEvent.LearningAim.FrameworkCode == 0
-            && outboundEvent.LearningAim.FundingLineType == inboundEvent.ApprenticeshipEarnings.FundingLineType
+            && outboundEvent.LearningAim.FundingLineType == inboundEvent.ApprenticeshipEarning.FundingLineType
             && outboundEvent.LearningAim.PathwayCode == 0
             && outboundEvent.LearningAim.ProgrammeType == 0
             && outboundEvent.LearningAim.Reference == "ZPROG001"
@@ -80,16 +80,16 @@ public class CalculateRequiredLevyAmountStepDefinitions
             && outboundEvent.LearningAim.StartDate == inboundEvent.Apprenticeship.StartDate
             && outboundEvent.LearningAimSequenceNumber == 0
             && outboundEvent.LearningStartDate == inboundEvent.Apprenticeship.StartDate
-            && outboundEvent.NumberOfInstalments == inboundEvent.ApprenticeshipEarnings.NumberOfInstalments
+            && outboundEvent.NumberOfInstalments == inboundEvent.ApprenticeshipEarning.NumberOfInstalments
             && outboundEvent.OnProgrammeEarningType == OnProgrammeEarningType.Learning
-            && outboundEvent.PlannedEndDate == inboundEvent.ApprenticeshipEarnings.PlannedEndDate
+            && outboundEvent.PlannedEndDate == inboundEvent.ApprenticeshipEarning.PlannedEndDate
             && outboundEvent.PriceEpisodeIdentifier == ""
             && outboundEvent.Priority == 0
             && outboundEvent.ReportingAimFundingLineType == ""
-            && outboundEvent.SfaContributionPercentage == inboundEvent.ApprenticeshipEarnings.GovernmentContributionPercentage
+            && outboundEvent.SfaContributionPercentage == inboundEvent.ApprenticeshipEarning.GovernmentContributionPercentage
             && outboundEvent.StartDate == inboundEvent.Apprenticeship.StartDate
             && outboundEvent.TransferSenderAccountId == inboundEvent.EmployerDetails.FundingAccountId
-            && outboundEvent.Ukprn == inboundEvent.ApprenticeshipEarnings.ProviderIdentifier
+            && outboundEvent.Ukprn == inboundEvent.ApprenticeshipEarning.ProviderIdentifier
             && outboundEvent.TransactionType == TransactionType.Learning
             ;
     }
