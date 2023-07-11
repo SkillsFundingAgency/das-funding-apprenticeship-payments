@@ -24,6 +24,10 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.ApprenticeshipEarning.DeliveryPeriodAmount = payment.Amount;
         @event.ApprenticeshipEarning.GovernmentContributionPercentage = Constants.ApprenticeshipEarningGovernmentContributionPercentage;
         @event.ApprenticeshipEarning.NumberOfInstalments = (short)apprenticeship.Payments.Count;
+        @event.ApprenticeshipEarning.PlannedEndDate = apprenticeship.PlannedEndDate;
+        @event.ApprenticeshipEarning.ProviderIdentifier = apprenticeship.Ukprn;
+        @event.ApprenticeshipEarning.StartDate = apprenticeship.StartDate;
+        @event.ApprenticeshipEarning.Uln = apprenticeship.Uln;
 
         @event.CollectionYear = payment.CollectionYear;
         @event.CollectionPeriod = payment.CollectionPeriod;

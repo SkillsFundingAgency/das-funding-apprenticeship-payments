@@ -1,7 +1,7 @@
 ﻿@EarningsGeneratedEndpoint
 @ReleasePaymentsEndpoint
 @PaymentsGeneratedEndpoint
-@FinalisedOnProgammeLearningPaymentEndpoint
+@FinalisedOnProgammeLearningPaymentSendOnlyEndpoint
 
 Feature: Payments Release
 
