@@ -11,13 +11,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
 {
     public class ProcessUnfundedPaymentsCommandHandler_ProcessTests
     {
-        private ProcessUnfundedPaymentsCommand _command;
-        private Fixture _fixture;
+        private ProcessUnfundedPaymentsCommand _command = null!;
+        private Fixture _fixture = null!;
         private byte _collectionPeriod;
-        private Mock<IMessageSession> _messageSession;
-        private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder;
-        private FinalisedOnProgammeLearningPaymentEvent _expectedEvent;
-        private ProcessUnfundedPaymentsCommandHandler _sut;
+        private Mock<IMessageSession> _messageSession = null!;
+        private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder = null!;
+        private FinalisedOnProgammeLearningPaymentEvent _expectedEvent = null!;
+        private ProcessUnfundedPaymentsCommandHandler _sut = null!;
 
         [SetUp]
         public async Task Setup()
@@ -36,7 +36,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
 
             _messageSession = new Mock<IMessageSession>();
             _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
-            _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), It.IsAny<Guid>())).Returns(_expectedEvent);
+            _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), _command.Model)).Returns(_expectedEvent);
             _sut = new ProcessUnfundedPaymentsCommandHandler(_messageSession.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
             await _sut.Process(_command);
@@ -45,8 +45,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         [Test]
         public void ThenOnlyExpectedPaymentIsReleased()
         {
-            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount == 100), It.IsAny<Guid>()));
-            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount != 100), It.IsAny<Guid>()), Times.Never);
+            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount == 100), _command.Model));
+            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount != 100), _command.Model), Times.Never);
         }
 
         [Test]

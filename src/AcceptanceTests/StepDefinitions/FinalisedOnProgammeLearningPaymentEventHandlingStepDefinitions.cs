@@ -1,4 +1,4 @@
-using NServiceBus;
+using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
@@ -7,28 +7,14 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
+[Scope(Feature = "Payments Release")]
 public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
-    private static IEndpointInstance _endpointInstance;
 
     public FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions(ScenarioContext scenarioContext)
     {
         _scenarioContext = scenarioContext;
-    }
-
-    [BeforeTestRun]
-    public static async Task StartEndpoint()
-    {
-        _endpointInstance = await EndpointHelper
-            .StartEndpoint("Test.Funding.ApprenticeshipPayments", false, new[] { typeof(FinalisedOnProgammeLearningPaymentEvent) });
-    }
-
-    [AfterTestRun]
-    public static async Task StopEndpoint()
-    {
-        await _endpointInstance.Stop()
-            .ConfigureAwait(false);
     }
 
     [Then("the correct payments are released")]
@@ -39,7 +25,22 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
 
     private bool ReleasedPaymentMatchesExpectation(FinalisedOnProgammeLearningPaymentEvent finalisedOnProgammeLearningPaymentEvent)
     {
-        return finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               finalisedOnProgammeLearningPaymentEvent.CollectionMonth == 10;
+        var earningsGeneratedEvent = (EarningsGeneratedEvent)_scenarioContext[ContextKeys.EarningsGeneratedEvent];
+
+        if (finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey != (Guid)_scenarioContext["apprenticeshipKey"]) return false;
+
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey.Should().Be(earningsGeneratedEvent.ApprenticeshipKey);
+        finalisedOnProgammeLearningPaymentEvent.CollectionPeriod.Should().Be(((byte)DateTime.Now.Month).ToDeliveryPeriod());
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString().Should().Be(earningsGeneratedEvent.Uln);
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate.Should().Be(earningsGeneratedEvent.StartDate);
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate.Should().Be(earningsGeneratedEvent.ActualEndDate);
+        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier.Should().Be(earningsGeneratedEvent.ProviderId);
+
+        var expectedAmount = earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount; 
+        finalisedOnProgammeLearningPaymentEvent.Amount.Should().Be(expectedAmount);
+
+
+        return true;
+
     }
 }

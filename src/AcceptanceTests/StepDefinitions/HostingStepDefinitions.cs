@@ -14,7 +14,7 @@ public class HostingStepDefinitions
         _featureContext = featureContext;
     }
 
-    [BeforeScenario(Order = 3)]
+    [BeforeScenario(Order = 1)]
     public async Task CreateConfig()
     {
         var stopwatch = new Stopwatch();
@@ -30,7 +30,7 @@ public class HostingStepDefinitions
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        await _testContext.TestFunction.DisposeAsync();
+        await _testContext.TestFunction?.DisposeAsync()!;
         stopwatch.Stop();
         Console.WriteLine($"Time it took to Cleanup  FunctionsHost: {stopwatch.Elapsed.Milliseconds} milliseconds for hub {_testContext.TestFunction.HubName}");
     }
