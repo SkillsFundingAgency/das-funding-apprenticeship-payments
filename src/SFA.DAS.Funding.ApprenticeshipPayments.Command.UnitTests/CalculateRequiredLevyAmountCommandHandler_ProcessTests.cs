@@ -194,10 +194,10 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     }
 
     [Test]
-    public void Process_Sends_CalculatedRequiredLevyAmount_JobId_0()
+    public void Process_Sends_CalculatedRequiredLevyAmount_JobId_Negative1()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.JobId == 0)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.JobId == -1)),
             Times.Once());
     }
 
