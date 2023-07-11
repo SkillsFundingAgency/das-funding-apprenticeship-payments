@@ -170,7 +170,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     }
 
     [Test]
-    public void Process_Sends_CalculatedRequiredLevyAmount_IlrFileName_Null()
+    public void Process_Sends_CalculatedRequiredLevyAmount_IlrFileName_AsEmptyString()
     {
         _busEndpoint.Verify(ms => ms.Send(
                 It.Is<CalculatedRequiredLevyAmount>(e => e.IlrFileName == "")),
@@ -194,7 +194,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     }
 
     [Test]
-    public void Process_Sends_CalculatedRequiredLevyAmount_JobId_Negative1()
+    public void Process_Sends_CalculatedRequiredLevyAmount_JobId_NegativeOne()
     {
         _busEndpoint.Verify(ms => ms.Send(
                 It.Is<CalculatedRequiredLevyAmount>(e => e.JobId == -1)),
