@@ -1,7 +1,6 @@
 using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
@@ -18,13 +17,19 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     private Mock<IPaymentsV2ServiceBusEndpoint> _busEndpoint = null!;
     private CalculateRequiredLevyAmountCommandHandler _sut = null!;
     private FinalisedOnProgammeLearningPaymentEvent _finalisedOnProgammeLearningPaymentEvent = null!;
+    private short _academicYear;
+    private short _academicYearStartingYear;
 
     [SetUp]
     public async Task Setup()
     {
         // Arrange
+        _academicYear = 1718;
+        _academicYearStartingYear = 2017;
+
         _finalisedOnProgammeLearningPaymentEvent = _fixture.Build<FinalisedOnProgammeLearningPaymentEvent>()
             .With(_ => _.CourseCode, _fixture.Create<short>().ToString)
+            .With(_ => _.CollectionYear, _academicYear)
             .Create();
 
         var command = new CalculateRequiredLevyAmountCommand(_finalisedOnProgammeLearningPaymentEvent);
@@ -177,13 +182,16 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
             Times.Once());
     }
 
-    //[Test]
-    //public void Process_Sends_CalculatedRequiredLevyAmount_IlrSubmissionDateTime_Null()
-    //{
-    //    _busEndpoint.Verify(ms => ms.Send(
-    //            It.Is<CalculatedRequiredLevyAmount>(e => e.IlrSubmissionDateTime == null)),
-    //        Times.Once());
-    //}
+    [Test]
+    public void Process_Sends_CalculatedRequiredLevyAmount_IlrSubmissionDateTime_Null()
+    {
+        _busEndpoint.Verify(ms => ms.Send(
+                It.Is<CalculatedRequiredLevyAmount>(e =>
+                    e.IlrSubmissionDateTime.Year == _academicYearStartingYear
+                    && e.IlrSubmissionDateTime.Month == 8
+                    && e.IlrSubmissionDateTime.Day == 1)),
+            Times.Once());
+    }
 
     [Test]
     public void Process_Sends_CalculatedRequiredLevyAmount_InstalmentAmount_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsDeliveryPeriodAmount()
