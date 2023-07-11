@@ -30,7 +30,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.EventId = Guid.NewGuid();
             e.EventTime = DateTime.UtcNow;
             e.IlrFileName = "";
-            //e.IlrSubmissionDateTime = null; // TODO: Modify IPaymentsEvent in PV2
+            e.IlrSubmissionDateTime = new DateTime(command.Data.CollectionYear.ToStartingCalendarYear(), 8, 1);
             e.InstalmentAmount = command.Data.ApprenticeshipEarning.DeliveryPeriodAmount;
             e.JobId = -1;
             e.Learner = new();
