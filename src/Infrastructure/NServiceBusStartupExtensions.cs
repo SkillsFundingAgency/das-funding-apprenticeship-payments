@@ -41,13 +41,12 @@ public static class NServiceBusStartupExtensions
 
         if (UsingLearningTransport(applicationSettings))
         {
-            SetupLearningTrasportEndpoint(endpointConfiguration);
+            SetupLearningTransportEndpoint(endpointConfiguration);
         }
         else
         {
             endpointConfiguration
-                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString,
-                // TODO: .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
+                .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
                     r => r.AddRouting().DoNotEnforceBestPractices());
         }
 
@@ -74,7 +73,7 @@ public static class NServiceBusStartupExtensions
 
         if (UsingLearningTransport(applicationSettings))
         {
-            SetupLearningTrasportEndpoint(endpointConfiguration);
+            SetupLearningTransportEndpoint(endpointConfiguration);
         }
         else
         {
@@ -98,7 +97,7 @@ public static class NServiceBusStartupExtensions
         return applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase);
     }
 
-    private static void SetupLearningTrasportEndpoint(EndpointConfiguration endpointConfiguration)
+    private static void SetupLearningTransportEndpoint(EndpointConfiguration endpointConfiguration)
     {
         var learningTransportFolder =
             Path.Combine(

@@ -22,7 +22,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.ApprenticeshipEarning.ApprenticeshipEarningsId = Guid.NewGuid();
         @event.ApprenticeshipEarning.DeliveryPeriod = payment.DeliveryPeriod;
         @event.ApprenticeshipEarning.DeliveryPeriodAmount = payment.Amount;
-        @event.ApprenticeshipEarning.GovernmentContributionPercentage = 0.95m;
+        @event.ApprenticeshipEarning.GovernmentContributionPercentage = Constants.ApprenticeshipEarningGovernmentContributionPercentage;
         @event.ApprenticeshipEarning.NumberOfInstalments = (short)apprenticeship.Payments.Count;
 
         @event.CollectionYear = payment.CollectionYear;
