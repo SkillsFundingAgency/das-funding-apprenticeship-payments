@@ -28,6 +28,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
     {
         var inboundEvent = _testContext.Fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
         inboundEvent.CourseCode = _testContext.Fixture.Create<short>().ToString();
+        inboundEvent.CollectionYear = 1718;
 
         _scenarioContext[nameof(FinalisedOnProgammeLearningPaymentEvent)] = inboundEvent;
 
@@ -91,6 +92,9 @@ public class CalculateRequiredLevyAmountStepDefinitions
         outboundEvent.TransferSenderAccountId.Should().Be(inboundEvent.EmployerDetails.FundingAccountId);
         outboundEvent.Ukprn.Should().Be(inboundEvent.ApprenticeshipEarning.ProviderIdentifier);
         outboundEvent.TransactionType.Should().Be(TransactionType.Learning);
+        outboundEvent.IlrSubmissionDateTime.Year.Should().Be(short.Parse($"20{inboundEvent.CollectionYear.ToString()[..2]}"));
+        outboundEvent.IlrSubmissionDateTime.Month.Should().Be(8);
+        outboundEvent.IlrSubmissionDateTime.Day.Should().Be(1);
 
         return true;
     }
