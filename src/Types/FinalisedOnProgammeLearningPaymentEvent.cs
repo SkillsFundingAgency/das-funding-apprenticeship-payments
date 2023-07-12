@@ -17,4 +17,4 @@ public class FinalisedOnProgammeLearningPaymentEvent
     public string? CourseCode { get; set; }
 }
 
-#pragma warning enable CS8618
+#pragma warning restore CS8618
