@@ -14,7 +14,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models
         public long Uln { get; set; }
         public long Ukprn { get; set; }
         public DateTime PlannedEndDate { get; set; }
-        public string CourseCode { get; set; }
+        public string? CourseCode { get; set; }
         public DateTime StartDate { get; set; }
     }
 }

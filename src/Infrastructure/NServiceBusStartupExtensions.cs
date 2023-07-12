@@ -118,7 +118,7 @@ public static class NServiceBusStartupExtensions
         foreach (var fileName in Directory.EnumerateFiles(baseDirectory, "*.dll")
                      .Select(Path.GetFileName))
         {
-            if (fileName != null && excludeRegexs.Any(pattern => Regex.IsMatch(fileName, pattern, RegexOptions.IgnoreCase)))
+            if (fileName != null && excludeRegexs.Exists(pattern => Regex.IsMatch(fileName, pattern, RegexOptions.IgnoreCase)))
             {
                 scanner.ExcludeAssemblies(fileName);
             }

@@ -3,13 +3,12 @@ using SFA.DAS.Payments.Model.Core;
 using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
 
-
-#nullable enable
+#nullable disable
 namespace SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
-public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent, NServiceBus.IMessage
+public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent
 {
-    public string EarningSource { get; }
+    public string EarningSource => "SubmitLearnerDataFundingPlatform";
     public int Priority { get; set; }
     public string? AgreementId { get; set; }
     public DateTime? AgreedOnDate { get; set; }

@@ -18,10 +18,10 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
     public async Task Process(ProcessUnfundedPaymentsCommand command)
     {
-        ArgumentNullException.ThrowIfNull(command.Model, "ApprenticeshipEntityModel");
+        ArgumentNullException.ThrowIfNull(command.Model);
 
         var paymentsToSend = command.Model.Payments
-            .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.SentForPayment == false)
+            .Where(x => x.CollectionPeriod == command.CollectionPeriod && !x.SentForPayment)
             .ToArray();
 
         _logger.LogInformation(paymentsToSend.Any()

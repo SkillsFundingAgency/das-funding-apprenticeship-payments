@@ -9,7 +9,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 public class ReleasePaymentsCommandPublishingStepDefinitions
 {
     private readonly TestContext _testContext;
-    private ReleasePaymentsCommand _releasePaymentsCommand;
+    private ReleasePaymentsCommand _releasePaymentsCommand = null!;
 
     public ReleasePaymentsCommandPublishingStepDefinitions(TestContext testContext)
     {
