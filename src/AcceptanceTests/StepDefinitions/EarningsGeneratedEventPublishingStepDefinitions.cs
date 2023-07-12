@@ -22,7 +22,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
 
 
     [Given(@"earnings have been generated")]
-    public void GivenEarningsHaveBeenGenerated()
+    public static void GivenEarningsHaveBeenGenerated()
     {
         // intentionally left blank
     }

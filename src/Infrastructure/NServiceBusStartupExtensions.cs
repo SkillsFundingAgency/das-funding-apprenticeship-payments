@@ -9,7 +9,6 @@ using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
@@ -85,8 +84,6 @@ public static class NServiceBusStartupExtensions
             endpointConfiguration.License(applicationSettings.NServiceBusLicense);
         }
 
-        ExcludeTestAssemblies(endpointConfiguration.AssemblyScanner());
-
         var endpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
         endpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
         serviceCollection.AddSingleton(p => endpointWithExternallyManagedServiceProvider.MessageSession.Value);
@@ -108,20 +105,5 @@ public static class NServiceBusStartupExtensions
             .StorageDirectory(learningTransportFolder);
         endpointConfiguration.UseLearningTransport(r => r.AddRouting().DoNotEnforceBestPractices());
         Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", learningTransportFolder, EnvironmentVariableTarget.Process);
-    }
-
-    private static void ExcludeTestAssemblies(AssemblyScannerConfiguration scanner)
-    {
-        var excludeRegexs = new List<string> { @"nunit.*.dll" };
-
-        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        foreach (var fileName in Directory.EnumerateFiles(baseDirectory, "*.dll")
-                     .Select(Path.GetFileName))
-        {
-            if (fileName != null && excludeRegexs.Exists(pattern => Regex.IsMatch(fileName, pattern, RegexOptions.IgnoreCase)))
-            {
-                scanner.ExcludeAssemblies(fileName);
-            }
-        }
     }
 }
