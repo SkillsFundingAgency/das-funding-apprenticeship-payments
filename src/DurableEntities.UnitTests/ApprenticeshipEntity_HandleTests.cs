@@ -103,5 +103,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         {
             _sut.Model.CourseCode.Should().Be(_earningsGeneratedEvent.TrainingCode);
         }
+
+        [Test]
+        public void ShouldMapFundingEmployerAccountIdToEntity()
+        {
+            _sut.Model.FundingEmployerAccountId.Should().Be(_earningsGeneratedEvent.EmployerAccountId);
+        }
     }
 }
