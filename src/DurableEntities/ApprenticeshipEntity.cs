@@ -65,6 +65,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model.Ukprn = earningsGeneratedEvent.ProviderId;
             Model.Uln = long.Parse(earningsGeneratedEvent.Uln);
             Model.PlannedEndDate = earningsGeneratedEvent.ActualEndDate;
+            Model.CourseCode = earningsGeneratedEvent.TrainingCode;
         }
     }
 }

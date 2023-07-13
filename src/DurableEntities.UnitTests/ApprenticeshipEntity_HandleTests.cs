@@ -97,5 +97,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         {
             _sut.Model.PlannedEndDate.Should().Be(_earningsGeneratedEvent.ActualEndDate); //todo is this right?
         }
+
+        [Test]
+        public void ShouldMapCourseCodeToEntity()
+        {
+            _sut.Model.CourseCode.Should().Be(_earningsGeneratedEvent.TrainingCode);
+        }
     }
 }
