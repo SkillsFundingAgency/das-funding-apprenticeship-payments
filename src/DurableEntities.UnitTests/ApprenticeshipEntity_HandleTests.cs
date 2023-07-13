@@ -95,7 +95,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         [Test]
         public void ShouldMapPlannedEndDateToEntity()
         {
-            _sut.Model.PlannedEndDate.Should().Be(_earningsGeneratedEvent.ActualEndDate); //todo is this right?
+            _sut.Model.PlannedEndDate.Should().Be(_earningsGeneratedEvent.PlannedEndDate);
         }
 
         [Test]
