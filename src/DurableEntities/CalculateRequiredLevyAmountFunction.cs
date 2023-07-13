@@ -1,5 +1,6 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
@@ -24,7 +25,7 @@ public class CalculateRequiredLevyAmountFunction
         ILogger log)
     {
         log.LogInformation(
-            "Triggered {0} function for ApprenticeshipKey: {1}, event: {2}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey, @event); //todo remove logging of entire event before merge
+            "Triggered {0} function for ApprenticeshipKey: {1}, event: {2}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey, JsonConvert.SerializeObject(@event)); //todo remove logging of entire event before merge
 
         await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
     }
