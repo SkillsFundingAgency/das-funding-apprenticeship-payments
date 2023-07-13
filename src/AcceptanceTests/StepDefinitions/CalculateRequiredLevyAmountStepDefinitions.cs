@@ -36,7 +36,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
     }
 
     [When(@"the associated data is used to generate a payment")]
-    public void WhenTheAssociatedDataIsUsedToGenerateAPayment()
+    public static void WhenTheAssociatedDataIsUsedToGenerateAPayment()
     {
         // 
     }

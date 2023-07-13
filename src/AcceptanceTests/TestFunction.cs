@@ -17,7 +17,7 @@ public class TestFunction : IDisposable
     private readonly IHost _host;
     private bool _isDisposed;
 
-    private IJobHost Jobs => _host.Services.GetService<IJobHost>();
+    private IJobHost Jobs => _host.Services.GetService<IJobHost>()!;
     public string HubName { get; }
     private readonly OrchestrationData _orchestrationData;
 

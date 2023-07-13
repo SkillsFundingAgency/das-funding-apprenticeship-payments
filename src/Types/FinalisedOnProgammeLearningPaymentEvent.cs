@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Types;
+#pragma warning disable CS8618
 
 public class FinalisedOnProgammeLearningPaymentEvent
 {
@@ -13,5 +14,7 @@ public class FinalisedOnProgammeLearningPaymentEvent
     public EmployerDetails EmployerDetails { get; set; }
     public ApprenticeshipEarning ApprenticeshipEarning { get; set; }
     public Apprenticeship Apprenticeship { get; set; }
-    public string CourseCode { get; set; }
+    public string? CourseCode { get; set; }
 }
+
+#pragma warning restore CS8618

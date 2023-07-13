@@ -12,7 +12,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
     private readonly TestContext _testContext;
-    private EarningsGeneratedEvent _earningsGeneratedEvent;
+    private EarningsGeneratedEvent _earningsGeneratedEvent = null!;
 
     public EarningsGeneratedEventPublishingStepDefinitions(ScenarioContext scenarioContext, TestContext testContext)
     {
@@ -22,8 +22,9 @@ public class EarningsGeneratedEventPublishingStepDefinitions
 
 
     [Given(@"earnings have been generated")]
-    public void GivenEarningsHaveBeenGenerated()
+    public static void GivenEarningsHaveBeenGenerated()
     {
+        // intentionally left blank
     }
 
     [Given(@"all of the earnings are due in the future")]
@@ -67,6 +68,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     [Given(@"no payments have previously been generated")]
     public void GivenNoPaymentsHavePreviouslyBeenGenerated()
     {
+        // intentionally left blank
     }
 
     [When (@"payments are calculated")]

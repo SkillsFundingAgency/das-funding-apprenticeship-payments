@@ -8,7 +8,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
 public class PaymentsGeneratedEndpoint
 {
     [BeforeScenario]
-    public async Task StartEndpoint(TestContext context)
+    public static async Task StartEndpoint(TestContext context)
     {
         if (context.PaymentsGeneratedEndpoint is not null) return;
 

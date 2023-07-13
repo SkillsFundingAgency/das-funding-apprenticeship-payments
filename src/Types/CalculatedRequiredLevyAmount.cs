@@ -3,15 +3,14 @@ using SFA.DAS.Payments.Model.Core;
 using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
 
-
-#nullable enable
+#nullable disable
 namespace SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
-public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent, NServiceBus.IMessage
+public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent
 {
-    public string EarningSource { get; }
+    public static string EarningSource => "SubmitLearnerDataFundingPlatform";
     public int Priority { get; set; }
-    public string? AgreementId { get; set; }
+    public string AgreementId { get; set; }
     public DateTime? AgreedOnDate { get; set; }
     public decimal SfaContributionPercentage { get; set; }
     public OnProgrammeEarningType OnProgrammeEarningType { get; set; }
@@ -21,8 +20,8 @@ public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent, 
     public string PriceEpisodeIdentifier { get; set; }
     public decimal AmountDue { get; set; }
     public byte DeliveryPeriod { get; set; }
-    public long? AccountId { get; set; }
-    public long? TransferSenderAccountId { get; set; }
+    public long AccountId { get; set; }
+    public long TransferSenderAccountId { get; set; }
     public ContractType ContractType { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? PlannedEndDate { get; set; }
