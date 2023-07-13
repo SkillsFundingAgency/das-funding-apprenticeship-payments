@@ -67,6 +67,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model.PlannedEndDate = earningsGeneratedEvent.PlannedEndDate;
             Model.CourseCode = earningsGeneratedEvent.TrainingCode;
             Model.FundingEmployerAccountId = earningsGeneratedEvent.EmployerAccountId;
+            Model.FundingCommitmentId = earningsGeneratedEvent.CommitmentId;
         }
     }
 }
