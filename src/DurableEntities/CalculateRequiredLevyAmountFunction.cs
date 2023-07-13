@@ -25,7 +25,7 @@ public class CalculateRequiredLevyAmountFunction
         ILogger log)
     {
         log.LogInformation(
-            "Triggered {0} function for ApprenticeshipKey: {1}, event: {2}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey, JsonConvert.SerializeObject(@event)); //todo remove logging of entire event before merge
+            "Triggered {0} function for ApprenticeshipKey: {1}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey);
 
         await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
     }
