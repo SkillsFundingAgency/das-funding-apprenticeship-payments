@@ -129,4 +129,10 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     {
         _result.ApprenticeshipEarning.ProviderIdentifier.Should().Be(_apprenticeship.Ukprn);
     }
+
+    [Test]
+    public void ShouldPopulate_ApprovalsApprenticeshipId_Correctly()
+    {
+        _result.Apprenticeship.ApprovalsApprenticeshipId.Should().Be(_apprenticeship.ApprovalsApprenticeshipId);
+    }
 }

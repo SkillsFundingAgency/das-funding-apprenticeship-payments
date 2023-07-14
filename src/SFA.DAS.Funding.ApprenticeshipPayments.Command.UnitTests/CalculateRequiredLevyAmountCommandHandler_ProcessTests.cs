@@ -98,7 +98,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Sends_CalculatedRequiredLevyAmount_ApprenticeshipId()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.ApprenticeshipId == _finalisedOnProgammeLearningPaymentEvent.EmployerDetails.FundingCommitmentId)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.ApprenticeshipId == _finalisedOnProgammeLearningPaymentEvent.Apprenticeship.ApprovalsApprenticeshipId)),
             Times.Once());
     }
 

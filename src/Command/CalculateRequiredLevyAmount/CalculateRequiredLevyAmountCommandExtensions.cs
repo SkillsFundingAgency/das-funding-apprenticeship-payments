@@ -16,7 +16,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.AgreementId = null;
             e.AmountDue = command.Data.Amount;
             e.ApprenticeshipEmployerType = command.Data.ApprenticeshipEmployerType == EmployerType.Levy ? ApprenticeshipEmployerType.Levy : ApprenticeshipEmployerType.NonLevy;
-            e.ApprenticeshipId = command.Data.EmployerDetails.FundingCommitmentId;
+            e.ApprenticeshipId = command.Data.Apprenticeship.ApprovalsApprenticeshipId;
             e.ApprenticeshipPriceEpisodeId = null;
             e.ClawbackSourcePaymentEventId = null;
             e.CollectionPeriod = new();

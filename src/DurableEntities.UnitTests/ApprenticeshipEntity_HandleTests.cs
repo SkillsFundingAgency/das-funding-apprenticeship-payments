@@ -111,9 +111,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         }
 
         [Test]
-        public void ShouldMapApprenticeshipIdToEntity()
+        public void ShouldMapApprovalsApprenticeshipIdToEntity()
         {
-            _sut.Model.FundingCommitmentId.Should().Be(_earningsGeneratedEvent.CommitmentId);
+            _sut.Model.ApprovalsApprenticeshipId.Should().Be(_earningsGeneratedEvent.ApprovalsApprenticeshipId);
         }
     }
 }
