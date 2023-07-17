@@ -8,7 +8,6 @@ namespace SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent
 {
-    public static string EarningSource => "SubmitLearnerDataFundingPlatform";
     public int Priority { get; set; }
     public string AgreementId { get; set; }
     public DateTime? AgreedOnDate { get; set; }
