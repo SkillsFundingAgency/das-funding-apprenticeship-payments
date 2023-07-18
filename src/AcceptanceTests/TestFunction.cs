@@ -1,66 +1,42 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Azure;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
+using SFA.DAS.Testing.AzureStorageEmulator;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
-public class Settings
-{
-    public string AzureWebJobsStorage { get; set; }
-    public string NServiceBusConnectionString { get; set; }
-    public string TopicPath { get; set; }
-    public string QueueName { get; set; }
-}
-
 public class TestFunction : IDisposable
 {
-    private readonly TestContext _testContext;
     private readonly IHost _host;
     private bool _isDisposed;
 
-    private IJobHost Jobs => _host.Services.GetService<IJobHost>();
+    private IJobHost Jobs => _host.Services.GetService<IJobHost>()!;
     public string HubName { get; }
     private readonly OrchestrationData _orchestrationData;
 
     public TestFunction(TestContext testContext, string hubName)
     {
+        AzureStorageEmulatorManager.StartStorageEmulator();
         HubName = hubName;
+
         _orchestrationData = new OrchestrationData();
 
-        _testContext = testContext;
-
-
-        var config = new ConfigurationBuilder()
-            .AddJsonFile("local.settings.json", optional: true)
-            .AddEnvironmentVariables()
-            .Build();
-
-        var settings = new Settings();
-
-        config.Bind(settings);
+        EndpointHelper.ClearEventStorage();
 
         var appConfig = new Dictionary<string, string>{
             { "EnvironmentName", "LOCAL_ACCEPTANCE_TESTS" },
-            { "AzureWebJobsStorage", settings.AzureWebJobsStorage },
-            { "NServiceBusConnectionString", settings.NServiceBusConnectionString ?? "UseLearningEndpoint=true" },
-            { "TopicPath", settings.TopicPath },
-            { "QueueName", settings.QueueName },
+            { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
+            { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true" },
+            { "ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true" },
             { "ApplicationSettings:LogLevel", "DEBUG" }
         };
-
-        _testContext = testContext;
-
-        Environment.SetEnvironmentVariable("AzureWebJobsStorage", "UseDevelopmentStorage=true", EnvironmentVariableTarget.Process);
-        Environment.SetEnvironmentVariable("NServiceBusConnectionString", "UseLearningEndpoint=true", EnvironmentVariableTarget.Process);
-        Environment.SetEnvironmentVariable("ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true", EnvironmentVariableTarget.Process);
-        Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", Path.Combine(Directory.GetCurrentDirectory().Substring(0, Directory.GetCurrentDirectory().IndexOf("src")), @"src\.learningtransport"), EnvironmentVariableTarget.Process);
-        Environment.SetEnvironmentVariable("EnvironmentName", "LOCAL_ACCEPTANCE_TESTS", EnvironmentVariableTarget.Process);
 
         _host = new HostBuilder()
             .ConfigureAppConfiguration(a =>
@@ -86,23 +62,10 @@ public class TestFunction : IDisposable
                         options.SetMinimumLevel(LogLevel.Trace);
                         options.AddConsole();
                     });
-                    s.Configure<ApplicationSettings>(a =>
-                    {
-                        a.AzureWebJobsStorage = appConfig["AzureWebJobsStorage"];
-                        a.QueueName = appConfig["QueueName"];
-                        a.TopicPath = appConfig["TopicPath"];
-                        a.ServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
-                    });
-
                     new Startup().Configure(builder);
-
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
                 })
             )
-            .ConfigureServices(s =>
-            {
-                s.AddHostedService<PurgeBackgroundJob>();
-            })
             .Build();
     }
 
@@ -121,6 +84,7 @@ public class TestFunction : IDisposable
     
     public async Task DisposeAsync()
     {
+        await Jobs.Purge();
         await Jobs.StopAsync();
         Dispose();
     }

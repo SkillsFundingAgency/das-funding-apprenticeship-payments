@@ -1,34 +1,19 @@
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
+[Scope(Feature = "Payments Release")]
 public class ReleasePaymentsCommandPublishingStepDefinitions
 {
-    private readonly ScenarioContext _scenarioContext;
-    private static IEndpointInstance? _endpointInstance;
-    private ReleasePaymentsCommand _releasePaymentsCommand;
+    private readonly TestContext _testContext;
+    private ReleasePaymentsCommand _releasePaymentsCommand = null!;
 
-    public ReleasePaymentsCommandPublishingStepDefinitions(ScenarioContext scenarioContext)
+    public ReleasePaymentsCommandPublishingStepDefinitions(TestContext testContext)
     {
-        _scenarioContext = scenarioContext;
-    }
-
-    [BeforeTestRun]
-    public static async Task StartEndpoint()
-    {
-        _endpointInstance = await EndpointHelper
-            .StartEndpoint(QueueNames.ReleasePayments, true, new[] { typeof(ReleasePaymentsCommand) });
-    }
-
-    [AfterTestRun]
-    public static async Task StopEndpoint()
-    {
-        await _endpointInstance.Stop()
-            .ConfigureAwait(false);
+        _testContext = testContext;
     }
 
     [When("payments are released")]
@@ -36,8 +21,8 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     {
         _releasePaymentsCommand = new ReleasePaymentsCommand
         {
-            CollectionPeriod = 10
+            CollectionPeriod = ((byte)DateTime.Now.Month).ToDeliveryPeriod()
         };
-        await _endpointInstance.Publish(_releasePaymentsCommand);
+        await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
     }
 }

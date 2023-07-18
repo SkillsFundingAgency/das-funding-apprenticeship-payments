@@ -18,13 +18,20 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
     public async Task Process(ProcessUnfundedPaymentsCommand command)
     {
-        var paymentsToSend = command.Model.Payments.Where(x => x.CollectionPeriod == command.CollectionPeriod && x.SentForPayment == false);
+        ArgumentNullException.ThrowIfNull(command.Model);
 
-        _logger.LogInformation($"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing { paymentsToSend.Count() } payments for collection period { command.CollectionPeriod }");
+        var paymentsToSend = command.Model.Payments
+            .Where(x => x.CollectionPeriod == command.CollectionPeriod && !x.SentForPayment)
+            .ToArray();
+
+        _logger.LogInformation(paymentsToSend.Any()
+            ? $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing {paymentsToSend.Length} payments for collection period {command.CollectionPeriod}"
+            : $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  No payments to publish for collection period {command.CollectionPeriod}");
 
         foreach (var payment in paymentsToSend)
         {
-            await _messageSession.Publish(_eventBuilder.Build(payment, command.Model.ApprenticeshipKey));
+            var finalisedOnProgammeLearningPaymentEvent = _eventBuilder.Build(payment, command.Model);
+            await _messageSession.Publish(finalisedOnProgammeLearningPaymentEvent);
             payment.SentForPayment = true;
         }
     }
