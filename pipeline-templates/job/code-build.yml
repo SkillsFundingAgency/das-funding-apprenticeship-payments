@@ -11,14 +11,9 @@ jobs:
   variables:
   - group: BUILD Management Resources
   steps:
-  - task: InstallAzuretie@4
-    displayName: Install Azure Storage Emulator
-    inputs:
-      version: latest
-      installPath: $(Agent.ToolsDirectory)/azure-storage-emulator
-      checkLatest: true
-  - script: npm install -g azurite
-
+  - name: Install Azurite
+    run: npm install azurite
+  
   - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
 
   - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
