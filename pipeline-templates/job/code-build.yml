@@ -11,6 +11,9 @@ jobs:
   variables:
   - group: BUILD Management Resources
   steps:
+  - task: Install Azuretie
+  - script: npm install -g azurite
+
   - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
 
   - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
