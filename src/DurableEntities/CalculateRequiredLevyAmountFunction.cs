@@ -26,6 +26,6 @@ public class CalculateRequiredLevyAmountFunction
         log.LogInformation(
             "Triggered {0} function for ApprenticeshipKey: {1}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey);
 
-       // await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
+        await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
     }
 }

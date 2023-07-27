@@ -10,6 +10,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
         internal static CalculatedRequiredLevyAmount MapToCalculatedRequiredLevyAmountEvent(this CalculateRequiredLevyAmountCommand command)
         {
             var e = new CalculatedRequiredLevyAmount();
+            ArgumentNullException.ThrowIfNull(command.Data);
+            ArgumentNullException.ThrowIfNull(command.Data.EmployerDetails);
+            ArgumentNullException.ThrowIfNull(command.Data.ApprenticeshipEmployerType);
+            ArgumentNullException.ThrowIfNull(command.Data.Apprenticeship);
+            ArgumentNullException.ThrowIfNull(command.Data.ApprenticeshipEarning);
+            ArgumentNullException.ThrowIfNull(command.Data.ApprenticeshipEarning.FundingLineType);
+
+
             e.AccountId = command.Data.EmployerDetails.EmployingAccountId;
             e.ActualEndDate = null;
             e.AgreedOnDate = null;
