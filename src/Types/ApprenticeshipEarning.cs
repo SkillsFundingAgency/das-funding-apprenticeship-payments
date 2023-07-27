@@ -1,6 +1,8 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Types;
+﻿using NServiceBus;
 
-public class ApprenticeshipEarning
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Types;
+
+public class ApprenticeshipEarning : IEvent
 {
     public long FundingPeriodId { get; set; }
     public byte DeliveryPeriod { get; set; }
