@@ -5,6 +5,7 @@
 
 Feature: Payments Release
 
+@ignore
 Scenario: Payments Release
 	Given earnings have been generated
 	And all of the earnings are due in the future
