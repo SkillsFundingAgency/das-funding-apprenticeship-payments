@@ -51,7 +51,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
     {
         var inboundEvent = (FinalisedOnProgammeLearningPaymentEvent)_scenarioContext[nameof(FinalisedOnProgammeLearningPaymentEvent)];
 
-        if (outboundEvent.ApprenticeshipId != inboundEvent.EmployerDetails.FundingCommitmentId) return false;
+        if (outboundEvent.ApprenticeshipId != inboundEvent.Apprenticeship.ApprovalsApprenticeshipId) return false;
 
         outboundEvent.AccountId.Should().Be(inboundEvent.EmployerDetails.EmployingAccountId);
         outboundEvent.ActualEndDate.Should().Be(null);
