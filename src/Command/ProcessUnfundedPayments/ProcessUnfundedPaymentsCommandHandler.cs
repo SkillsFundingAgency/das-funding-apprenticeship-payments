@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NServiceBus;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using System.Text.Json;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 
@@ -32,6 +35,11 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         {
             var finalisedOnProgammeLearningPaymentEvent = _eventBuilder.Build(payment, command.Model);
             await _messageSession.Publish(finalisedOnProgammeLearningPaymentEvent);
+
+            _logger.LogInformation("ApprenticeshipKey: {0} Publishing FinalisedOnProgammeLearningPaymentEvent: {1}",
+                finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey,
+                System.Text.Json.JsonSerializer.Serialize(finalisedOnProgammeLearningPaymentEvent, new JsonSerializerOptions { WriteIndented = true }));
+
             payment.SentForPayment = true;
         }
     }
