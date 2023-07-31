@@ -1,9 +1,13 @@
 ﻿using NServiceBus;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using System.Reflection;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
+using JsonSerializer = System.Text.Json.JsonSerializer;
+using Payment = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Payment;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments
 {
@@ -31,7 +35,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
             apprenticeship.CalculatePayments(DateTime.Now);
             command.ApprenticeshipEntity.Payments = MapPaymentsToModel(apprenticeship.Payments);
             _logger.LogInformation($"Publishing payments generated event for apprenticeship key {command.ApprenticeshipEntity.ApprenticeshipKey}. Number of payments: {command.ApprenticeshipEntity.Payments.Count}");
-            await _messageSession.Publish(_paymentsGeneratedEventBuilder.Build(apprenticeship));
+
+            var @event = _paymentsGeneratedEventBuilder.Build(apprenticeship);
+            _logger.LogInformation("ApprenticeshipKey: {0} Publishing PaymentsGeneratedEvent: {1}",
+                @event.ApprenticeshipKey,
+                JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
+
+            await _messageSession.Publish(@event);
             return apprenticeship;
         }
 

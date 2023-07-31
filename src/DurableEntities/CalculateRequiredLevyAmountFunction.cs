@@ -27,11 +27,9 @@ public class CalculateRequiredLevyAmountFunction
         log.LogInformation(
             "Triggered {0} function for ApprenticeshipKey: {1}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey);
 
-        log.LogInformation("ApprenticeshipKey: {0} Publishing FinalisedOnProgammeLearningPaymentEvent: {1}",
+        log.LogInformation("ApprenticeshipKey: {0} Received FinalisedOnProgammeLearningPaymentEvent: {1}",
             @event.ApprenticeshipKey,
             JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
-
-
 
         await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
     }
