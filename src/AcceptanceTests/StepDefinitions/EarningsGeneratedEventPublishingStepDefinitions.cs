@@ -41,6 +41,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
             .Build<EarningsGeneratedEvent>()
             .With(x => x.DeliveryPeriods, periods)
             .With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
+            .With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
             .Create();
 
         _earningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
@@ -60,6 +61,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
             .Build<EarningsGeneratedEvent>()
             .With(x => x.DeliveryPeriods, periods)
             .With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
+            .With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
             .Create();
 
         _earningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
