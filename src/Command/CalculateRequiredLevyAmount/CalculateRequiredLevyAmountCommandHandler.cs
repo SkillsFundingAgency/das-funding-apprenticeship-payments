@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using NServiceBus.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 using System.Text.Json;
