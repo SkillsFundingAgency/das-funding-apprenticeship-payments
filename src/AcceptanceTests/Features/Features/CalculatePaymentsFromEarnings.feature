@@ -1,8 +1,6 @@
 ﻿@EarningsGeneratedEndpoint
 @PaymentsGeneratedEndpoint
 @ReleasePaymentsEndpoint
-@EarningsGeneratedEndpoint
-@PaymentsGeneratedEndpoint
 
 Feature: Calculate payments for earnings
 
