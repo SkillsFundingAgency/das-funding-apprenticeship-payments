@@ -31,7 +31,7 @@ public static class NServiceBusStartupExtensions
 
     private static void ConfigurePv2ServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
     {
-        var endpointConfiguration = new EndpointConfiguration("sfa.das.funding.payments.calculatedlevyamount")
+        var endpointConfiguration = new EndpointConfiguration("sfa.das.funding.payments")
                  .UseNewtonsoftJsonSerializer();
         endpointConfiguration.SendOnly();
 
@@ -45,7 +45,8 @@ public static class NServiceBusStartupExtensions
         else
         {
             endpointConfiguration
-                .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
+                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString,
+               // .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
                     r => r.AddRouting().DoNotEnforceBestPractices());
         }
 
