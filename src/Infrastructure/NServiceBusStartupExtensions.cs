@@ -23,7 +23,7 @@ public static class NServiceBusStartupExtensions
         webBuilder.AddExecutionContextBinding();
         webBuilder.AddExtension(new NServiceBusExtensionConfigProvider());
 
-        // ConfigurePv2ServiceBus(serviceCollection, applicationSettings);
+        ConfigurePv2ServiceBus(serviceCollection, applicationSettings);
         ConfigureFundingServiceBus(serviceCollection, applicationSettings);
 
         return serviceCollection;
