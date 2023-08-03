@@ -1,11 +1,11 @@
 using AutoFixture;
-using Moq;
-using NServiceBus;
-using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
-using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Moq;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
 {
@@ -14,7 +14,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         private ProcessUnfundedPaymentsCommand _command = null!;
         private Fixture _fixture = null!;
         private byte _collectionPeriod;
-        private Mock<IMessageSession> _messageSession = null!;
+        private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
         private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder = null!;
         private FinalisedOnProgammeLearningPaymentEvent _expectedEvent = null!;
         private ProcessUnfundedPaymentsCommandHandler _sut = null!;
@@ -34,10 +34,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
 
             _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
-            _messageSession = new Mock<IMessageSession>();
+            _busEndpoint = new Mock<IDasServiceBusEndpoint>();
             _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
             _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), _command.Model)).Returns(_expectedEvent);
-            _sut = new ProcessUnfundedPaymentsCommandHandler(_messageSession.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
+            _sut = new ProcessUnfundedPaymentsCommandHandler(_busEndpoint.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
             await _sut.Process(_command);
         }

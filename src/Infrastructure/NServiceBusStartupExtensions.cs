@@ -45,8 +45,7 @@ public static class NServiceBusStartupExtensions
         else
         {
             endpointConfiguration
-                .UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString,
-               // .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
+                .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
                     r => r.AddRouting().DoNotEnforceBestPractices());
         }
 
@@ -88,11 +87,13 @@ public static class NServiceBusStartupExtensions
         var endpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
         endpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
         serviceCollection.AddSingleton(p => endpointWithExternallyManagedServiceProvider.MessageSession.Value);
+
+        serviceCollection.AddSingleton(typeof(IDasServiceBusEndpoint), new DasServiceBusEndpoint(endpointWithExternallyManagedServiceProvider));
     }
 
     private static bool UsingLearningTransport(ApplicationSettings applicationSettings)
     {
-        return applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase);
+        return applicationSettings.NServiceBusConnectionString.Contains("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase);
     }
 
     private static void SetupLearningTransportEndpoint(EndpointConfiguration endpointConfiguration)

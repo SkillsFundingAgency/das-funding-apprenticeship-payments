@@ -1,10 +1,8 @@
-﻿using NServiceBus;
+﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
-using System.Reflection;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using Payment = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Payment;
@@ -14,17 +12,17 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
     public class CalculateApprenticeshipPaymentsCommandHandler : ICalculateApprenticeshipPaymentsCommandHandler
     {
         private readonly IApprenticeshipFactory _apprenticeshipFactory;
-        private readonly IMessageSession _messageSession;
+        private readonly IDasServiceBusEndpoint _busEndpoint;
         private readonly IPaymentsGeneratedEventBuilder _paymentsGeneratedEventBuilder;
         private readonly ILogger<CalculateApprenticeshipPaymentsCommandHandler> _logger;
 
         public CalculateApprenticeshipPaymentsCommandHandler(IApprenticeshipFactory apprenticeshipFactory,
-            IMessageSession messageSession,
+            IDasServiceBusEndpoint busEndpoint,
             IPaymentsGeneratedEventBuilder paymentsGeneratedEventBuilder,
             ILogger<CalculateApprenticeshipPaymentsCommandHandler> logger)
         {
             _apprenticeshipFactory = apprenticeshipFactory;
-            _messageSession = messageSession;
+            _busEndpoint = busEndpoint;
             _paymentsGeneratedEventBuilder = paymentsGeneratedEventBuilder;
             _logger = logger;
         }
@@ -41,7 +39,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
                 @event.ApprenticeshipKey,
                 JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
 
-            await _messageSession.Publish(@event);
+            await _busEndpoint.Publish(@event);
             return apprenticeship;
         }
 
