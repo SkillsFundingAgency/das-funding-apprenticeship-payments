@@ -13,11 +13,6 @@ public class DasServiceBusEndpoint : IDasServiceBusEndpoint
         _endpointInstance = endpointInstance;
     }
 
-    public async Task Send(object message)
-    {
-        await _endpointInstance.MessageSession.Value.Send(QueueNames.CalculatedRequiredLevyAmount, message);
-    }
-
     public async Task Publish(object @event)
     {
         await _endpointInstance.MessageSession.Value.Publish(@event);
