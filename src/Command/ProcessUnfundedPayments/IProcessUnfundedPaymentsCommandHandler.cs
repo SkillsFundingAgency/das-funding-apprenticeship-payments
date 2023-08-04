@@ -3,4 +3,6 @@
 public interface IProcessUnfundedPaymentsCommandHandler
 {
     Task Process(ProcessUnfundedPaymentsCommand command);
+
+    Task ProcessTest();
 }

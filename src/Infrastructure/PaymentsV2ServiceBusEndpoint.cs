@@ -10,7 +10,7 @@ public class PaymentsV2ServiceBusEndpoint : IPaymentsV2ServiceBusEndpoint
 
     public PaymentsV2ServiceBusEndpoint(IStartableEndpointWithExternallyManagedContainer endpointInstance)
     {
-        _endpointInstance = endpointInstance;
+        _endpointInstance = endpointInstance; 
     }
 
     public async Task Send(object message)

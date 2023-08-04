@@ -42,19 +42,19 @@ public class CalculateRequiredLevyAmountFunction
 
     }
 
-    [FunctionName(nameof(CalculateRequiredLevyAmountFunction))]
-    public async Task Run(
-        [NServiceBusTrigger(Endpoint = QueueNames.FinalisedOnProgammeLearningPayment)] FinalisedOnProgammeLearningPaymentEvent @event,
+    //[FunctionName(nameof(CalculateRequiredLevyAmountFunction))]
+    //public async Task Run(
+    //    [NServiceBusTrigger(Endpoint = QueueNames.FinalisedOnProgammeLearningPayment)] FinalisedOnProgammeLearningPaymentEvent @event,
             
-        ILogger log)
-    {
-        log.LogInformation(
-            "Triggered {0} function for ApprenticeshipKey: {1}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey);
+    //    ILogger log)
+    //{
+    //    log.LogInformation(
+    //        "Triggered {0} function for ApprenticeshipKey: {1}", nameof(CalculateRequiredLevyAmountFunction), @event.ApprenticeshipKey);
 
-        log.LogInformation("ApprenticeshipKey: {0} Received FinalisedOnProgammeLearningPaymentEvent: {1}",
-            @event.ApprenticeshipKey,
-            JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
+    //    log.LogInformation("ApprenticeshipKey: {0} Received FinalisedOnProgammeLearningPaymentEvent: {1}",
+    //        @event.ApprenticeshipKey,
+    //        JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
 
-        await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
-    }
+    //    await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
+    //}
 }

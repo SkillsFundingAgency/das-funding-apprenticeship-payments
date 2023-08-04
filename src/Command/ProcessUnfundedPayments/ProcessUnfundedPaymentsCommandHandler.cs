@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using System.Text.Json;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
@@ -16,6 +17,13 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         _eventBuilder = eventBuilder;
         _logger = logger;
     }
+
+
+    public async Task ProcessTest()
+    {
+        await _busEndpoint.Publish(new FinalisedOnProgammeLearningPaymentEvent());
+    }
+
 
     public async Task Process(ProcessUnfundedPaymentsCommand command)
     {

@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
 using System;
@@ -13,6 +14,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 {
     public class EarningsFunctions
     {
+        private readonly IProcessUnfundedPaymentsCommandHandler _commandHandler;
+
+        public EarningsFunctions(IProcessUnfundedPaymentsCommandHandler commandHandler)
+        {
+            _commandHandler = commandHandler;
+        }
+
         [FunctionName(nameof(EarningsGeneratedEventServiceBusTrigger))]
         public async Task EarningsGeneratedEventServiceBusTrigger(
             [NServiceBusTrigger(Endpoint = QueueNames.EarningsGenerated)] EarningsGeneratedEvent earningsGeneratedEvent,
@@ -29,9 +37,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             [DurableClient] IDurableEntityClient client,
             ILogger log)
         {
-            var earningsGeneratedEvent = new EarningsGeneratedEvent { ApprenticeshipKey = Guid.NewGuid() };
-            var entityId = new EntityId(nameof(ApprenticeshipEntity), earningsGeneratedEvent.ApprenticeshipKey.ToString());
-            await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsGeneratedEvent), earningsGeneratedEvent);
+
+            await _commandHandler.ProcessTest();
         }
     }
 }
