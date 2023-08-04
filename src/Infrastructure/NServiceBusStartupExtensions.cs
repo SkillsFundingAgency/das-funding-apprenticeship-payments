@@ -54,8 +54,7 @@ public static class NServiceBusStartupExtensions
             endpointConfiguration.License(applicationSettings.NServiceBusLicense);
         }
 
-        var endpointInstance = Endpoint.Start(endpointConfiguration).ConfigureAwait(false).GetAwaiter().GetResult();
-        serviceCollection.AddSingleton(typeof(IPaymentsV2ServiceBusEndpoint), new PaymentsV2ServiceBusEndpoint(endpointInstance));
+        serviceCollection.AddSingleton(typeof(IPaymentsV2ServiceBusEndpoint), new PaymentsV2ServiceBusEndpoint(endpointConfiguration));
     }
 
     private static void ConfigureFundingServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
@@ -82,8 +81,7 @@ public static class NServiceBusStartupExtensions
             endpointConfiguration.License(applicationSettings.NServiceBusLicense);
         }
 
-        var endpointInstance = Endpoint.Start(endpointConfiguration).ConfigureAwait(false).GetAwaiter().GetResult();
-        serviceCollection.AddSingleton(typeof(IDasServiceBusEndpoint), new DasServiceBusEndpoint(endpointInstance));
+        serviceCollection.AddSingleton(typeof(IDasServiceBusEndpoint), new DasServiceBusEndpoint(endpointConfiguration));
     }
 
     private static bool UsingLearningTransport(ApplicationSettings applicationSettings)

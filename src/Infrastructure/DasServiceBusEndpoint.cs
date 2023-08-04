@@ -6,15 +6,16 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 [ExcludeFromCodeCoverage]
 public class DasServiceBusEndpoint : IDasServiceBusEndpoint
 {
-    private readonly IEndpointInstance _endpointInstance;
+    private readonly EndpointConfiguration _endpointConfiguration;
 
-    public DasServiceBusEndpoint(IEndpointInstance endpointInstance)
+    public DasServiceBusEndpoint(EndpointConfiguration endpointConfiguration)
     {
-        _endpointInstance = endpointInstance;
+        _endpointConfiguration = endpointConfiguration;
     }
 
     public async Task Publish(object @event)
     {
-        await _endpointInstance.Publish(@event);
+        var endpointInstance = await Endpoint.Start(_endpointConfiguration).ConfigureAwait(false);
+        await endpointInstance.Publish(@event);
     }
 }
