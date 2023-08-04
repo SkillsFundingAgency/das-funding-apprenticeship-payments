@@ -66,7 +66,7 @@ public static class NServiceBusStartupExtensions
             .UseMessageConventions()
             .UseNewtonsoftJsonSerializer();
 
-        //endpointConfiguration.SendOnly();
+        endpointConfiguration.SendOnly();
         var conventions = endpointConfiguration.Conventions();
         conventions.DefiningMessagesAs(type => type == typeof(CalculatedRequiredLevyAmount)); // Treat CalculatedRequiredLevyAmount as a message
 
