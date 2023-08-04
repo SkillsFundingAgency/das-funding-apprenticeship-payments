@@ -6,17 +6,15 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 [ExcludeFromCodeCoverage]
 public class PaymentsV2ServiceBusEndpoint : IPaymentsV2ServiceBusEndpoint
 {
-    private readonly EndpointConfiguration _endpointConfiguration;
+    private readonly IEndpointInstance _endpointInstance;
 
-    public PaymentsV2ServiceBusEndpoint(EndpointConfiguration endpointConfiguration)
+    public PaymentsV2ServiceBusEndpoint(IEndpointInstance endpointInstance)
     {
-        _endpointConfiguration = endpointConfiguration;
+        _endpointInstance = endpointInstance; 
     }
 
     public async Task Send(object message)
     {
-        var endpointInstance = await Endpoint.Start(_endpointConfiguration).ConfigureAwait(false);
-         
-        await endpointInstance.Send(QueueNames.CalculatedRequiredLevyAmount, message);
+        await _endpointInstance.Send(QueueNames.CalculatedRequiredLevyAmount, message);
     }
 }
