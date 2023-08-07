@@ -31,7 +31,7 @@ public class Startup : FunctionsStartup
             .AddConfiguration(configuration)
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddEnvironmentVariables();
-            
+
         if (NotAcceptanceTests(configuration))
         {
             configBuilder.AddJsonFile("local.settings.json", true);
@@ -42,7 +42,7 @@ public class Startup : FunctionsStartup
                 options.EnvironmentName = configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
             });
-        }
+        } 
 
         Configuration = configBuilder.Build();
 
@@ -56,6 +56,8 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddCommandServices().AddDomainServices();
+
+        builder.Services.AddLogging(b => b.AddApplicationInsights());
     }
 
     private static void EnsureConfig(ApplicationSettings applicationSettings)
