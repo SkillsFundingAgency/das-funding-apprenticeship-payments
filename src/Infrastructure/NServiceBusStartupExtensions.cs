@@ -31,8 +31,8 @@ public static class NServiceBusStartupExtensions
 
     private static void ConfigurePv2ServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
     {
-        var endpointConfiguration = new EndpointConfiguration("sfa.das.funding.payments");
-                 //.UseNewtonsoftJsonSerializer();
+        var endpointConfiguration = new EndpointConfiguration("sfa.das.funding.payments")
+                 .UseNewtonsoftJsonSerializer();
         endpointConfiguration.SendOnly();
 
         var conventions = endpointConfiguration.Conventions();
