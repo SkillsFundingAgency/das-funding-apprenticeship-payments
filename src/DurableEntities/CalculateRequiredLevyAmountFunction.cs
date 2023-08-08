@@ -34,8 +34,12 @@ public class CalculateRequiredLevyAmountFunction
         Fixture fixture = new();
         var data = fixture.
             Build<FinalisedOnProgammeLearningPaymentEvent>()
-            .With(x => x.CourseCode, "000000")
+            .With(x => x.CourseCode, "123456")
             .Create();
+
+        data.ApprenticeshipEarning.FundingLineType = null;
+        data.ApprenticeshipEarning.Uln = 12345678;
+        data.ApprenticeshipEarning.ProviderIdentifier = 123456;
 
         await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(
             data));
