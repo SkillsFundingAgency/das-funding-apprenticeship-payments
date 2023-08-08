@@ -1,9 +1,9 @@
-﻿using SFA.DAS.Payments.Messages.Core.Events;
+﻿using System;
+using SFA.DAS.Payments.Messages.Core.Events;
 using SFA.DAS.Payments.Model.Core;
 using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
 
-#nullable disable
 namespace SFA.DAS.Payments.RequiredPayments.Messages.Events
 {
     public class CalculatedRequiredLevyAmount : IPaymentsEvent, NServiceBus.IEvent

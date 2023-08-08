@@ -1,7 +1,6 @@
 ﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using NServiceBus;
-using NServiceBus.ObjectBuilder.MSDependencyInjection;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.NServiceBus.Configuration;
