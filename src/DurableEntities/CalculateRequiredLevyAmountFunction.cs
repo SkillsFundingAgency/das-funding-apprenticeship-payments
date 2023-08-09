@@ -1,18 +1,15 @@
-using System;
-using System.Text.Json;
+using AutoFixture;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using SFA.DAS.NServiceBus.AzureFunction.Attributes;
+using System.Text.Json;
 using System.Threading.Tasks;
-using AutoFixture;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.NServiceBus;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 
@@ -41,15 +38,13 @@ public class CalculateRequiredLevyAmountFunction
         data.ApprenticeshipEarning.Uln = 12345678;
         data.ApprenticeshipEarning.ProviderIdentifier = 123456;
 
-        await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(
-            data));
+        await _commandHandler.Send(new CalculateRequiredLevyAmountCommand(data));
 
     }
 
     [FunctionName(nameof(CalculateRequiredLevyAmountFunction))]
     public async Task Run(
         [NServiceBusTrigger(Endpoint = QueueNames.FinalisedOnProgammeLearningPayment)] FinalisedOnProgammeLearningPaymentEvent @event,
-
         ILogger log)
     {
         log.LogInformation(
@@ -59,6 +54,6 @@ public class CalculateRequiredLevyAmountFunction
             @event.ApprenticeshipKey,
             JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
 
-        await _commandHandler.Process(new CalculateRequiredLevyAmountCommand(@event));
+        await _commandHandler.Publish(new CalculateRequiredLevyAmountCommand(@event));
     }
 }

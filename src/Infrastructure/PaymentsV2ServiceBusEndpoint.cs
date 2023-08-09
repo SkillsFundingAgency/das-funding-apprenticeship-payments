@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using NServiceBus;
+using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
@@ -16,5 +17,10 @@ public class PaymentsV2ServiceBusEndpoint : IPaymentsV2ServiceBusEndpoint
     public async Task Send(object message)
     {
         await _endpointInstance.Send(QueueNames.CalculatedRequiredLevyAmount, message);
+    }
+
+    public async Task Publish(CalculatedRequiredLevyAmount @event)
+    {
+        await _endpointInstance.Publish(@event);
     }
 }

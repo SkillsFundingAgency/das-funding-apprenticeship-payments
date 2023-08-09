@@ -30,6 +30,6 @@ public class CalculateRequiredLevyAmountFunction_RunTests
         await _sut.Run(@event, Mock.Of<ILogger>());
 
         // Assert
-        _commandHandlerMock.Verify(_ => _.Process(It.Is<CalculateRequiredLevyAmountCommand>(c => c.Data == @event)), Times.Once());
+        _commandHandlerMock.Verify(_ => _.Send(It.Is<CalculateRequiredLevyAmountCommand>(c => c.Data == @event)), Times.Once());
     }
 }

@@ -1,6 +1,9 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
+﻿using SFA.DAS.Payments.RequiredPayments.Messages.Events;
+
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
 public interface IPaymentsV2ServiceBusEndpoint
 {
-    public Task Send(object message);
+    Task Send(object message);
+    Task Publish(CalculatedRequiredLevyAmount @event);
 }
