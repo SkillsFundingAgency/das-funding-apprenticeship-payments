@@ -210,10 +210,10 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     }
 
     [Test]
-    public void Process_Sends_CalculatedRequiredLevyAmount_LearnerReferenceNumber_Null()
+    public void Process_Sends_CalculatedRequiredLevyAmount_LearnerReferenceNumber_NonEmpty12DigitNumber()
     {
         _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.Learner.ReferenceNumber == null)),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.Learner.ReferenceNumber.Length == 12 && !e.Learner.ReferenceNumber.IsNullOrEmpty())),
             Times.Once());
     }
 

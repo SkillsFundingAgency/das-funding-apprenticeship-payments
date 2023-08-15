@@ -70,7 +70,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         outboundEvent.JobId.Should().Be(-1);
         outboundEvent.IlrFileName.Should().Be("");
         outboundEvent.InstalmentAmount.Should().Be(inboundEvent.ApprenticeshipEarning.DeliveryPeriodAmount);
-        outboundEvent.Learner.ReferenceNumber.Should().Be(null);
+        outboundEvent.Learner.ReferenceNumber.Should().HaveLength(12).And.NotBeNullOrEmpty();
         outboundEvent.Learner.Uln.Should().Be(inboundEvent.ApprenticeshipEarning.Uln);
         outboundEvent.LearningAim.FrameworkCode.Should().Be(0);
         outboundEvent.LearningAim.FundingLineType.Should().Be(inboundEvent.ApprenticeshipEarning.FundingLineType);
