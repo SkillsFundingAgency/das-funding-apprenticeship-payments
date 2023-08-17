@@ -40,7 +40,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.InstalmentAmount = command.Data.ApprenticeshipEarning.DeliveryPeriodAmount;
             e.JobId = -1;
             e.Learner = new();
-            e.Learner.ReferenceNumber = DateTime.UtcNow.ToString("yyyyMMddHHmm");
+            e.Learner.ReferenceNumber = command.Data.ApprenticeshipEarning.Uln.ToString();
             e.Learner.Uln = command.Data.ApprenticeshipEarning.Uln;
             e.LearningAim = new();
             e.LearningAim.FrameworkCode = 0;
