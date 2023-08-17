@@ -67,6 +67,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 model.DeliveryPeriod = y.Period;
                 model.CollectionMonth = y.CalendarMonth;
                 model.CollectionYear = y.CalenderYear;
+                model.FundingLineType = y.FundingLineType;
                 return model;
             }).ToList();
             Model.StartDate = earningsGeneratedEvent.StartDate;

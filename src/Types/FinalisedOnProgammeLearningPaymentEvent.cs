@@ -15,6 +15,7 @@ public class FinalisedOnProgammeLearningPaymentEvent
     public ApprenticeshipEarning ApprenticeshipEarning { get; set; }
     public Apprenticeship Apprenticeship { get; set; }
     public string? CourseCode { get; set; }
+    public string FundingLineType { get; set; }
 }
 
 #pragma warning restore CS8618

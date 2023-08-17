@@ -24,14 +24,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             foreach (var earning in Earnings)
             {
                 var collectionPeriod = DetermineCollectionPeriod(earning, now);
-                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionPeriod.AcademicYear, (byte)collectionPeriod.Period);
+                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType);
                 _payments.Add(payment);
             }
         }
 
-        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth)
+        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType)
         {
-            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
+            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth, fundingLineType));
         }
 
         private (short AcademicYear, byte Period) DetermineCollectionPeriod(Earning earning, DateTime now)

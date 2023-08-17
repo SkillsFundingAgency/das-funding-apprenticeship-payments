@@ -29,6 +29,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.ApprenticeshipEarning.ProviderIdentifier = apprenticeship.Ukprn;
         @event.ApprenticeshipEarning.StartDate = apprenticeship.StartDate;
         @event.ApprenticeshipEarning.Uln = apprenticeship.Uln;
+        @event.ApprenticeshipEarning.FundingLineType = payment.FundingLineType;
 
         @event.CollectionYear = payment.CollectionYear;
         @event.CollectionPeriod = payment.CollectionPeriod;
@@ -38,6 +39,8 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.EmployerDetails.EmployingAccountId = apprenticeship.FundingEmployerAccountId;
         @event.EmployerDetails.FundingAccountId = apprenticeship.TransferSenderAccountId ?? apprenticeship.FundingEmployerAccountId;
         @event.EmployerDetails.FundingCommitmentId = apprenticeship.FundingCommitmentId;
+
+        @event.FundingLineType = payment.FundingLineType;
 
         return @event;
     }

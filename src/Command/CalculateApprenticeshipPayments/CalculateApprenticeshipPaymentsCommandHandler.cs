@@ -43,7 +43,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
             return apprenticeship;
         }
 
-        private List<PaymentEntityModel> MapPaymentsToModel(IReadOnlyCollection<Payment> apprenticeshipPayments)
+        private static List<PaymentEntityModel> MapPaymentsToModel(IReadOnlyCollection<Payment> apprenticeshipPayments)
         {
             return apprenticeshipPayments.Select(x => new PaymentEntityModel
             {
@@ -52,7 +52,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
                 Amount = x.Amount,
                 DeliveryPeriod = x.DeliveryPeriod,
                 CollectionPeriod = x.CollectionPeriod,
-                SentForPayment = x.SentForPayment
+                SentForPayment = x.SentForPayment,
+                FundingLineType = x.FundingLineType
             }).ToList();
         }
     }
