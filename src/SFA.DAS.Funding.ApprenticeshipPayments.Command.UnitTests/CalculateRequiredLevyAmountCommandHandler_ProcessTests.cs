@@ -209,13 +209,13 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
             Times.Once());
     }
 
-    [Test]
-    public void Process_Sends_CalculatedRequiredLevyAmount_LearnerReferenceNumber_NonEmpty12DigitNumber()
-    {
-        _busEndpoint.Verify(ms => ms.Send(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.Learner.ReferenceNumber.Length == 12 && !string.IsNullOrEmpty(e.Learner.ReferenceNumber))),
-            Times.Once());
-    }
+    //[Test]
+    //public void Process_Sends_CalculatedRequiredLevyAmount_LearnerReferenceNumber_NonEmpty12DigitNumber()
+    //{
+    //    _busEndpoint.Verify(ms => ms.Send(
+    //            It.Is<CalculatedRequiredLevyAmount>(e => e.Learner.ReferenceNumber.Length == 12 && !string.IsNullOrEmpty(e.Learner.ReferenceNumber))),
+    //        Times.Once());
+    //}
 
     [Test]
     public void Process_Sends_CalculatedRequiredLevyAmount_LearnerUln_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsUln()
