@@ -2,6 +2,5 @@
 
 public interface ICalculateRequiredLevyAmountCommandHandler
 {
-    Task Send(CalculateRequiredLevyAmountCommand command);
     Task Publish(CalculateRequiredLevyAmountCommand command);
 }

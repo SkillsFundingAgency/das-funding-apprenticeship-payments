@@ -16,25 +16,6 @@ public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyA
         _logger = logger;
     }
 
-    public async Task Send(CalculateRequiredLevyAmountCommand command)
-    {
-        var @event = command.MapToCalculatedRequiredLevyAmountEvent();
-
-        _logger.LogInformation(
-            "Apprenticeship Key: {ApprenticeshipKey} - Sending {event} for CollectionPeriod: {Period}/{AcademicYear}",
-            command.Data.ApprenticeshipKey,
-            nameof(CalculatedRequiredLevyAmount),
-            @event.CollectionPeriod.Period,
-        @event.CollectionPeriod.AcademicYear);
-
-
-        _logger.LogInformation("ApprenticeshipKey: {0} Sending CalculatedRequiredLevyAmount: {1}",
-            command.Data.ApprenticeshipKey,
-            JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
-
-        await _busEndpoint.Send(@event);
-    }
-
     public async Task Publish(CalculateRequiredLevyAmountCommand command)
     {
         var @event = command.MapToCalculatedRequiredLevyAmountEvent();

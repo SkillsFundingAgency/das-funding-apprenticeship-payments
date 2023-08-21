@@ -20,8 +20,7 @@ public class CalculateRequiredLevyAmountFunction_RunTests
     }
 
     [Test]
-    [Ignore("temp")]
-    public async Task Run_SendsCalculateRequiredLevyAmountCommand()
+    public async Task Run_PublishesCalculateRequiredLevyAmountCommand()
     {
         // Arrange
         var @event = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
@@ -30,6 +29,6 @@ public class CalculateRequiredLevyAmountFunction_RunTests
         await _sut.Run(@event, Mock.Of<ILogger>());
 
         // Assert
-        _commandHandlerMock.Verify(_ => _.Send(It.Is<CalculateRequiredLevyAmountCommand>(c => c.Data == @event)), Times.Once());
+        _commandHandlerMock.Verify(_ => _.Publish(It.Is<CalculateRequiredLevyAmountCommand>(c => c.Data == @event)), Times.Once());
     }
 }
