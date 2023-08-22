@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
-using SFA.DAS.Payments.RequiredPayments.Messages.Events;
-using System.Text.Json;
+﻿using SFA.DAS.Payments.RequiredPayments.Messages.Events;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 
@@ -30,7 +27,7 @@ public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyA
 
         _logger.LogInformation("ApprenticeshipKey: {0} Publishing CalculatedRequiredLevyAmount: {1}",
             command.Data.ApprenticeshipKey,
-            JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
+            @event.SerialiseForLogging());
 
         await _busEndpoint.Publish(@event);
     }

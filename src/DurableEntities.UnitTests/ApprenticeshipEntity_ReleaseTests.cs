@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests;
@@ -26,7 +25,7 @@ public class ApprenticeshipEntity_ReleaseTests
         _collectionPeriod = _fixture.Create<byte>();
 
         _processUnfundedPaymentsCommandHandler = new Mock<IProcessUnfundedPaymentsCommandHandler>();
-        _sut = new ApprenticeshipEntity(Mock.Of<ICalculateApprenticeshipPaymentsCommandHandler>(), Mock.Of<IDomainEventDispatcher>(), _processUnfundedPaymentsCommandHandler.Object, Mock.Of<ILogger<ApprenticeshipEntity>>());
+        _sut = new ApprenticeshipEntity(Mock.Of<ICalculateApprenticeshipPaymentsCommandHandler>(), _processUnfundedPaymentsCommandHandler.Object, Mock.Of<ILogger<ApprenticeshipEntity>>());
         _sut.Model = _fixture.Create<ApprenticeshipEntityModel>();
 
         await _sut.ReleasePaymentsForCollectionPeriod(_collectionPeriod);

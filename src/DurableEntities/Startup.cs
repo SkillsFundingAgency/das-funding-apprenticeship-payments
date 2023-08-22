@@ -6,9 +6,7 @@ using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -60,7 +58,7 @@ public class Startup : FunctionsStartup
     private static void EnsureConfig(ApplicationSettings applicationSettings)
     {
         if (string.IsNullOrWhiteSpace(applicationSettings.NServiceBusConnectionString))
-            throw new Exception("NServiceBusConnectionString in ApplicationSettings should not be null.");
+            throw new InvalidOperationException("NServiceBusConnectionString in ApplicationSettings should not be null.");
     }
 
     private static bool NotAcceptanceTests(IConfiguration configuration)

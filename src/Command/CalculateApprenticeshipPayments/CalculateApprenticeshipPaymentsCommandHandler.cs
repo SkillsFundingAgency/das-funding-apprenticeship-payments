@@ -1,10 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
-using System.Text.Json;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 using Payment = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Payment;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments
@@ -35,9 +31,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
             _logger.LogInformation($"Publishing payments generated event for apprenticeship key {command.ApprenticeshipEntity.ApprenticeshipKey}. Number of payments: {command.ApprenticeshipEntity.Payments.Count}");
 
             var @event = _paymentsGeneratedEventBuilder.Build(apprenticeship);
-            _logger.LogInformation("ApprenticeshipKey: {0} Publishing PaymentsGeneratedEvent: {1}",
-                @event.ApprenticeshipKey,
-                JsonSerializer.Serialize(@event, new JsonSerializerOptions { WriteIndented = true }));
+            _logger.LogInformation("ApprenticeshipKey: {0} Publishing PaymentsGeneratedEvent: {1}", @event.ApprenticeshipKey, @event.SerialiseForLogging());
 
             await _busEndpoint.Publish(@event);
             return apprenticeship;

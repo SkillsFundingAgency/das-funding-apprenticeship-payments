@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
-using System.Text.Json;
-
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 
 public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCommandHandler
 {
@@ -36,7 +32,7 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
 
             _logger.LogInformation("ApprenticeshipKey: {0} Publishing FinalisedOnProgammeLearningPaymentEvent: {1}",
                 finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey,
-                System.Text.Json.JsonSerializer.Serialize(finalisedOnProgammeLearningPaymentEvent, new JsonSerializerOptions { WriteIndented = true }));
+                finalisedOnProgammeLearningPaymentEvent.SerialiseForLogging());
 
             payment.SentForPayment = true;
         }

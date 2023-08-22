@@ -1,18 +1,8 @@
-﻿using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using NServiceBus.Logging;
+﻿using Newtonsoft.Json;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
-using SFA.DAS.NServiceBus;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 {
@@ -22,17 +12,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         [JsonProperty] public ApprenticeshipEntityModel Model { get; set; }
 
         private readonly ICalculateApprenticeshipPaymentsCommandHandler _calculateApprenticeshipPaymentsCommandHandler;
-        private readonly IDomainEventDispatcher _domainEventDispatcher;
         private readonly IProcessUnfundedPaymentsCommandHandler _processUnfundedPaymentsCommandHandler;
         private readonly ILogger<ApprenticeshipEntity> _logger;
 
         public ApprenticeshipEntity(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler,
-            IDomainEventDispatcher domainEventDispatcher,
             IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler,
             ILogger<ApprenticeshipEntity> logger)
         {
             _calculateApprenticeshipPaymentsCommandHandler = calculateApprenticeshipPaymentsCommandHandler;
-            _domainEventDispatcher = domainEventDispatcher;
             _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
             _logger = logger;
         }
@@ -41,7 +28,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         {
             _logger.LogInformation("ApprenticeshipKey: {0} Received EarningsGeneratedEvent: {1}",
                 earningsGeneratedEvent.ApprenticeshipKey,
-                JsonSerializer.Serialize(earningsGeneratedEvent, new JsonSerializerOptions { WriteIndented = true }));
+                earningsGeneratedEvent.SerialiseForLogging());
 
             _logger.LogInformation($"Handling Earnings Generated Event For Apprenticeship Key: {earningsGeneratedEvent.ApprenticeshipKey}");
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);

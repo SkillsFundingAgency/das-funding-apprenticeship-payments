@@ -2,7 +2,6 @@
 
 public class ApprenticeshipEarning
 {
-    public ApprenticeshipEarning() { }
     public long FundingPeriodId { get; set; }
     public byte DeliveryPeriod { get; set; }
     public Guid ApprenticeshipEarningsId { get; set; }

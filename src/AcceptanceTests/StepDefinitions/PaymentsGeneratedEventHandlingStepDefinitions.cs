@@ -31,15 +31,15 @@ public class PaymentsGeneratedEventHandlingStepDefinitions
 
     private bool FuturePaymentsMatchExpectation(PaymentsGeneratedEvent paymentsGeneratedEvent)
     {
-        return paymentsGeneratedEvent.ApprenticeshipKey == (Guid) _scenarioContext["apprenticeshipKey"] &&
-               paymentsGeneratedEvent.Payments.Count() == (int) _scenarioContext["numberOfPayments"] &&
-               paymentsGeneratedEvent.Payments.All(x => x.Amount == (int) _scenarioContext["paymentAmount"]);
+        return paymentsGeneratedEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
+               paymentsGeneratedEvent.Payments.Count == (int)_scenarioContext["numberOfPayments"] &&
+               paymentsGeneratedEvent.Payments.TrueForAll(x => x.Amount == (int)_scenarioContext["paymentAmount"]);
     }
 
     private bool PastPaymentsMatchExpectation(PaymentsGeneratedEvent paymentsGeneratedEvent)
     {
         return paymentsGeneratedEvent.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] &&
-               paymentsGeneratedEvent.Payments.Count() == (int)_scenarioContext["numberOfPayments"] &&
-               paymentsGeneratedEvent.Payments.All(x => x.Amount == (int)_scenarioContext["paymentAmount"]);
+               paymentsGeneratedEvent.Payments.Count == (int)_scenarioContext["numberOfPayments"] &&
+               paymentsGeneratedEvent.Payments.TrueForAll(x => x.Amount == (int)_scenarioContext["paymentAmount"]);
     }
 }

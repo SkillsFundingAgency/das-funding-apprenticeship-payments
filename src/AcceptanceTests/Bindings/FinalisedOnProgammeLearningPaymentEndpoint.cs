@@ -6,7 +6,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
 
 [Binding]
 [Scope(Tag = "FinalisedOnProgammeLearningPaymentEndpoint")]
-public class FinalisedOnProgammeLearningPaymentEndpoint
+public static class FinalisedOnProgammeLearningPaymentEndpoint
 {
     [BeforeScenario]
     public static async Task StartEndpoint(TestContext context)
@@ -14,7 +14,7 @@ public class FinalisedOnProgammeLearningPaymentEndpoint
         if (context.FinalisedOnProgammeLearningPaymentEndpoint is not null) return;
 
         context.FinalisedOnProgammeLearningPaymentEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.FinalisedOnProgammeLearningPayment, false, new[] { typeof(FinalisedOnProgammeLearningPaymentEvent) });
+            .StartEndpoint(QueueNames.FinalisedOnProgammeLearningPayment + "-test", false, new[] { typeof(FinalisedOnProgammeLearningPaymentEvent) });
 
     }
 }

@@ -7,6 +7,6 @@
         public byte CollectionMonth { get; set; }
         public short CollectionYear { get; set; }
         public decimal Amount { get; set; }
-        public string FundingLineType { get; set; }
+        public string FundingLineType { get; set; } = null!;
     }
 }

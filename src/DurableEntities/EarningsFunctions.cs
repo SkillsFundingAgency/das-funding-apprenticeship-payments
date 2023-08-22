@@ -1,13 +1,6 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
-using SFA.DAS.NServiceBus.AzureFunction.Attributes;
-using System;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 {
