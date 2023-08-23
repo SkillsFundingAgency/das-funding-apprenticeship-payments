@@ -113,5 +113,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         {
             _sut.Model.ApprovalsApprenticeshipId.Should().Be(_earningsGeneratedEvent.ApprovalsApprenticeshipId);
         }
+
+        [Test]
+        public void ShouldMapEmployerType()
+        {
+            _sut.Model.EmployerType.Should().Be(_earningsGeneratedEvent.EmployerType);
+        }
     }
 }

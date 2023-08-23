@@ -57,6 +57,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 model.FundingLineType = y.FundingLineType;
                 return model;
             }).ToList();
+            Model.EmployerType = earningsGeneratedEvent.EmployerType;
             Model.StartDate = earningsGeneratedEvent.StartDate;
             Model.Ukprn = earningsGeneratedEvent.ProviderId;
             Model.Uln = long.Parse(earningsGeneratedEvent.Uln);
