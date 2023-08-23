@@ -17,6 +17,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.Apprenticeship = new Apprenticeship();
         @event.Apprenticeship.StartDate = apprenticeship.StartDate;
         @event.Apprenticeship.ApprovalsApprenticeshipId = apprenticeship.ApprovalsApprenticeshipId;
+        @event.ApprenticeshipEmployerType = apprenticeship.EmployerType;
 
         @event.ApprenticeshipKey = apprenticeship.ApprenticeshipKey;
         @event.ApprenticeshipEarning = new ApprenticeshipEarning();
