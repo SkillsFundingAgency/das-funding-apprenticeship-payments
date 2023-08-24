@@ -1,17 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
-using NServiceBus;
-
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 
 public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCommandHandler
 {
-    private readonly IMessageSession _messageSession;
+    private readonly IDasServiceBusEndpoint _busEndpoint;
     private readonly IFinalisedOnProgammeLearningPaymentEventBuilder _eventBuilder;
     private readonly ILogger<ProcessUnfundedPaymentsCommandHandler> _logger;
 
-    public ProcessUnfundedPaymentsCommandHandler(IMessageSession messageSession, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
+    public ProcessUnfundedPaymentsCommandHandler(IDasServiceBusEndpoint busEndpoint, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
     {
-        _messageSession = messageSession;
+        _busEndpoint = busEndpoint;
         _eventBuilder = eventBuilder;
         _logger = logger;
     }
@@ -31,7 +28,12 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         foreach (var payment in paymentsToSend)
         {
             var finalisedOnProgammeLearningPaymentEvent = _eventBuilder.Build(payment, command.Model);
-            await _messageSession.Publish(finalisedOnProgammeLearningPaymentEvent);
+            await _busEndpoint.Publish(finalisedOnProgammeLearningPaymentEvent);
+
+            _logger.LogInformation("ApprenticeshipKey: {0} Publishing FinalisedOnProgammeLearningPaymentEvent: {1}",
+                finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey,
+                finalisedOnProgammeLearningPaymentEvent.SerialiseForLogging());
+
             payment.SentForPayment = true;
         }
     }

@@ -7,6 +7,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
 using SFA.DAS.Payments.RequiredPayments.Messages.Events;
+using static Microsoft.Azure.Amqp.Serialization.SerializableType;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
@@ -29,6 +30,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         var inboundEvent = _testContext.Fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
         inboundEvent.CourseCode = _testContext.Fixture.Create<short>().ToString();
         inboundEvent.CollectionYear = 1718;
+        inboundEvent.ApprenticeshipEarning.Uln = new Random().Next(10000000, 99999999);
 
         _scenarioContext[nameof(FinalisedOnProgammeLearningPaymentEvent)] = inboundEvent;
 
@@ -38,7 +40,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
     [When(@"the associated data is used to generate a payment")]
     public static void WhenTheAssociatedDataIsUsedToGenerateAPayment()
     {
-        // 
+        // intentionally left blank
     }
 
     [Then(@"the CalculateRequiredLevyAmount event is published to Payments v2")]
@@ -70,7 +72,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         outboundEvent.JobId.Should().Be(-1);
         outboundEvent.IlrFileName.Should().Be("");
         outboundEvent.InstalmentAmount.Should().Be(inboundEvent.ApprenticeshipEarning.DeliveryPeriodAmount);
-        outboundEvent.Learner.ReferenceNumber.Should().Be(null);
+        outboundEvent.Learner.ReferenceNumber.Should().HaveLength(8).And.NotBeNullOrEmpty();
         outboundEvent.Learner.Uln.Should().Be(inboundEvent.ApprenticeshipEarning.Uln);
         outboundEvent.LearningAim.FrameworkCode.Should().Be(0);
         outboundEvent.LearningAim.FundingLineType.Should().Be(inboundEvent.ApprenticeshipEarning.FundingLineType);

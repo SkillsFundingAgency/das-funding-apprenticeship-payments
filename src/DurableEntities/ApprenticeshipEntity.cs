@@ -1,14 +1,8 @@
-﻿using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 {
@@ -18,23 +12,24 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         [JsonProperty] public ApprenticeshipEntityModel Model { get; set; }
 
         private readonly ICalculateApprenticeshipPaymentsCommandHandler _calculateApprenticeshipPaymentsCommandHandler;
-        private readonly IDomainEventDispatcher _domainEventDispatcher;
         private readonly IProcessUnfundedPaymentsCommandHandler _processUnfundedPaymentsCommandHandler;
         private readonly ILogger<ApprenticeshipEntity> _logger;
 
         public ApprenticeshipEntity(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler,
-            IDomainEventDispatcher domainEventDispatcher,
             IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler,
             ILogger<ApprenticeshipEntity> logger)
         {
             _calculateApprenticeshipPaymentsCommandHandler = calculateApprenticeshipPaymentsCommandHandler;
-            _domainEventDispatcher = domainEventDispatcher;
             _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
             _logger = logger;
         }
 
         public async Task HandleEarningsGeneratedEvent(EarningsGeneratedEvent earningsGeneratedEvent)
         {
+            _logger.LogInformation("ApprenticeshipKey: {0} Received EarningsGeneratedEvent: {1}",
+                earningsGeneratedEvent.ApprenticeshipKey,
+                earningsGeneratedEvent.SerialiseForLogging());
+
             _logger.LogInformation($"Handling Earnings Generated Event For Apprenticeship Key: {earningsGeneratedEvent.ApprenticeshipKey}");
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
@@ -59,8 +54,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 model.DeliveryPeriod = y.Period;
                 model.CollectionMonth = y.CalendarMonth;
                 model.CollectionYear = y.CalenderYear;
+                model.FundingLineType = y.FundingLineType;
                 return model;
             }).ToList();
+            Model.EmployerType = earningsGeneratedEvent.EmployerType;
             Model.StartDate = earningsGeneratedEvent.StartDate;
             Model.Ukprn = earningsGeneratedEvent.ProviderId;
             Model.Uln = long.Parse(earningsGeneratedEvent.Uln);

@@ -7,7 +7,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
 
 [Binding]
 [Scope(Tag = "EarningsGeneratedEndpoint")]
-public class EarningsGeneratedEndpoint
+public static class EarningsGeneratedEndpoint
 {
     [BeforeScenario]
     public static async Task StartEndpoint(TestContext context)
@@ -15,7 +15,7 @@ public class EarningsGeneratedEndpoint
         if (context.EarningsGeneratedEndpoint is not null) return;
 
         context.EarningsGeneratedEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.EarningsGenerated, true, new[] { typeof(EarningsGeneratedEvent) });
+            .StartEndpoint(QueueNames.EarningsGenerated + "-test", true, new[] { typeof(EarningsGeneratedEvent) });
 
     }
 }

@@ -33,8 +33,8 @@ public class TestFunction : IDisposable
         var appConfig = new Dictionary<string, string>{
             { "EnvironmentName", "LOCAL_ACCEPTANCE_TESTS" },
             { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
-            { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true" },
-            { "ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true" },
+            { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true;NServiceBusConnectionString" },
+            { "ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true;DCServiceBusConnectionString" },
             { "ApplicationSettings:LogLevel", "DEBUG" }
         };
 

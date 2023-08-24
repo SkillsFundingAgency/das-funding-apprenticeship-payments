@@ -1,7 +1,6 @@
 ﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using NServiceBus;
-using NServiceBus.ObjectBuilder.MSDependencyInjection;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.NServiceBus.Configuration;
@@ -23,15 +22,15 @@ public static class NServiceBusStartupExtensions
         webBuilder.AddExecutionContextBinding();
         webBuilder.AddExtension(new NServiceBusExtensionConfigProvider());
 
-        ConfigurePv2ServiceBus(serviceCollection, applicationSettings);
         ConfigureFundingServiceBus(serviceCollection, applicationSettings);
+        ConfigurePv2ServiceBus(serviceCollection, applicationSettings);
 
         return serviceCollection;
     }
 
     private static void ConfigurePv2ServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
     {
-        var endpointConfiguration = new EndpointConfiguration("sfa.das.funding.payments.calculatedlevyamount")
+        var endpointConfiguration = new EndpointConfiguration("sfa.das.funding.payments")
                  .UseNewtonsoftJsonSerializer();
         endpointConfiguration.SendOnly();
 
@@ -54,10 +53,8 @@ public static class NServiceBusStartupExtensions
             endpointConfiguration.License(applicationSettings.NServiceBusLicense);
         }
 
-        var paymentsV2EndpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
-        paymentsV2EndpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
-
-        serviceCollection.AddSingleton(typeof(IPaymentsV2ServiceBusEndpoint), new PaymentsV2ServiceBusEndpoint(paymentsV2EndpointWithExternallyManagedServiceProvider));
+        var endpointInstance = Endpoint.Start(endpointConfiguration).ConfigureAwait(false).GetAwaiter().GetResult();
+        serviceCollection.AddSingleton(typeof(IPaymentsV2ServiceBusEndpoint), new PaymentsV2ServiceBusEndpoint(endpointInstance));
     }
 
     private static void ConfigureFundingServiceBus(IServiceCollection serviceCollection, ApplicationSettings applicationSettings)
@@ -84,14 +81,13 @@ public static class NServiceBusStartupExtensions
             endpointConfiguration.License(applicationSettings.NServiceBusLicense);
         }
 
-        var endpointWithExternallyManagedServiceProvider = EndpointWithExternallyManagedServiceProvider.Create(endpointConfiguration, serviceCollection);
-        endpointWithExternallyManagedServiceProvider.Start(new UpdateableServiceProvider(serviceCollection));
-        serviceCollection.AddSingleton(p => endpointWithExternallyManagedServiceProvider.MessageSession.Value);
+        var endpointInstance = Endpoint.Start(endpointConfiguration).ConfigureAwait(false).GetAwaiter().GetResult();
+        serviceCollection.AddSingleton(typeof(IDasServiceBusEndpoint), new DasServiceBusEndpoint(endpointInstance));
     }
 
     private static bool UsingLearningTransport(ApplicationSettings applicationSettings)
     {
-        return applicationSettings.NServiceBusConnectionString.Equals("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase);
+        return applicationSettings.NServiceBusConnectionString.Contains("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase);
     }
 
     private static void SetupLearningTransportEndpoint(EndpointConfiguration endpointConfiguration)

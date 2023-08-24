@@ -6,7 +6,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
 
 [Binding]
 [Scope(Tag = "CalculatedRequiredLevyAmountEndpoint")]
-public class CalculatedRequiredLevyAmountEndpoint
+public static class CalculatedRequiredLevyAmountEndpoint
 {
     [BeforeScenario]
     public static async Task StartEndpoint(TestContext context)
@@ -14,7 +14,7 @@ public class CalculatedRequiredLevyAmountEndpoint
         if (context.CalculatedRequiredLevyAmountEndpoint is not null) return;
 
         context.CalculatedRequiredLevyAmountEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.CalculatedRequiredLevyAmount, false, new[]
+            .StartEndpoint(QueueNames.CalculatedRequiredLevyAmount + "-test", false, new[]
             {
                 typeof(CalculatedRequiredLevyAmount)
             });

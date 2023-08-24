@@ -10,7 +10,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories
 
             foreach (var earning in entityModel.Earnings)
             {
-                apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth);
+                apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, earning.FundingLineType);
             }
 
             return apprenticeship;

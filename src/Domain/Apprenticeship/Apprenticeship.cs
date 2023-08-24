@@ -24,20 +24,20 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             foreach (var earning in Earnings)
             {
                 var collectionPeriod = DetermineCollectionPeriod(earning, now);
-                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, (short)collectionPeriod.AcademicYear, (byte)collectionPeriod.Period);
+                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType);
                 _payments.Add(payment);
             }
         }
 
-        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth)
+        public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType)
         {
-            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth));
+            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth, fundingLineType));
         }
 
-        private (short AcademicYear, byte Period) DetermineCollectionPeriod(Earning earning, DateTime now)
+        private static (short AcademicYear, byte Period) DetermineCollectionPeriod(Earning earning, DateTime now)
         {
-            var censusDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
-            var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1);
+            var censusDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Local).AddMonths(1).AddDays(-1);
+            var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1, 0, 0, 0, DateTimeKind.Local);
             if (collectionDate >= censusDate)
             {
                 return (earning.AcademicYear, earning.DeliveryPeriod);
@@ -47,7 +47,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             return CollectionDateToPeriod(collectionDate);
         }
 
-        private (short AcademicYear, byte Period) CollectionDateToPeriod(DateTime collectionDate)
+        private static (short AcademicYear, byte Period) CollectionDateToPeriod(DateTime collectionDate)
         {
             var period = collectionDate.Month - 7;
             if (period <= 0)

@@ -36,7 +36,7 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
         finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate.Should().Be(earningsGeneratedEvent.PlannedEndDate);
         finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier.Should().Be(earningsGeneratedEvent.ProviderId);
 
-        var expectedAmount = earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount; 
+        var expectedAmount = earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount;
         finalisedOnProgammeLearningPaymentEvent.Amount.Should().Be(expectedAmount);
 
 

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
 {
@@ -26,13 +26,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         {
             var earnings = new List<Earning>
             {
-                new ((short)DateTime.Now.Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month),
-                new ((short)DateTime.Now.AddMonths(1).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month),
-                new ((short)DateTime.Now.AddMonths(2).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month)
+                new ((short)DateTime.Now.Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month,_fixture.Create<string>()),
+                new ((short)DateTime.Now.AddMonths(1).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month, _fixture.Create<string>()),
+                new ((short)DateTime.Now.AddMonths(2).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month, _fixture.Create<string>())
             };
             foreach (var earning in earnings)
             {
-                _sut.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth);
+                _sut.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, _fixture.Create<string>());
             }
 
             _sut.CalculatePayments(DateTime.Now);
@@ -43,7 +43,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         [Test]
         public void CollectionPeriodShouldBeDeliveryPeriodIfInTheFuture()
         {
-            _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month);
+            _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month,_fixture.Create<string>());
 
             _sut.CalculatePayments(DateTime.Now);
 
@@ -56,7 +56,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         public void CollectionPeriodShouldBeCurrentPeriodIfInThePast()
         {
             var now = new DateTime(2023, 6, 25);
-            _sut.AddEarning(2223, 11, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month);
+            _sut.AddEarning(2223, 11, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month, _fixture.Create<string>());
 
             _sut.CalculatePayments(now);
 

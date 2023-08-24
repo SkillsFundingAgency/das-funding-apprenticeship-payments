@@ -9,7 +9,6 @@ using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
@@ -21,7 +20,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         private ApprenticeshipEntity _sut = null!;
         private EarningsGeneratedEvent _earningsGeneratedEvent = null!;
         private Mock<ICalculateApprenticeshipPaymentsCommandHandler> _calculateApprenticeshipPaymentsCommandHandler = null!;
-        private Mock<IDomainEventDispatcher> _domainEventDispatcher = null!;
         private Fixture _fixture = null!;
         private Apprenticeship _apprenticeship = null!;
         private IEnumerable<EarningEntityModel> _expectedEarnings = null!;
@@ -42,14 +40,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
                     AcademicYear = y.AcademicYear,
                     Amount = y.LearningAmount,
                     CollectionMonth = y.CalendarMonth,
-                    CollectionYear = y.CalenderYear
+                    CollectionYear = y.CalenderYear,
+                    FundingLineType = y.FundingLineType
                 });
 
             _apprenticeship = _fixture.Create<Apprenticeship>();
 
             _calculateApprenticeshipPaymentsCommandHandler = new Mock<ICalculateApprenticeshipPaymentsCommandHandler>();
-            _domainEventDispatcher = new Mock<IDomainEventDispatcher>();
-            _sut = new ApprenticeshipEntity(_calculateApprenticeshipPaymentsCommandHandler.Object, _domainEventDispatcher.Object, Mock.Of<IProcessUnfundedPaymentsCommandHandler>(), Mock.Of<ILogger<ApprenticeshipEntity>>());
+            _sut = new ApprenticeshipEntity(_calculateApprenticeshipPaymentsCommandHandler.Object,Mock.Of<IProcessUnfundedPaymentsCommandHandler>(), Mock.Of<ILogger<ApprenticeshipEntity>>());
 
             _calculateApprenticeshipPaymentsCommandHandler.Setup(x => x.Calculate(It.IsAny<CalculateApprenticeshipPaymentsCommand>())).ReturnsAsync(_apprenticeship);
 
@@ -114,6 +112,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         public void ShouldMapApprovalsApprenticeshipIdToEntity()
         {
             _sut.Model.ApprovalsApprenticeshipId.Should().Be(_earningsGeneratedEvent.ApprovalsApprenticeshipId);
+        }
+
+        [Test]
+        public void ShouldMapEmployerType()
+        {
+            _sut.Model.EmployerType.Should().Be(_earningsGeneratedEvent.EmployerType);
         }
     }
 }

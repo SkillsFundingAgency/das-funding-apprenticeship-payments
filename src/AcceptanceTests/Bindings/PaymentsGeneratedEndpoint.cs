@@ -5,7 +5,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
 
 [Binding]
 [Scope(Tag = "PaymentsGeneratedEndpoint")]
-public class PaymentsGeneratedEndpoint
+public static class PaymentsGeneratedEndpoint
 {
     [BeforeScenario]
     public static async Task StartEndpoint(TestContext context)

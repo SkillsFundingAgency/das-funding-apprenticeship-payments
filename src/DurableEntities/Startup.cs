@@ -2,14 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -31,7 +28,7 @@ public class Startup : FunctionsStartup
             .AddConfiguration(configuration)
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddEnvironmentVariables();
-            
+
         if (NotAcceptanceTests(configuration))
         {
             configBuilder.AddJsonFile("local.settings.json", true);
@@ -42,7 +39,7 @@ public class Startup : FunctionsStartup
                 options.EnvironmentName = configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
             });
-        }
+        } 
 
         Configuration = configBuilder.Build();
 
@@ -61,7 +58,7 @@ public class Startup : FunctionsStartup
     private static void EnsureConfig(ApplicationSettings applicationSettings)
     {
         if (string.IsNullOrWhiteSpace(applicationSettings.NServiceBusConnectionString))
-            throw new Exception("NServiceBusConnectionString in ApplicationSettings should not be null.");
+            throw new InvalidOperationException("NServiceBusConnectionString in ApplicationSettings should not be null.");
     }
 
     private static bool NotAcceptanceTests(IConfiguration configuration)
