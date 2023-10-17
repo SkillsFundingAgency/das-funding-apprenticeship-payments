@@ -26,5 +26,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             var entityId = new EntityId(nameof(ApprenticeshipEntity), earningsGeneratedEvent.ApprenticeshipKey.ToString());
             await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsGeneratedEvent), earningsGeneratedEvent);
         }
+
+        [FunctionName(nameof(EarningsRecalculatedEventServiceBusTrigger))]
+        public async Task EarningsRecalculatedEventServiceBusTrigger(
+            [NServiceBusTrigger(Endpoint = QueueNames.EarningsGenerated)] ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent,
+            [DurableClient] IDurableEntityClient client,
+            ILogger log)
+        {
+            await client.SignalEntityAsync(new EntityId(nameof(ApprenticeshipEntity), earningsRecalculatedEvent.ApprenticeshipKey.ToString()), nameof(ApprenticeshipEntity.HandleEarningsRecalculatedEvent), earningsRecalculatedEvent);
+        }
     }
 }

@@ -34,6 +34,17 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
+
+        public async Task HandleEarningsRecalculatedEvent(ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent)
+        {
+            _logger.LogInformation("ApprenticeshipKey: {0} Received EarningsRecalculatedEvent: {1}",
+                earningsRecalculatedEvent.ApprenticeshipKey,
+                earningsRecalculatedEvent.SerialiseForLogging());
+            //call handler
+
+            //then copy new earnings and payments to the entity (don't map them before the handler)
+        }
+
         public async Task ReleasePaymentsForCollectionPeriod(byte collectionPeriod)
         {
             await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(collectionPeriod, Model));
