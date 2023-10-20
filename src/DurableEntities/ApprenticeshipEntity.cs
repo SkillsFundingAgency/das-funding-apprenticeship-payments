@@ -2,6 +2,8 @@
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
@@ -13,14 +15,17 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         private readonly ICalculateApprenticeshipPaymentsCommandHandler _calculateApprenticeshipPaymentsCommandHandler;
         private readonly IProcessUnfundedPaymentsCommandHandler _processUnfundedPaymentsCommandHandler;
+        private readonly IRecalculateApprenticeshipPaymentsCommandHandler _recalculateApprenticeshipPaymentsCommandHandler;
         private readonly ILogger<ApprenticeshipEntity> _logger;
 
         public ApprenticeshipEntity(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler,
             IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler,
+            IRecalculateApprenticeshipPaymentsCommandHandler recalculateApprenticeshipPaymentsCommandHandler,
             ILogger<ApprenticeshipEntity> logger)
         {
             _calculateApprenticeshipPaymentsCommandHandler = calculateApprenticeshipPaymentsCommandHandler;
             _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
+            _recalculateApprenticeshipPaymentsCommandHandler = recalculateApprenticeshipPaymentsCommandHandler;
             _logger = logger;
         }
 
@@ -40,9 +45,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             _logger.LogInformation("ApprenticeshipKey: {0} Received EarningsRecalculatedEvent: {1}",
                 earningsRecalculatedEvent.ApprenticeshipKey,
                 earningsRecalculatedEvent.SerialiseForLogging());
-            //call handler
 
-            //then copy new earnings and payments to the entity (don't map them before the handler)
+            var apprenticeship = await _recalculateApprenticeshipPaymentsCommandHandler.Recalculate(new RecalculateApprenticeshipPaymentsCommand(Model, earningsRecalculatedEvent.DeliveryPeriods.ToEarnings()));
+
+            MapNewEarningsAndPayments(apprenticeship);
         }
 
         public async Task ReleasePaymentsForCollectionPeriod(byte collectionPeriod)
@@ -76,6 +82,29 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model.CourseCode = earningsGeneratedEvent.TrainingCode;
             Model.FundingEmployerAccountId = earningsGeneratedEvent.EmployerAccountId;
             Model.ApprovalsApprenticeshipId = earningsGeneratedEvent.ApprovalsApprenticeshipId;
+        }
+
+        private void MapNewEarningsAndPayments(Apprenticeship apprenticeship)
+        {
+            Model.Earnings = apprenticeship.Earnings.Select(e => new EarningEntityModel
+            {
+                AcademicYear = e.AcademicYear,
+                Amount = e.Amount,
+                DeliveryPeriod = e.DeliveryPeriod,
+                CollectionMonth = e.CollectionMonth,
+                CollectionYear = e.CollectionYear,
+                FundingLineType = e.FundingLineType
+            }).ToList();
+            Model.Payments = apprenticeship.Payments.Select(p => new PaymentEntityModel
+            {
+                AcademicYear = p.AcademicYear,
+                Amount = p.Amount,
+                CollectionPeriod = p.CollectionPeriod,
+                CollectionYear = p.CollectionYear,
+                DeliveryPeriod = p.DeliveryPeriod,
+                FundingLineType = p.FundingLineType,
+                SentForPayment = p.SentForPayment
+            }).ToList();
         }
     }
 }
