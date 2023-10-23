@@ -2,6 +2,7 @@
 @PaymentsGeneratedEndpoint
 @ReleasePaymentsEndpoint
 @EarningsRecalculatedEndpoint
+@FinalisedOnProgammeLearningPaymentEndpoint
 
 Feature: Recalculate payments for earnings
 

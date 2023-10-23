@@ -97,7 +97,7 @@ public class PaymentsRecalculationStepDefinitions
         await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
     }
 
-    [When("Payments are recalculated")]
+    [When("payments are recalculated")]
     public void PaymentsAreRecalculated()
     {
         //intentionally left blank
