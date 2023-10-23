@@ -29,7 +29,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         [FunctionName(nameof(EarningsRecalculatedEventServiceBusTrigger))]
         public async Task EarningsRecalculatedEventServiceBusTrigger(
-            [NServiceBusTrigger(Endpoint = QueueNames.EarningsGenerated)] ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent,
+            [NServiceBusTrigger(Endpoint = QueueNames.EarningsRecalculated)] ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent,
             [DurableClient] IDurableEntityClient client,
             ILogger log)
         {
