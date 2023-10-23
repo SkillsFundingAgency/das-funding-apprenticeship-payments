@@ -33,7 +33,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories
                 p.CollectionYear,
                 p.CollectionPeriod,
                 p.FundingLineType
-            )).ToList());
+            ) { SentForPayment = p.SentForPayment }).ToList());
         }
     }
 }
