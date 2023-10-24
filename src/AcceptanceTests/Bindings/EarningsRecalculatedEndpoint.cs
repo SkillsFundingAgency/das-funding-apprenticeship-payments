@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
@@ -14,7 +15,7 @@ public static class EarningsRecalculatedEndpoint
         if (context.EarningsRecalculatedEndpoint is not null) return;
 
         context.EarningsRecalculatedEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.EarningsRecalculated + "-test", true, new[] { typeof(ApprenticeshipEarningsRecalculatedEvent) }); //todo different queue?
+            .StartEndpoint(QueueNames.EarningsRecalculated + "-test", true, new[] { typeof(ApprenticeshipEarningsRecalculatedEvent) });
 
     }
 }

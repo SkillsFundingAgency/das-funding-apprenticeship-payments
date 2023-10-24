@@ -77,7 +77,7 @@ public class PaymentsRecalculationStepDefinitions
     public async Task RecalculatedEarningsHaveBeenGenerated()
     {
         //build event for recalculated earnings
-        var periods = new List<EarningsRecalculatedDeliveryPeriod>
+        var periods = new List<DeliveryPeriod>
         {
             new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1200 }, //this month already paid
             new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1200 } // next month not paid yet
