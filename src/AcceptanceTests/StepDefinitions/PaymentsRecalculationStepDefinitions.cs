@@ -32,8 +32,8 @@ public class PaymentsRecalculationStepDefinitions
         //build event for previous earnings
         var periods = new List<DeliveryPeriod>
         {
-            new() { CalenderYear = (short)DateTime.Now.AddMonths(-1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-1).Month, LearningAmount = 1000 }, //last month already paid todo check this
-            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 } // this month not paid yet
+            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }, //this month already paid
+            new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 } // next month not paid yet
         };
 
         _previousEarningsGeneratedEvent = _testContext.Fixture
@@ -57,10 +57,10 @@ public class PaymentsRecalculationStepDefinitions
             && e.Payments.Count == 2
             && e.Payments.All(p => p.Amount == 1000)), "Failed to find published PaymentsGenerated event for previously generated payments");
 
-        //release payments for last month
+        //release payments for this month
         var releasePaymentsCommand = new ReleasePaymentsCommand
         {
-            CollectionPeriod = ((byte)DateTime.Now.AddMonths(-1).Month).ToDeliveryPeriod()
+            CollectionPeriod = ((byte)DateTime.Now.Month).ToDeliveryPeriod()
         };
         await _testContext.ReleasePaymentsEndpoint.Publish(releasePaymentsCommand);
 
@@ -79,8 +79,8 @@ public class PaymentsRecalculationStepDefinitions
         //build event for recalculated earnings
         var periods = new List<EarningsRecalculatedDeliveryPeriod>
         {
-            new() { CalenderYear = (short)DateTime.Now.AddMonths(-1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-1).Month, LearningAmount = 1200 }, //last month already paid
-            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1200 } // this month not paid yet
+            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1200 }, //this month already paid
+            new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1200 } // next month not paid yet
         };
 
         _earningsRecalculatedEvent = _testContext.Fixture
@@ -110,9 +110,9 @@ public class PaymentsRecalculationStepDefinitions
             {
                 return e.ApprenticeshipKey == _apprenticeshipKey
                        && e.Payments.Count == 3
-                       && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.AddMonths(-1).Month).ToDeliveryPeriod() && x.Amount == 1000m) //original payment
-                       && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.AddMonths(-1).Month).ToDeliveryPeriod() && x.Amount == 200m) //diff payment
-                       && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod() && x.Amount == 1200m); }), //payment for month not yet sent
-            "Failed to find published PaymentsGenerated event for recalculated payments"); //todo these payments off by one collection period
+                       && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod() && x.Amount == 1000) //original payment
+                       && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod() && x.Amount == 200) //diff payment
+                       && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.AddMonths(1).Month).ToDeliveryPeriod() && x.Amount == 1200); }), //payment for month not yet sent
+            "Failed to find published PaymentsGenerated event for recalculated payments");
     }
 }
