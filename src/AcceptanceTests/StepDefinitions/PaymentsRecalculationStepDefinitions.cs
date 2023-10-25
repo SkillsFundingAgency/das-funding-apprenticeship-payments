@@ -97,13 +97,13 @@ public class PaymentsRecalculationStepDefinitions
     }
 
     [When("payments are recalculated")]
-    public void PaymentsAreRecalculated()
+    public static void PaymentsAreRecalculated()
     {
         //intentionally left blank
     }
 
     [Then("new payments are generated with the correct learning amounts")]
-    public async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmounts()
+    public static async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmounts()
     {
         await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(e =>
             {

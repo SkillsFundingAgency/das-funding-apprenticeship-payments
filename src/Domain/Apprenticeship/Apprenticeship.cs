@@ -38,7 +38,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 
         public void RecalculatePayments(DateTime now)
         {
-            _payments.RemoveAll(p => p.SentForPayment == false);
+            _payments.RemoveAll(p => !p.SentForPayment);
             foreach (var earning in Earnings)
             {
                 var collectionPeriod = DetermineCollectionPeriod(earning, now);
