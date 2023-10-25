@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 

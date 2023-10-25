@@ -1,5 +1,4 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments

@@ -42,18 +42,4 @@ public class RecalculateApprenticeshipPaymentsCommandHandler : IRecalculateAppre
         await _busEndpoint.Publish(@event);
         return apprenticeship;
     }
-
-    private static List<PaymentEntityModel> MapPaymentsToModel(IReadOnlyCollection<Payment> apprenticeshipPayments)
-    {
-        return apprenticeshipPayments.Select(x => new PaymentEntityModel
-        {
-            CollectionYear = x.CollectionYear,
-            AcademicYear = x.AcademicYear,
-            Amount = x.Amount,
-            DeliveryPeriod = x.DeliveryPeriod,
-            CollectionPeriod = x.CollectionPeriod,
-            SentForPayment = x.SentForPayment,
-            FundingLineType = x.FundingLineType
-        }).ToList();
-    }
 }
