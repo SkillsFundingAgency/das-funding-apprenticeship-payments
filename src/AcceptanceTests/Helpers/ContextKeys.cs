@@ -3,4 +3,5 @@
 public static class ContextKeys
 {
     public const string EarningsGeneratedEvent = "earningsGeneratedEvent";
+    public const string EarningsRecalculatedEvent = "earningsRecalculatedEvent";
 }

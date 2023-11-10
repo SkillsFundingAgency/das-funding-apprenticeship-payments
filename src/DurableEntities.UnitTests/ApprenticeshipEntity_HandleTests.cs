@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
@@ -47,7 +48,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
             _apprenticeship = _fixture.Create<Apprenticeship>();
 
             _calculateApprenticeshipPaymentsCommandHandler = new Mock<ICalculateApprenticeshipPaymentsCommandHandler>();
-            _sut = new ApprenticeshipEntity(_calculateApprenticeshipPaymentsCommandHandler.Object,Mock.Of<IProcessUnfundedPaymentsCommandHandler>(), Mock.Of<ILogger<ApprenticeshipEntity>>());
+            _sut = new ApprenticeshipEntity(_calculateApprenticeshipPaymentsCommandHandler.Object,Mock.Of<IProcessUnfundedPaymentsCommandHandler>(), Mock.Of<IRecalculateApprenticeshipPaymentsCommandHandler>(), Mock.Of<ILogger<ApprenticeshipEntity>>());
 
             _calculateApprenticeshipPaymentsCommandHandler.Setup(x => x.Calculate(It.IsAny<CalculateApprenticeshipPaymentsCommand>())).ReturnsAsync(_apprenticeship);
 

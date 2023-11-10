@@ -13,6 +13,15 @@ public static class PeriodHelper
         }
     }
 
+    public static void SetDeliveryPeriodsAccordingToCalendarMonths(this ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent)
+    {
+        foreach (var deliveryPeriod in earningsRecalculatedEvent.DeliveryPeriods)
+        {
+            deliveryPeriod.AcademicYear = deliveryPeriod.CalenderYear.ToAcademicYear(deliveryPeriod.CalendarMonth);
+            deliveryPeriod.Period = deliveryPeriod.CalendarMonth.ToDeliveryPeriod();
+        }
+    }
+
     public static byte ToDeliveryPeriod(this byte calendarMonth)
     {
         if (calendarMonth < 8)
