@@ -3,6 +3,7 @@ using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 {
@@ -34,9 +35,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
-        public async Task ReleasePaymentsForCollectionPeriod(byte collectionPeriod)
+        public async Task ReleasePaymentsForCollectionPeriod(ReleasePaymentsCommand releasePaymentsCommand)
         {
-            await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(collectionPeriod, Model));
+            await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, Model));
         }
 
         [FunctionName(nameof(ApprenticeshipEntity))]

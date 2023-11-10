@@ -21,7 +21,8 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     {
         _releasePaymentsCommand = new ReleasePaymentsCommand
         {
-            CollectionPeriod = ((byte)DateTime.Now.Month).ToDeliveryPeriod()
+            CollectionPeriod = ((byte)DateTime.Now.Month).ToDeliveryPeriod(),
+            CollectionYear = ((short)DateTime.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
         };
         await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
     }
