@@ -18,12 +18,12 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         ArgumentNullException.ThrowIfNull(command.Model);
 
         var paymentsToSend = command.Model.Payments
-            .Where(x => x.CollectionPeriod == command.CollectionPeriod && !x.SentForPayment)
+            .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.CollectionYear == command.CollectionYear && !x.SentForPayment)
             .ToArray();
 
         _logger.LogInformation(paymentsToSend.Any()
-            ? $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing {paymentsToSend.Length} payments for collection period {command.CollectionPeriod}"
-            : $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  No payments to publish for collection period {command.CollectionPeriod}");
+            ? $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing {paymentsToSend.Length} payments for collection period {command.CollectionPeriod} & year {command.CollectionYear}"
+            : $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  No payments to publish for collection period {command.CollectionPeriod} & year {command.CollectionYear}");
 
         foreach (var payment in paymentsToSend)
         {

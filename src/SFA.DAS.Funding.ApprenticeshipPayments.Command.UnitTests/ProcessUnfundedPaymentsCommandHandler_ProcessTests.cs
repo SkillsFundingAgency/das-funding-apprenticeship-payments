@@ -14,6 +14,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         private ProcessUnfundedPaymentsCommand _command = null!;
         private Fixture _fixture = null!;
         private byte _collectionPeriod;
+        private short _collectionYear;
         private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
         private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder = null!;
         private FinalisedOnProgammeLearningPaymentEvent _expectedEvent = null!;
@@ -24,12 +25,14 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         {
             _fixture = new Fixture();
             _collectionPeriod = _fixture.Create<byte>();
-            _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _fixture.Create<ApprenticeshipEntityModel>());
+            _collectionYear = _fixture.Create<short>();
+            _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<ApprenticeshipEntityModel>());
             _command.Model.Payments = new List<PaymentEntityModel>
             {
-                new PaymentEntityModel { Amount = 100, CollectionPeriod = _collectionPeriod, SentForPayment = false }, //to be sent
-                new PaymentEntityModel { Amount = 200, CollectionPeriod = _collectionPeriod, SentForPayment = true }, //already sent
-                new PaymentEntityModel { Amount = 300, CollectionPeriod = (byte)(_collectionPeriod + 1), SentForPayment = false } //wrong period
+                new PaymentEntityModel { Amount = 100, CollectionYear = _collectionYear, CollectionPeriod = _collectionPeriod, SentForPayment = false }, //to be sent
+                new PaymentEntityModel { Amount = 200, CollectionYear = _collectionYear, CollectionPeriod = _collectionPeriod, SentForPayment = true }, //already sent
+                new PaymentEntityModel { Amount = 300, CollectionYear = _collectionYear, CollectionPeriod = (byte)(_collectionPeriod + 1), SentForPayment = false }, //wrong period
+                new PaymentEntityModel { Amount = 400, CollectionYear = (short)(_collectionYear + 1), CollectionPeriod = _collectionPeriod, SentForPayment = false } //wrong year
             };
 
             _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
