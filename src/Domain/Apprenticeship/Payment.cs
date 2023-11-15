@@ -2,7 +2,7 @@
 {
     public class Payment
     {
-        internal Payment(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionPeriod, string fundingLineType)
+        public Payment(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionPeriod, string fundingLineType)
         {
             AcademicYear = academicYear;
             DeliveryPeriod = deliveryPeriod;
@@ -19,6 +19,6 @@
         public short CollectionYear { get; }
         public byte DeliveryPeriod { get; }
         public string FundingLineType { get; }
-        public bool SentForPayment { get; }
+        public bool SentForPayment { get; set; }
     }
 }

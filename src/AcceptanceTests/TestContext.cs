@@ -11,6 +11,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
         public IEndpointInstance? ReleasePaymentsEndpoint { get; set; }
         public IEndpointInstance? CalculatedRequiredLevyAmountEndpoint { get; set; }
         public IEndpointInstance? FinalisedOnProgammeLearningPaymentSendOnlyEndpoint { get; set; }
+        public IEndpointInstance? EarningsRecalculatedEndpoint { get; set; }
 
         public AutoFixture.Fixture Fixture = new();
 
@@ -22,6 +23,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
             PaymentsGeneratedEndpoint?.Stop();
             ReleasePaymentsEndpoint?.Stop();
             CalculatedRequiredLevyAmountEndpoint?.Stop();
+            EarningsRecalculatedEndpoint?.Stop();
             TestFunction?.Dispose();
         }
     }

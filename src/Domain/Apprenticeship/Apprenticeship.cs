@@ -11,6 +11,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             _payments = new List<Payment>();
         }
 
+        public Apprenticeship(Guid apprenticeshipKey, List<Earning> earnings, List<Payment> payments)
+        {
+            ApprenticeshipKey = apprenticeshipKey;
+            _earnings = earnings;
+            _payments = payments;
+        }
+
         public Guid ApprenticeshipKey { get; }
 
         private readonly List<Earning> _earnings;
@@ -29,9 +36,38 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             }
         }
 
+        public void RecalculatePayments(DateTime now)
+        {
+            _payments.RemoveAll(p => !p.SentForPayment);
+            foreach (var earning in Earnings)
+            {
+                var collectionPeriod = DetermineCollectionPeriod(earning, now);
+
+                if (!_payments.Any(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear))
+                {
+                    var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType);
+                    _payments.Add(payment);
+                }
+                else
+                {
+                    var existingPaidForDeliveryPeriod = _payments
+                        .Where(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear)
+                        .Sum(p => p.Amount);
+
+                    var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType);
+                    _payments.Add(payment);
+                }
+            }
+        }
+
         public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType)
         {
             _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth, fundingLineType));
+        }
+
+        public void ClearEarnings()
+        {
+            _earnings.Clear();
         }
 
         private static (short AcademicYear, byte Period) DetermineCollectionPeriod(Earning earning, DateTime now)

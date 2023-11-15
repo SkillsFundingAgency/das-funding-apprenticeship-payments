@@ -61,4 +61,20 @@
   <ItemGroup>
     <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <Compile Update="Features\Features\RecalculatePaymentsFromEarnings.feature.cs">
+      <Visible>true</Visible>
+      <DependentUpon>RecalculatePaymentsFromEarnings.feature</DependentUpon>
+      <DesignTime>true</DesignTime>
+      <AutoGen>true</AutoGen>
+    </Compile>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <SpecFlowFeatureFiles Update="Features\Features\RecalculatePaymentsFromEarnings.feature">
+      <Visible>$(UsingMicrosoftNETSdk)</Visible>
+      <CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+    </SpecFlowFeatureFiles>
+  </ItemGroup>
 </Project>

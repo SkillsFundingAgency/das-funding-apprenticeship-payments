@@ -7,7 +7,6 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using SFA.DAS.Payments.Model.Core.Entities;
 using SFA.DAS.Payments.Model.Core.OnProgramme;
 using SFA.DAS.Payments.RequiredPayments.Messages.Events;
-using static Microsoft.Azure.Amqp.Serialization.SerializableType;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
