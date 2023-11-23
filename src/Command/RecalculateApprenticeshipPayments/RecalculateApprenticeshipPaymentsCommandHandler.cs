@@ -30,7 +30,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler : IRecalculateAppre
         
         foreach (var earning in command.NewEarnings)
         {
-            apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, earning.FundingLineType);
+            apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, earning.FundingLineType, earning.EarningsProfileId);
         }
 
         apprenticeship.RecalculatePayments(DateTime.Now);

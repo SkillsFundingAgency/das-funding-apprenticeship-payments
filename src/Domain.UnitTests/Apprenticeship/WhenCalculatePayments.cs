@@ -26,24 +26,29 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         {
             var earnings = new List<Earning>
             {
-                new ((short)DateTime.Now.Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month,_fixture.Create<string>()),
-                new ((short)DateTime.Now.AddMonths(1).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month, _fixture.Create<string>()),
-                new ((short)DateTime.Now.AddMonths(2).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month, _fixture.Create<string>())
+                new ((short)DateTime.Now.Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month,_fixture.Create<string>(), Guid.NewGuid()),
+                new ((short)DateTime.Now.AddMonths(1).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month, _fixture.Create<string>(), Guid.NewGuid()),
+                new ((short)DateTime.Now.AddMonths(2).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month, _fixture.Create<string>(), Guid.NewGuid())
             };
             foreach (var earning in earnings)
             {
-                _sut.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, _fixture.Create<string>());
+                _sut.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, _fixture.Create<string>(), earning.EarningsProfileId);
             }
 
             _sut.CalculatePayments(DateTime.Now);
 
-            earnings.ForEach(earning => _sut.Payments.Should().Contain(x => x.SentForPayment == false && x.Amount == earning.Amount && x.AcademicYear == earning.AcademicYear && x.DeliveryPeriod == earning.DeliveryPeriod));
+            earnings.ForEach(earning => _sut.Payments.Should()
+                .Contain(x => x.SentForPayment == false &&
+                              x.Amount == earning.Amount &&
+                              x.AcademicYear == earning.AcademicYear &&
+                              x.DeliveryPeriod == earning.DeliveryPeriod &&
+                              x.EarningsProfileId == earning.EarningsProfileId));
         }
 
         [Test]
         public void CollectionPeriodShouldBeDeliveryPeriodIfInTheFuture()
         {
-            _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month,_fixture.Create<string>());
+            _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month,_fixture.Create<string>(), Guid.NewGuid());
 
             _sut.CalculatePayments(DateTime.Now);
 
@@ -56,7 +61,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         public void CollectionPeriodShouldBeCurrentPeriodIfInThePast()
         {
             var now = new DateTime(2023, 6, 25);
-            _sut.AddEarning(2223, 11, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month, _fixture.Create<string>());
+            _sut.AddEarning(2223, 11, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month, _fixture.Create<string>(), Guid.NewGuid());
 
             _sut.CalculatePayments(now);
 

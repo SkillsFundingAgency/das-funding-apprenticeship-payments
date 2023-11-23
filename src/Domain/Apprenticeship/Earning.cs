@@ -2,7 +2,7 @@
 {
     public class Earning
     {
-        public Earning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType)
+        public Earning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId)
         {
             AcademicYear = academicYear;
             DeliveryPeriod = deliveryPeriod;
@@ -10,6 +10,7 @@
             CollectionMonth = collectionMonth;
             FundingLineType = fundingLineType;
             CollectionYear = collectionYear;
+            EarningsProfileId = earningsProfileId;
         }
 
         public short AcademicYear { get; }
@@ -18,5 +19,6 @@
         public short CollectionYear { get; }
         public byte DeliveryPeriod { get; }
         public string FundingLineType { get; }
+        public Guid EarningsProfileId { get; }
     }
 }

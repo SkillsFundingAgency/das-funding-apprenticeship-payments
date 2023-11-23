@@ -22,7 +22,8 @@ public class PaymentsGeneratedEventBuilder : IPaymentsGeneratedEventBuilder
                 DeliveryPeriod = x.DeliveryPeriod,
                 CollectionPeriod = x.CollectionPeriod,
                 CollectionYear = x.CollectionYear,
-                FundingLineType = x.FundingLineType
+                FundingLineType = x.FundingLineType,
+                EarningsProfileId = x.EarningsProfileId
             }).ToList()
         };
     }

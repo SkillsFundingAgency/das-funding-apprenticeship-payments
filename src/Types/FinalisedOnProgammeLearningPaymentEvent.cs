@@ -15,4 +15,5 @@ public class FinalisedOnProgammeLearningPaymentEvent
     public Apprenticeship Apprenticeship { get; set; }
     public string? CourseCode { get; set; }
     public string FundingLineType { get; set; }
+    public Guid EarningsProfileId { get; set; }
 }

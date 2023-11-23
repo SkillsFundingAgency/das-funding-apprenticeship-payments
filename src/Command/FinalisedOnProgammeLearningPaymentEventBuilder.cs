@@ -43,6 +43,8 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
 
         @event.FundingLineType = payment.FundingLineType;
 
+        @event.EarningsProfileId = payment.EarningsProfileId;
+
         return @event;
     }
 }

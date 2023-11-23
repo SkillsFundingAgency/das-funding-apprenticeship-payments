@@ -135,4 +135,10 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     {
         _result.Apprenticeship.ApprovalsApprenticeshipId.Should().Be(_apprenticeship.ApprovalsApprenticeshipId);
     }
+    
+    [Test]
+    public void ShouldPopulate_TheEarningsProfileId_Correctly()
+    {
+        _result.EarningsProfileId.Should().Be(_paymentEntityModel.EarningsProfileId);
+    }
 }

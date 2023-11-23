@@ -42,7 +42,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
                     Amount = y.LearningAmount,
                     CollectionMonth = y.CalendarMonth,
                     CollectionYear = y.CalenderYear,
-                    FundingLineType = y.FundingLineType
+                    FundingLineType = y.FundingLineType,
+                    EarningsProfileId = _earningsGeneratedEvent.EarningsProfileId
                 });
 
             _apprenticeship = _fixture.Create<Apprenticeship>();
