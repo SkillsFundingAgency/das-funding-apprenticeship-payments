@@ -47,7 +47,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
                 DeliveryPeriod = x.DeliveryPeriod,
                 CollectionPeriod = x.CollectionPeriod,
                 SentForPayment = x.SentForPayment,
-                FundingLineType = x.FundingLineType
+                FundingLineType = x.FundingLineType,
+                EarningsProfileId = x.EarningsProfileId
             }).ToList();
         }
     }
