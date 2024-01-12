@@ -46,7 +46,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 earningsRecalculatedEvent.ApprenticeshipKey,
                 earningsRecalculatedEvent.SerialiseForLogging());
 
-            var apprenticeship = await _recalculateApprenticeshipPaymentsCommandHandler.Recalculate(new RecalculateApprenticeshipPaymentsCommand(Model, earningsRecalculatedEvent.DeliveryPeriods.ToEarnings()));
+            var apprenticeship = await _recalculateApprenticeshipPaymentsCommandHandler.Recalculate(new RecalculateApprenticeshipPaymentsCommand(Model, earningsRecalculatedEvent.DeliveryPeriods.ToEarnings(earningsRecalculatedEvent.EarningsProfileId)));
 
             MapNewEarningsAndPayments(apprenticeship);
         }
@@ -72,6 +72,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 model.CollectionMonth = y.CalendarMonth;
                 model.CollectionYear = y.CalenderYear;
                 model.FundingLineType = y.FundingLineType;
+                model.EarningsProfileId = earningsGeneratedEvent.EarningsProfileId;
                 return model;
             }).ToList();
             Model.EmployerType = earningsGeneratedEvent.EmployerType;
@@ -93,7 +94,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 DeliveryPeriod = e.DeliveryPeriod,
                 CollectionMonth = e.CollectionMonth,
                 CollectionYear = e.CollectionYear,
-                FundingLineType = e.FundingLineType
+                FundingLineType = e.FundingLineType,
+                EarningsProfileId = e.EarningsProfileId
             }).ToList();
             Model.Payments = apprenticeship.Payments.Select(p => new PaymentEntityModel
             {
@@ -103,7 +105,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 CollectionYear = p.CollectionYear,
                 DeliveryPeriod = p.DeliveryPeriod,
                 FundingLineType = p.FundingLineType,
-                SentForPayment = p.SentForPayment
+                SentForPayment = p.SentForPayment,
+                EarningsProfileId = p.EarningsProfileId
             }).ToList();
         }
     }

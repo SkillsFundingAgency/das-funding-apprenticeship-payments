@@ -2,7 +2,7 @@
 {
     public class Payment
     {
-        public Payment(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionPeriod, string fundingLineType)
+        public Payment(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionPeriod, string fundingLineType, Guid earningsProfileId)
         {
             AcademicYear = academicYear;
             DeliveryPeriod = deliveryPeriod;
@@ -11,6 +11,7 @@
             CollectionPeriod = collectionPeriod;
             FundingLineType = fundingLineType;
             SentForPayment = false;
+            EarningsProfileId = earningsProfileId;
         }
 
         public short AcademicYear { get; }
@@ -20,5 +21,6 @@
         public byte DeliveryPeriod { get; }
         public string FundingLineType { get; }
         public bool SentForPayment { get; set; }
+        public Guid EarningsProfileId { get; set; }
     }
 }

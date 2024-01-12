@@ -11,7 +11,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories
 
             foreach (var earning in entityModel.Earnings)
             {
-                apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, earning.FundingLineType);
+                apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, earning.FundingLineType, earning.EarningsProfileId);
             }
 
             return apprenticeship;
@@ -25,14 +25,16 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories
                 e.Amount,
                 e.CollectionYear,
                 e.CollectionMonth,
-                e.FundingLineType
+                e.FundingLineType,
+                e.EarningsProfileId
             )).ToList(), entityModel.Payments.Select(p => new Payment(
                 p.AcademicYear,
                 p.DeliveryPeriod,
                 p.Amount,
                 p.CollectionYear,
                 p.CollectionPeriod,
-                p.FundingLineType
+                p.FundingLineType,
+                p.EarningsProfileId
             ) { SentForPayment = p.SentForPayment }).ToList());
         }
     }

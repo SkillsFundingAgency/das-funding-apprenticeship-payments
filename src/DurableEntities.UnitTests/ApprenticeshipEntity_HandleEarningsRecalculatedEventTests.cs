@@ -42,7 +42,8 @@ public class ApprenticeshipEntity_HandleEarningsRecalculatedEventTests
             CollectionMonth = x.CollectionMonth,
             CollectionYear = x.CollectionYear,
             DeliveryPeriod = x.DeliveryPeriod,
-            FundingLineType = x.FundingLineType
+            FundingLineType = x.FundingLineType,
+            EarningsProfileId = x.EarningsProfileId
         });
 
         _expectedPayments = _apprenticeship.Payments.Select(x => new PaymentEntityModel
@@ -53,7 +54,8 @@ public class ApprenticeshipEntity_HandleEarningsRecalculatedEventTests
             AcademicYear = x.AcademicYear,
             Amount = x.Amount,
             SentForPayment = x.SentForPayment,
-            CollectionPeriod = x.CollectionPeriod
+            CollectionPeriod = x.CollectionPeriod,
+            EarningsProfileId = x.EarningsProfileId
         });
 
         _recalculateApprenticeshipPaymentsCommandHandler = new Mock<IRecalculateApprenticeshipPaymentsCommandHandler>();

@@ -9,5 +9,6 @@
         public byte CollectionPeriod { get; set; }
         public bool SentForPayment { get; set; }
         public string FundingLineType { get; set; } = null!;
+        public Guid EarningsProfileId { get; set; }
     }
 }

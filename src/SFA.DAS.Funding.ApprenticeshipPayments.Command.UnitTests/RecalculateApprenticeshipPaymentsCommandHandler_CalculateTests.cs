@@ -23,6 +23,8 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
     private List<Earning> _newEarnings = null!;
     private List<Earning> _existingEarnings = null!;
     private List<Payment> _existingPayments = null!;
+    private Guid _previousEarningsProfileId = Guid.NewGuid();
+    private Guid _newEarningsProfileId = Guid.NewGuid();
     private Mock<IApprenticeshipFactory> _apprenticeshipFactory = null!;
     private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
     private Mock<IPaymentsGeneratedEventBuilder> _paymentsGeneratedEventBuilder = null!;
@@ -47,15 +49,15 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
         //Delivery Period 3 - no existing payments, new one calculated for new learning amount
         _newEarnings = new List<Earning>
         {
-            new Earning(2223, 1, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>()),
-            new Earning(2223, 2, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>()),
-            new Earning(2223, 3, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>())
+            new Earning(2223, 1, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
+            new Earning(2223, 2, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
+            new Earning(2223, 3, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId)
         };
 
         _existingPayments = new List<Payment>()
         {
-            new Payment(2223, 1, _currentMonthlyLearningAmount, 2022, 8, "payment 1 paid"){ SentForPayment = true },
-            new Payment(2223, 2, _currentMonthlyLearningAmount, 2022, 8, "payment 2 unpaid")
+            new Payment(2223, 1, _currentMonthlyLearningAmount, 2022, 8, "payment 1 paid", _previousEarningsProfileId){ SentForPayment = true },
+            new Payment(2223, 2, _currentMonthlyLearningAmount, 2022, 8, "payment 2 unpaid", _previousEarningsProfileId)
         };
 
         _command = new RecalculateApprenticeshipPaymentsCommand(_apprenticeshipEntityModel, _newEarnings);
@@ -91,7 +93,8 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
                 && x.Amount == expectedEarning.Amount
                 && x.CollectionMonth == expectedEarning.CollectionMonth
                 && x.CollectionYear == expectedEarning.CollectionYear
-                && x.DeliveryPeriod == expectedEarning.DeliveryPeriod);
+                && x.DeliveryPeriod == expectedEarning.DeliveryPeriod
+                && x.EarningsProfileId == _newEarningsProfileId);
         }
     }
 
@@ -110,18 +113,18 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
     [Test]
     public void NewPaymentsToMakeUpExistingPaidPaymentsAmountsShouldBeAdded()
     {
-        _result.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 1 && p.Amount == _newMonthlyLearningAmount - _currentMonthlyLearningAmount);
+        _result.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 1 && p.Amount == _newMonthlyLearningAmount - _currentMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
     }
 
     [Test]
     public void NewPaymentsForPreviouslyRemovedUnpaidPaymentPeriodsShouldBeAdded()
     {
-        _result.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 2 && p.Amount == _newMonthlyLearningAmount);
+        _result.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 2 && p.Amount == _newMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
     }
 
     [Test]
     public void NewPaymentsForPreviouslyUncalculatedPaymentPeriodsShouldBeAdded()
     {
-        _result.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 3 && p.Amount == _newMonthlyLearningAmount);
+        _result.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 3 && p.Amount == _newMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
     }
 }
