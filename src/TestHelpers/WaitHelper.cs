@@ -30,7 +30,21 @@ public class WaitHelper
 {
     private static WaitConfiguration Config => WaitConfigurationHelper.WaitConfiguration;
 
-    public static async Task WaitForIt(Func<bool> lookForIt, string failText)
+	public static async Task WaitForIt(Func<bool> lookForIt, Func<string> failText)
+	{
+		var endTime = DateTime.Now.Add(Config.TimeToWait);
+
+		while (DateTime.Now <= endTime)
+		{
+			if (lookForIt()) return;
+
+			await Task.Delay(Config.TimeToPause);
+		}
+
+		Assert.Fail($"{failText()}  Time: {DateTime.Now:G}.");
+	}
+
+	public static async Task WaitForIt(Func<bool> lookForIt, string failText)
     {
         var endTime = DateTime.Now.Add(Config.TimeToWait);
 
@@ -61,6 +75,6 @@ public class WaitHelper
 
 public class WaitConfiguration
 {
-    public TimeSpan TimeToWait { get; set; } = TimeSpan.FromSeconds(20);
+    public TimeSpan TimeToWait { get; set; } = TimeSpan.FromSeconds(30);
     public TimeSpan TimeToPause { get; set; } = TimeSpan.FromMilliseconds(10);
 }
