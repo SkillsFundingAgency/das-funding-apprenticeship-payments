@@ -73,7 +73,21 @@ public class PaymentsRecalculationStepDefinitions
         }, "Failed to find published FinalisedOnProgammeLearningPaymentEvent for previously generated payment");
     }
 
-    [Given(@"recalculated earnings are generated")]
+	[Given(@"a years previous earnings have been paid")]
+	public async Task GivenAYearsPreviousEarningsHaveBeenPaid()
+	{
+        var originalStartDate = DateTime.Now.AddMonths(-7);
+        var periods = new List<DeliveryPeriod>();
+
+		for (var i = 0; i < 20; i++)
+        {
+            periods.Add(new() { CalenderYear = (short)originalStartDate.AddMonths(i).Year, CalendarMonth = (byte)originalStartDate.AddMonths(i).Month, LearningAmount = 600 });
+		}
+
+        await GenerateExistingPayments(periods);
+	}
+
+	[Given(@"recalculated earnings are generated")]
     public async Task RecalculatedEarningsHaveBeenGenerated()
     {
         //build event for recalculated earnings
@@ -97,7 +111,21 @@ public class PaymentsRecalculationStepDefinitions
         await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
     }
 
-    [When("payments are recalculated")]
+	[Given(@"recalculated earnings are generated with an earlier start date")]
+	public async Task RecalculatedEarningsHaveBeenGeneratedWithAnEarlierStartDate()
+	{
+		var originalStartDate = DateTime.Now.AddMonths(-10);
+		var periods = new List<DeliveryPeriod>();
+
+		for (var i = 0; i < 22; i++)
+		{
+			periods.Add(new() { CalenderYear = (short)originalStartDate.AddMonths(i).Year, CalendarMonth = (byte)originalStartDate.AddMonths(i).Month, LearningAmount = 545.45m });
+		}
+
+		await GenerateRecalculatedEarnings(periods);
+	}
+
+	[When("payments are recalculated")]
     public static void PaymentsAreRecalculated()
     {
         //intentionally left blank
@@ -115,4 +143,84 @@ public class PaymentsRecalculationStepDefinitions
                        && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.AddMonths(1).Month).ToDeliveryPeriod() && x.Amount == 1200); }), //payment for month not yet sent
             "Failed to find published PaymentsGenerated event for recalculated payments");
     }
+
+	[Then("new payments are generated with the correct learning amounts for an earlier start date")]
+	public static async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmountsForAnEarlierStartDate()
+	{
+		await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(e =>
+		{
+            if (e.Payments.Count < 30)
+                return false;
+
+            if(e.Payments.Where(p=> p.Amount == 600).Count() != 8)
+				return false;
+
+			if (e.Payments.Where(p => p.Amount == 545.45m).Count() != 14)
+				return false;
+
+			if (e.Payments.Where(p => p.Amount == -54.55m).Count() != 8)
+				return false;
+
+            return true;
+		}), //payment for month not yet sent
+			"Failed to find published PaymentsGenerated event for recalculated payments");
+	}
+
+	private async Task GenerateExistingPayments(List<DeliveryPeriod> periods)
+	{
+		_apprenticeshipKey = Guid.NewGuid();
+
+		_previousEarningsGeneratedEvent = _testContext.Fixture
+			.Build<EarningsGeneratedEvent>()
+			.With(x => x.DeliveryPeriods, periods)
+			.With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
+			.With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
+			.With(x => x.ApprenticeshipKey, _apprenticeshipKey)
+			.Create();
+
+		_previousEarningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
+
+		_scenarioContext[ContextKeys.EarningsGeneratedEvent] = _previousEarningsGeneratedEvent;
+
+		//publish event for previous earnings
+		await _testContext.EarningsGeneratedEndpoint.Publish(_previousEarningsGeneratedEvent);
+
+		//wait for payments to be generated
+		await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(e =>
+			e.ApprenticeshipKey == _apprenticeshipKey
+			&& e.Payments.Count == periods.Count), "Failed to find published PaymentsGenerated event for previously generated payments");
+
+		//release payments for this month
+		var releasePaymentsCommand = new ReleasePaymentsCommand
+		{
+			CollectionPeriod = ((byte)DateTime.Now.Month).ToDeliveryPeriod(),
+			CollectionYear = ((short)DateTime.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
+		};
+		await _testContext.ReleasePaymentsEndpoint.Publish(releasePaymentsCommand);
+
+		//wait for finalised on programme learning payment event to be published
+		await WaitHelper.WaitForIt(() =>
+		{
+			return FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(e =>
+				e.CollectionPeriod == releasePaymentsCommand.CollectionPeriod
+				&& e.ApprenticeshipKey == _apprenticeshipKey);
+		}, "Failed to find published FinalisedOnProgammeLearningPaymentEvent for previously generated payment");
+	}
+
+	private async Task GenerateRecalculatedEarnings(List<DeliveryPeriod> periods)
+	{
+		//build event for recalculated earnings
+		_earningsRecalculatedEvent = _testContext.Fixture
+			.Build<ApprenticeshipEarningsRecalculatedEvent>()
+			.With(x => x.DeliveryPeriods, periods)
+			.With(x => x.ApprenticeshipKey, _apprenticeshipKey)
+			.Create();
+
+		_earningsRecalculatedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
+
+		_scenarioContext[ContextKeys.EarningsRecalculatedEvent] = _earningsRecalculatedEvent;
+
+		//publish event for recalculated earnings
+		await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
+	}
 }
