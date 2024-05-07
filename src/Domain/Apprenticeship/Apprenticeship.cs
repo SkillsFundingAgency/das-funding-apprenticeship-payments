@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using SFA.DAS.Payments.Model.Core.OnProgramme;
+using System.Collections.ObjectModel;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 {
@@ -39,7 +40,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public void RecalculatePayments(DateTime now)
         {
             _payments.RemoveAll(p => !p.SentForPayment);
-            foreach (var earning in Earnings)
+
+            var earningsToProcess = GetEarningsToProcess();
+
+            foreach (var earning in earningsToProcess)
             {
                 var collectionPeriod = DetermineCollectionPeriod(earning, now);
 
@@ -99,6 +103,30 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
                 academicYear = short.Parse($"{year}{year + 1}");
 
             return (academicYear, (byte)period);
+        }
+
+        // When new earnings are generated they may not cover a period that has already been paid for
+        // For these periods earnings of zero for that month need to be generated for calculation purposes
+        private  List<Earning> GetEarningsToProcess()
+        {
+            var earningsToProcess = Earnings.ToList();
+
+            foreach(Payment payment in _payments)
+			{
+				if (!earningsToProcess.Any(e=> e.DeliveryPeriod == payment.DeliveryPeriod && e.AcademicYear == payment.AcademicYear))
+                {
+					int collectionMonth = payment.DeliveryPeriod + 7;
+					if (collectionMonth > 12)
+					{
+						collectionMonth -= 12;
+					}
+
+					var earning = new Earning(payment.AcademicYear, payment.DeliveryPeriod, 0, payment.CollectionYear, (byte)collectionMonth, payment.FundingLineType, payment.EarningsProfileId);
+					earningsToProcess.Add(earning);
+				}
+			}
+
+            return earningsToProcess;
         }
     }
 }
