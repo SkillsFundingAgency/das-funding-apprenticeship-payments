@@ -12,29 +12,81 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 [Scope(Feature = "Recalculate payments for earnings")]
 public class PaymentsRecalculationStepDefinitions
 {
-    private readonly ScenarioContext _scenarioContext;
-    private readonly TestContext _testContext;
-    private static Guid _apprenticeshipKey;
-    private static EarningsGeneratedEvent _previousEarningsGeneratedEvent;
-    private static ApprenticeshipEarningsRecalculatedEvent _earningsRecalculatedEvent;
+	private readonly ScenarioContext _scenarioContext;
+	private readonly TestContext _testContext;
+	private static Guid _apprenticeshipKey;
+	private static List<ExpectedPayments> _expectedPayments = new List<ExpectedPayments>();
+	private static EarningsGeneratedEvent _previousEarningsGeneratedEvent;
+	private static ApprenticeshipEarningsRecalculatedEvent _earningsRecalculatedEvent;
 
-    public PaymentsRecalculationStepDefinitions(ScenarioContext scenarioContext, TestContext testContext)
-    {
-        _scenarioContext = scenarioContext;
-        _testContext = testContext;
-    }
+	public PaymentsRecalculationStepDefinitions(ScenarioContext scenarioContext, TestContext testContext)
+	{
+		_scenarioContext = scenarioContext;
+		_testContext = testContext;
+	}
 
-    [Given(@"some previous earnings have been paid")]
-    public async Task GivenSomePreviousEarningsHaveBeenPaid()
-    {
-        var periods = new List<DeliveryPeriod>
-        {
-            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }, //this month already paid
-            new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 } // next month not paid yet
-        };
+	[BeforeScenario]
+	public void BeforeEachScenario()
+	{
+		_expectedPayments = new List<ExpectedPayments>();
+	}
+
+	[AfterScenario]
+	public async Task AfterEachScenario()
+	{
+		if (!_expectedPayments.Any())
+			return;
+
+		var processedEvents = new List<PaymentsGeneratedEvent>();
+
+		await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Except(processedEvents).Any(e =>
+		{
+			//  Inspect event to see if it contains the expected payments
+			processedEvents.Add(e);
+
+			foreach (var expectedPayment in _expectedPayments)
+			{
+				if (!ValidateExpectedPayments(e, expectedPayment.Amount, expectedPayment.Count, out int actualCount))
+				{
+					expectedPayment.ActualCountFound = actualCount;
+					return false;
+				}
+				else
+				{
+					expectedPayment.Found = true;
+				}
+			}
+
+			return true;
+		}),
+		() => 
+		{
+			//  Generate message to show failure reason
+			if (!processedEvents.Any())
+				return "Expected to find PaymentsGeneratedEvent, but none where received";
+
+			var failmessage = string.Empty;
+
+			foreach (var expectedPayment in _expectedPayments.Where(x=> !x.Found))
+			{
+				failmessage += $"Expected {expectedPayment.Count} payments of {expectedPayment.Amount}, but found {expectedPayment.ActualCountFound}. ";
+			}
+
+			return failmessage; 
+		});
+	}
+
+	[Given(@"some previous earnings have been paid")]
+	public async Task GivenSomePreviousEarningsHaveBeenPaid()
+	{
+		var periods = new List<DeliveryPeriod>
+		{
+			new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }, //this month already paid
+			new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 } // next month not paid yet
+		};
 
 		await GenerateExistingPayments(periods);
-    }
+	}
 
 	[Given(@"there are (.*) payments of (.*), which started (.*) months ago")]
 	public async Task GivenAYearsPreviousEarningsHaveBeenPaid(int totalNumberOfPayments, decimal paymentAmount, int months)
@@ -80,10 +132,10 @@ public class PaymentsRecalculationStepDefinitions
 	}
 
 	[When("payments are recalculated")]
-    public static void PaymentsAreRecalculated()
+    public static async Task PaymentsAreRecalculated()
     {
-        //intentionally left blank
-    }
+		await Task.Delay(1000);
+	}
 
     [Then("new payments are generated with the correct learning amounts")]
     public static async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmounts()
@@ -98,31 +150,10 @@ public class PaymentsRecalculationStepDefinitions
             "Failed to find published PaymentsGenerated event for recalculated payments");
     }
 
-	[Then(@"new payments are generated with (.*) payments of (.*), (.*) payments of (.*) and (.*) payments of (.*)")]
-	public static async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmountsForAnEarlierStartDate(
-		int paymentCount1, decimal paymentAmount1, int paymentCount2, decimal paymentAmount2, int paymentCount3, decimal paymentAmount3)
+	[Then(@"there are (.*) payments of (.*)")]
+	public static void AddExpectedPayments(int paymentCount, decimal paymentAmount)
 	{
-		var failmessage = "but no events published";
-		var processedEvents = new List<PaymentsGeneratedEvent>();
-
-		await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Except(processedEvents).Any(e =>
-		{
-			processedEvents.Add(e);
-
-			if (!ValidateExpectedPayments(e, paymentAmount1, paymentCount1, ref failmessage))
-				return false;
-
-			if (!ValidateExpectedPayments(e, paymentAmount2, paymentCount2, ref failmessage))
-				return false;
-
-			if (!ValidateExpectedPayments(e, paymentAmount3, paymentCount3, ref failmessage))
-				return false;
-
-			return true;
-		}), 
-			() => { return $"Expected to find PaymentsGenerated {failmessage}"; } );
-
-
+		_expectedPayments.Add(new ExpectedPayments { Amount = paymentAmount, Count = paymentCount });
 	}
 
 	private async Task GenerateExistingPayments(List<DeliveryPeriod> periods)
@@ -184,16 +215,24 @@ public class PaymentsRecalculationStepDefinitions
 	}
 
 	private static bool ValidateExpectedPayments(
-		PaymentsGeneratedEvent paymentsGeneratedEvent, decimal expectedAmount, int expectedNumberOfPayments, ref string failmessage)
+		PaymentsGeneratedEvent paymentsGeneratedEvent, decimal expectedAmount, int expectedNumberOfPayments, out int actualCount)
 	{
-		var numberOfPayments = paymentsGeneratedEvent.Payments.Where(p => p.Amount == expectedAmount).Count();
+		actualCount = paymentsGeneratedEvent.Payments.Where(p => p.Amount == expectedAmount).Count();
 
-		if (numberOfPayments != expectedNumberOfPayments)
+		if (actualCount != expectedNumberOfPayments)
 		{
-			failmessage = $"with {expectedNumberOfPayments} payments of {expectedAmount} but found {numberOfPayments}";
 			return false;
 		}
 
 		return true;
 	}
+
+}
+
+public class ExpectedPayments
+{
+	public decimal Amount { get; set; }
+	public int Count { get; set; }
+	public bool Found { get; set; }
+	public int ActualCountFound { get; set; }
 }
