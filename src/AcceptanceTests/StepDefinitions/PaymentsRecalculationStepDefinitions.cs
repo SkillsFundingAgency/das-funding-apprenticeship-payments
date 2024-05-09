@@ -16,6 +16,7 @@ public class PaymentsRecalculationStepDefinitions
 	private readonly TestContext _testContext;
 	private static Guid _apprenticeshipKey;
 	private static List<ExpectedPayments> _expectedPayments = new List<ExpectedPayments>();
+	private static int _expectedNumberOfEventsPublished = 0;
 	private static EarningsGeneratedEvent _previousEarningsGeneratedEvent;
 	private static ApprenticeshipEarningsRecalculatedEvent _earningsRecalculatedEvent;
 
@@ -29,6 +30,8 @@ public class PaymentsRecalculationStepDefinitions
 	public void BeforeEachScenario()
 	{
 		_expectedPayments = new List<ExpectedPayments>();
+		_expectedNumberOfEventsPublished = 0;
+		PaymentsGeneratedEventHandler.ReceivedEvents.Clear();
 	}
 
 	[AfterScenario]
@@ -89,15 +92,15 @@ public class PaymentsRecalculationStepDefinitions
 	}
 
 	[Given(@"there are (.*) payments of (.*), which started (.*) months ago")]
-	public async Task GivenAYearsPreviousEarningsHaveBeenPaid(int totalNumberOfPayments, decimal paymentAmount, int months)
+	public async Task GivenAYearsPreviousEarningsHaveBeenPaid(int totalNumberOfPayments, decimal paymentAmount, int monthsAgo)
 	{
-		var offsetMonths = months - 1;// to account for the current month
-        var originalStartDate = DateTime.Now.AddMonths(-offsetMonths);
+		var offsetMonths = monthsAgo - 1;// to account for the current month
+        var startDate = DateTime.Now.AddMonths(-offsetMonths);
         var periods = new List<DeliveryPeriod>();
 
 		for (var i = 0; i < totalNumberOfPayments; i++)
         {
-            periods.Add(new() { CalenderYear = (short)originalStartDate.AddMonths(i).Year, CalendarMonth = (byte)originalStartDate.AddMonths(i).Month, LearningAmount = paymentAmount });
+            periods.Add(new() { CalenderYear = (short)startDate.AddMonths(i).Year, CalendarMonth = (byte)startDate.AddMonths(i).Month, LearningAmount = paymentAmount });
 		}
 
         await GenerateExistingPayments(periods);
@@ -117,15 +120,15 @@ public class PaymentsRecalculationStepDefinitions
 	}
 
 	[Given(@"recalculated earnings now have (.*) payments of (.*), which started (.*) months ago")]
-	public async Task RecalculatedEarningsHaveBeenGeneratedWithAnEarlierStartDate(int totalNumberOfPayments, decimal paymentAmount, int months)
+	public async Task RecalculatedEarningsHaveBeenGeneratedWithAnEarlierStartDate(int totalNumberOfPayments, decimal paymentAmount, int monthsAgo)
 	{
-		var offsetMonths = months - 1;// to account for the current month
-		var originalStartDate = DateTime.Now.AddMonths(-offsetMonths);
+		var offsetMonths = monthsAgo - 1;// to account for the current month
+		var startDate = DateTime.Now.AddMonths(-offsetMonths);
 		var periods = new List<DeliveryPeriod>();
 
 		for (var i = 0; i < totalNumberOfPayments; i++)
 		{
-			periods.Add(new() { CalenderYear = (short)originalStartDate.AddMonths(i).Year, CalendarMonth = (byte)originalStartDate.AddMonths(i).Month, LearningAmount = paymentAmount });
+			periods.Add(new() { CalenderYear = (short)startDate.AddMonths(i).Year, CalendarMonth = (byte)startDate.AddMonths(i).Month, LearningAmount = paymentAmount });
 		}
 
 		await GenerateRecalculatedEarnings(periods);
@@ -134,7 +137,8 @@ public class PaymentsRecalculationStepDefinitions
 	[When("payments are recalculated")]
     public static async Task PaymentsAreRecalculated()
     {
-		await Task.Delay(1000);
+		await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Count == _expectedNumberOfEventsPublished, 
+			$"Failed to receive expected number of events Received: {PaymentsGeneratedEventHandler.ReceivedEvents.Count} Expected: {_expectedNumberOfEventsPublished}");
 	}
 
     [Then("new payments are generated with the correct learning amounts")]
@@ -195,6 +199,8 @@ public class PaymentsRecalculationStepDefinitions
 				e.CollectionPeriod == releasePaymentsCommand.CollectionPeriod
 				&& e.ApprenticeshipKey == _apprenticeshipKey);
 		}, "Failed to find published FinalisedOnProgammeLearningPaymentEvent for previously generated payment");
+
+		_expectedNumberOfEventsPublished++;
 	}
 
 	private async Task GenerateRecalculatedEarnings(List<DeliveryPeriod> periods)
@@ -212,6 +218,7 @@ public class PaymentsRecalculationStepDefinitions
 
 		//publish event for recalculated earnings
 		await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
+		_expectedNumberOfEventsPublished++;
 	}
 
 	private static bool ValidateExpectedPayments(
