@@ -121,7 +121,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
                 }
             }
 
-            return earningsToProcess;
+            // Sorting the list has no technical purpose, it is just to make manual validation easier
+            return earningsToProcess
+                .OrderBy(x => x.AcademicYear)
+                .ThenBy(x => x.DeliveryPeriod)
+                .ToList();
         }
     }
 }
