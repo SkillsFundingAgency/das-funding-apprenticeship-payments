@@ -1,5 +1,4 @@
-﻿using SFA.DAS.Payments.Model.Core.OnProgramme;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 {
@@ -41,7 +40,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         {
             _payments.RemoveAll(p => !p.SentForPayment);
 
-            var earningsToProcess = GetEarningsToProcess();
+            var earningsToProcess = GetEarningsToProcess(now);
 
             foreach (var earning in earningsToProcess)
             {
@@ -107,24 +106,24 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 
         // When new earnings are generated they may not cover a period that has already been paid for
         // For these periods earnings of zero for that month need to be generated for calculation purposes
-        private  List<Earning> GetEarningsToProcess()
+        private  List<Earning> GetEarningsToProcess(DateTime now)
         {
+            // Get current collection date for any zero earnings to be generated
+            var censusDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Local).AddMonths(1).AddDays(-1);
+            var currentCollectionPeriod = CollectionDateToPeriod(censusDate);
+
+            // Put earnings into a new list, this is for processing only as we will be adding zero earnings
             var earningsToProcess = Earnings.ToList();
 
+            // Cycle through payments and add zero earnings for any periods that have had payments made before recalc
             foreach(Payment payment in _payments)
 			{
 				if (!earningsToProcess.Any(e=> e.DeliveryPeriod == payment.DeliveryPeriod && e.AcademicYear == payment.AcademicYear))
                 {
-					int collectionMonth = payment.DeliveryPeriod + 7;
-					if (collectionMonth > 12)
-					{
-						collectionMonth -= 12;
-					}
-
-					var earning = new Earning(payment.AcademicYear, payment.DeliveryPeriod, 0, payment.CollectionYear, (byte)collectionMonth, payment.FundingLineType, payment.EarningsProfileId);
-					earningsToProcess.Add(earning);
-				}
-			}
+                    var earning = new Earning(payment.AcademicYear, payment.DeliveryPeriod, 0, currentCollectionPeriod.AcademicYear, currentCollectionPeriod.Period, payment.FundingLineType, payment.EarningsProfileId);
+                    earningsToProcess.Add(earning);
+                }
+            }
 
             return earningsToProcess;
         }
