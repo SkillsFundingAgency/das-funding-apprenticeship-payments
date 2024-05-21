@@ -108,10 +108,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         // For these periods earnings of zero for that month need to be generated for calculation purposes
         private  List<Earning> GetEarningsToProcess(DateTime now)
         {
-            // Get current collection date for any zero earnings to be generated
-            var censusDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Local).AddMonths(1).AddDays(-1);
-            var currentCollectionPeriod = CollectionDateToPeriod(censusDate);
-
             // Put earnings into a new list, this is for processing only as we will be adding zero earnings
             var earningsToProcess = Earnings.ToList();
 
@@ -120,7 +116,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 			{
 				if (!earningsToProcess.Any(e=> e.DeliveryPeriod == payment.DeliveryPeriod && e.AcademicYear == payment.AcademicYear))
                 {
-                    var earning = new Earning(payment.AcademicYear, payment.DeliveryPeriod, 0, currentCollectionPeriod.AcademicYear, currentCollectionPeriod.Period, payment.FundingLineType, payment.EarningsProfileId);
+                    var earning = new Earning(payment.AcademicYear, payment.DeliveryPeriod, 0, (short)now.Year, (byte)now.Month, payment.FundingLineType, payment.EarningsProfileId);
                     earningsToProcess.Add(earning);
                 }
             }
