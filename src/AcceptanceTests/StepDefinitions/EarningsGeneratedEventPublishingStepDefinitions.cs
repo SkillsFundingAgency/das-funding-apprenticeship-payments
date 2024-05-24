@@ -32,9 +32,9 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     {
         var periods = new List<DeliveryPeriod>
         {
-            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 },
-            new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 },
-            new() { CalenderYear = (short)DateTime.Now.AddMonths(2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(2).Month, LearningAmount = 1000 }
+            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.Month, (short)DateTime.Now.Year, 1000),
+            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(1).Month, (short)DateTime.Now.AddMonths(1).Year, 1000),
+            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(2).Month, (short)DateTime.Now.AddMonths(2).Year, 1000)
         };
 
         _earningsGeneratedEvent = _testContext.Fixture
@@ -43,8 +43,6 @@ public class EarningsGeneratedEventPublishingStepDefinitions
             .With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
             .With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
             .Create();
-
-        _earningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
     }
 
     [Given(@"two of the earnings are due in a past month")]
@@ -52,9 +50,9 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     {
         var periods = new List<DeliveryPeriod>
         {
-            new() { CalenderYear = (short)DateTime.Now.AddMonths(-2).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-2).Month, LearningAmount = 1000 },
-            new() { CalenderYear = (short)DateTime.Now.AddMonths(-1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(-1).Month, LearningAmount = 1000 },
-            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }
+             PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.Month, (short)DateTime.Now.Year, 1000),
+             PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(-2).Month, (short)DateTime.Now.AddMonths(-2).Year, 1000),
+             PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(-1).Month, (short)DateTime.Now.AddMonths(-1).Year, 1000)
         };
 
         _earningsGeneratedEvent = _testContext.Fixture
@@ -63,8 +61,6 @@ public class EarningsGeneratedEventPublishingStepDefinitions
             .With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
             .With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
             .Create();
-
-        _earningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
     }
 
     [Given(@"no payments have previously been generated")]
