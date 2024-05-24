@@ -33,7 +33,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             [DurableClient] IDurableEntityClient client,
             ILogger log)
         {
-            await client.SignalEntityAsync(new EntityId(nameof(ApprenticeshipEntity), earningsRecalculatedEvent.ApprenticeshipKey.ToString()), nameof(ApprenticeshipEntity.HandleEarningsRecalculatedEvent), earningsRecalculatedEvent);
+            var entityId = new EntityId(nameof(ApprenticeshipEntity), earningsRecalculatedEvent.ApprenticeshipKey.ToString());
+            await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsRecalculatedEvent), earningsRecalculatedEvent);
         }
     }
 }

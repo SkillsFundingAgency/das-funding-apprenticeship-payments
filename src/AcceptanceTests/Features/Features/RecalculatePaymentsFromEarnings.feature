@@ -12,7 +12,7 @@ Scenario: Payments Recalculation
 	When payments are recalculated
 	Then new payments are generated with the correct learning amounts
 
-Scenario: Payments Recalculation when start date is changed to ealier date
+Scenario: Payments Recalculation when start date is changed to earlier date
 	Given there are 20 payments of 600, which started 8 months ago
 	And recalculated earnings now have 22 payments of 545.45, which started 10 months ago
 	When payments are recalculated

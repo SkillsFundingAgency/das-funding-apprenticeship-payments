@@ -84,8 +84,8 @@ public class PaymentsRecalculationStepDefinitions
 	{
 		var periods = new List<DeliveryPeriod>
 		{
-			new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1000 }, //this month already paid
-			new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1000 } // next month not paid yet
+            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.Month, (short)DateTime.Now.Year, 1000),
+            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(1).Month, (short)DateTime.Now.AddMonths(1).Year, 1000)  // next month not paid yet
 		};
 
 		await GenerateExistingPayments(periods);
@@ -100,7 +100,7 @@ public class PaymentsRecalculationStepDefinitions
 
 		for (var i = 0; i < totalNumberOfPayments; i++)
         {
-            periods.Add(new() { CalenderYear = (short)startDate.AddMonths(i).Year, CalendarMonth = (byte)startDate.AddMonths(i).Month, LearningAmount = paymentAmount });
+            periods.Add(PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(i).Month, (short)DateTime.Now.AddMonths(i).Year, 1000));
 		}
 
         await GenerateExistingPayments(periods);
@@ -112,8 +112,8 @@ public class PaymentsRecalculationStepDefinitions
         //build event for recalculated earnings
         var periods = new List<DeliveryPeriod>
         {
-            new() { CalenderYear = (short)DateTime.Now.Year, CalendarMonth = (byte)DateTime.Now.Month, LearningAmount = 1200 }, //this month already paid
-            new() { CalenderYear = (short)DateTime.Now.AddMonths(1).Year, CalendarMonth = (byte)DateTime.Now.AddMonths(1).Month, LearningAmount = 1200 } // next month not paid yet
+            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.Month, (short)DateTime.Now.Year, 1200), //this month already paid
+            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(1).Month, (short)DateTime.Now.AddMonths(1).Year, 1200) // next month not paid yet
         };
 
 		await GenerateRecalculatedEarnings(periods);
@@ -128,7 +128,7 @@ public class PaymentsRecalculationStepDefinitions
 
 		for (var i = 0; i < totalNumberOfPayments; i++)
 		{
-			periods.Add(new() { CalenderYear = (short)startDate.AddMonths(i).Year, CalendarMonth = (byte)startDate.AddMonths(i).Month, LearningAmount = paymentAmount });
+			periods.Add(PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(i).Month, (short)DateTime.Now.AddMonths(i).Year, paymentAmount));
 		}
 
 		await GenerateRecalculatedEarnings(periods);
@@ -172,8 +172,6 @@ public class PaymentsRecalculationStepDefinitions
 			.With(x => x.ApprenticeshipKey, _apprenticeshipKey)
 			.Create();
 
-		_previousEarningsGeneratedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
-
 		_scenarioContext[ContextKeys.EarningsGeneratedEvent] = _previousEarningsGeneratedEvent;
 
 		//publish event for previous earnings
@@ -211,8 +209,6 @@ public class PaymentsRecalculationStepDefinitions
 			.With(x => x.DeliveryPeriods, periods)
 			.With(x => x.ApprenticeshipKey, _apprenticeshipKey)
 			.Create();
-
-		_earningsRecalculatedEvent.SetDeliveryPeriodsAccordingToCalendarMonths();
 
 		_scenarioContext[ContextKeys.EarningsRecalculatedEvent] = _earningsRecalculatedEvent;
 
