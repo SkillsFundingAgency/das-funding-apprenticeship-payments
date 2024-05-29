@@ -100,7 +100,7 @@ public class PaymentsRecalculationStepDefinitions
 
 		for (var i = 0; i < totalNumberOfPayments; i++)
         {
-            periods.Add(PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(i).Month, (short)DateTime.Now.AddMonths(i).Year, paymentAmount));
+            periods.Add(PeriodHelper.CreateDeliveryPeriod((byte)startDate.AddMonths(i).Month, (short)startDate.AddMonths(i).Year, paymentAmount));
 		}
 
         await GenerateExistingPayments(periods);
@@ -128,7 +128,7 @@ public class PaymentsRecalculationStepDefinitions
 
 		for (var i = 0; i < totalNumberOfPayments; i++)
 		{
-			periods.Add(PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(i).Month, (short)DateTime.Now.AddMonths(i).Year, paymentAmount));
+			periods.Add(PeriodHelper.CreateDeliveryPeriod((byte)startDate.AddMonths(i).Month, (short)startDate.AddMonths(i).Year, paymentAmount));
 		}
 
 		await GenerateRecalculatedEarnings(periods);
