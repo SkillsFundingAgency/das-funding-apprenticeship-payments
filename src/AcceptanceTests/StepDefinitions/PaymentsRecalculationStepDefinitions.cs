@@ -84,7 +84,7 @@ public class PaymentsRecalculationStepDefinitions
 	{
 		var periods = new List<DeliveryPeriod>
 		{
-            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.Month, (short)DateTime.Now.Year, 1000),
+            PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.Month, (short)DateTime.Now.Year, 1000), //this month already paid
             PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(1).Month, (short)DateTime.Now.AddMonths(1).Year, 1000)  // next month not paid yet
 		};
 
@@ -100,7 +100,7 @@ public class PaymentsRecalculationStepDefinitions
 
 		for (var i = 0; i < totalNumberOfPayments; i++)
         {
-            periods.Add(PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(i).Month, (short)DateTime.Now.AddMonths(i).Year, 1000));
+            periods.Add(PeriodHelper.CreateDeliveryPeriod((byte)DateTime.Now.AddMonths(i).Month, (short)DateTime.Now.AddMonths(i).Year, paymentAmount));
 		}
 
         await GenerateExistingPayments(periods);
