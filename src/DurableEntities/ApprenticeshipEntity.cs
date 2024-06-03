@@ -114,6 +114,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         private void MapNewApprenticeshipValues(ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent)
         {
             Model.StartDate = earningsRecalculatedEvent.StartDate;
+            Model.PlannedEndDate = earningsRecalculatedEvent.PlannedEndDate;
         }
     }
 }
