@@ -39,7 +39,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public void RecalculatePayments(DateTime now)
         {
             _payments.RemoveAll(p => !p.SentForPayment);
-            foreach (var earning in Earnings)
+
+            var earningsToProcess = GetEarningsToProcess(now);
+
+            foreach (var earning in earningsToProcess)
             {
                 var collectionPeriod = DetermineCollectionPeriod(earning, now);
 
@@ -99,6 +102,30 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
                 academicYear = short.Parse($"{year}{year + 1}");
 
             return (academicYear, (byte)period);
+        }
+
+        // When new earnings are generated they may not cover a period that has already been paid for
+        // For these periods earnings of zero for that month need to be generated for calculation purposes
+        private  List<Earning> GetEarningsToProcess(DateTime now)
+        {
+            // Put earnings into a new list, this is for processing only as we will be adding zero earnings
+            var earningsToProcess = Earnings.ToList();
+
+            // Cycle through payments and add zero earnings for any periods that have had payments made before recalc
+            foreach(Payment payment in _payments)
+			{
+				if (!earningsToProcess.Any(e=> e.DeliveryPeriod == payment.DeliveryPeriod && e.AcademicYear == payment.AcademicYear))
+                {
+                    var earning = new Earning(payment.AcademicYear, payment.DeliveryPeriod, 0, (short)now.Year, (byte)now.Month, payment.FundingLineType, payment.EarningsProfileId);
+                    earningsToProcess.Add(earning);
+                }
+            }
+
+            // Sorting the list has no technical purpose, it is just to make manual validation easier
+            return earningsToProcess
+                .OrderBy(x => x.AcademicYear)
+                .ThenBy(x => x.DeliveryPeriod)
+                .ToList();
         }
     }
 }

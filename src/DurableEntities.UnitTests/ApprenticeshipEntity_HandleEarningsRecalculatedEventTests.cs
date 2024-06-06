@@ -74,6 +74,12 @@ public class ApprenticeshipEntity_HandleEarningsRecalculatedEventTests
     }
 
     [Test]
+    public void ShouldMapStartDate()
+    {
+        _sut.Model.StartDate.Should().Be(_earningsRecalculatedEvent.StartDate);
+    }
+    
+    [Test]
     public void ShouldMapEarnings()
     {
         _sut.Model.Earnings.Should().BeEquivalentTo(_expectedEarnings);

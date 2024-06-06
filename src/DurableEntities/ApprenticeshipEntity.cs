@@ -48,6 +48,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
             var apprenticeship = await _recalculateApprenticeshipPaymentsCommandHandler.Recalculate(new RecalculateApprenticeshipPaymentsCommand(Model, earningsRecalculatedEvent.DeliveryPeriods.ToEarnings(earningsRecalculatedEvent.EarningsProfileId)));
 
+            MapNewApprenticeshipValues(earningsRecalculatedEvent);
             MapNewEarningsAndPayments(apprenticeship);
         }
 
@@ -108,6 +109,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
                 SentForPayment = p.SentForPayment,
                 EarningsProfileId = p.EarningsProfileId
             }).ToList();
+        }
+
+        private void MapNewApprenticeshipValues(ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent)
+        {
+            Model.StartDate = earningsRecalculatedEvent.StartDate;
+            Model.PlannedEndDate = earningsRecalculatedEvent.PlannedEndDate;
         }
     }
 }
