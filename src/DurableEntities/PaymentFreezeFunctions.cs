@@ -11,7 +11,7 @@ public class PaymentFreezeFunctions
         [DurableClient] IDurableEntityClient client,
         ILogger log)
     {
-        log.LogInformation($"Received PaymentsFrozenEvent for apprenticeship {paymentsFrozenEvent.ApprenticeshipKey}");
+        log.LogInformation("Received PaymentsFrozenEvent for apprenticeship {apprenticeshipKey}", paymentsFrozenEvent.ApprenticeshipKey);
 
         var entityId = new EntityId(nameof(ApprenticeshipEntity), paymentsFrozenEvent.ApprenticeshipKey.ToString());
         await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandlePaymentFrozenEvent), paymentsFrozenEvent);
