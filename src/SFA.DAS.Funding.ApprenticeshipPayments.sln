@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.Apprentices
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests", "SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests.csproj", "{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Payments.RequiredPayments.Messages", "SFA.DAS.Payments.RequiredPayments.Messages\SFA.DAS.Payments.RequiredPayments.Messages.csproj", "{765777FF-CA07-41C1-88A1-DE67E3EB0F9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Payments.RequiredPayments.Messages", "SFA.DAS.Payments.RequiredPayments.Messages\SFA.DAS.Payments.RequiredPayments.Messages.csproj", "{765777FF-CA07-41C1-88A1-DE67E3EB0F9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
