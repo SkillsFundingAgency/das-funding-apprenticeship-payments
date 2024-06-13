@@ -38,11 +38,10 @@ public class PaymentsFreezeStepDefinitions
     public async Task AssertCorrectPaymentsAreReleased()
     {
         var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];
-        await Task.Delay(5000); // wait for any potential messages to be processed, we are trying to prove a negative
-                                // alternative to this would be to publish a NoPaymentsReleasedEvent when release payments
-                                // is triggered and payments are frozen. However, this event would only be used to aid testing
 
-        if (FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(x => x.ApprenticeshipKey == apprenticeshipKey))
-            Assert.Fail("No payments should have been published");
+        await WaitHelper.WaitForUnexpected(() =>
+            FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(x => x.ApprenticeshipKey == apprenticeshipKey),
+            "No payments should have been published");
+
     }
 }
