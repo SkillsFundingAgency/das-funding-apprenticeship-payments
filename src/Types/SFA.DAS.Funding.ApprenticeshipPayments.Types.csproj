@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.11.4" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.61.3" />
     <PackageReference Include="NServiceBus" Version="7.7.4" />
     <PackageReference Include="SFA.DAS.Apprenticeships.Types" Version="6.8.4-prerelease-43" />
     <PackageReference Include="SFA.DAS.Funding.ApprenticeshipEarnings.Types" Version="1.0.27-prerelease-10" />
