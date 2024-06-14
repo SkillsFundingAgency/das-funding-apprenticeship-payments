@@ -2,10 +2,10 @@
 
 public static class QueueNames
 {
-    public const string EarningsGenerated = "das-funding-payments-earnings-generated";
-    public const string EarningsRecalculated = "das-funding-payments-earnings-recalculated";
-    public const string ReleasePayments = "das-funding-payments-release-payments";
-    public const string FinalisedOnProgammeLearningPayment = "sfa.das.funding.payments.finalisedpaymentgenerated";
+    public const string EarningsGenerated = "das-funding-payments-earningsgenerated";
+    public const string EarningsRecalculated = "das-funding-payments-earningsrecalculated";
+    public const string ReleasePayments = "das-funding-payments-releasepayments";
+    public const string FinalisedOnProgammeLearningPayment = "das-funding-payments-finalisedpaymentgenerated";
     public const string CalculatedRequiredLevyAmount = "sfa-das-payments-fundingsource-levy-transaction";
-    public const string PaymentsFrozen = "das-apprenticeships-payments-frozen";
+    public const string PaymentsFrozen = "das-funding-payments-paymentsfrozen";
 }
