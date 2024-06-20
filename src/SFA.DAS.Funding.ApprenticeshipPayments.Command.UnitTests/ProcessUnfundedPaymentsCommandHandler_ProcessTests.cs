@@ -27,6 +27,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
             _collectionPeriod = _fixture.Create<byte>();
             _collectionYear = _fixture.Create<short>();
             _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<ApprenticeshipEntityModel>());
+            _command.Model.PaymentsFrozen = false;
             _command.Model.Payments = new List<PaymentEntityModel>
             {
                 new PaymentEntityModel { Amount = 100, CollectionYear = _collectionYear, CollectionPeriod = _collectionPeriod, SentForPayment = false }, //to be sent

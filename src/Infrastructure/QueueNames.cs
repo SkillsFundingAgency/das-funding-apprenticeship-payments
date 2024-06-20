@@ -8,4 +8,5 @@ public static class QueueNames
     public const string FinalisedOnProgammeLearningPayment = "das-funding-payments-finalisedpaymentgenerated";
     public const string CalculatedRequiredLevyAmount = "sfa-das-payments-fundingsource-levy-transaction";
     public const string PaymentsFrozen = "das-funding-payments-paymentsfrozen";
+    public const string PaymentsUnfrozen = "das-funding-payments-paymentsunfrozen";
 }
