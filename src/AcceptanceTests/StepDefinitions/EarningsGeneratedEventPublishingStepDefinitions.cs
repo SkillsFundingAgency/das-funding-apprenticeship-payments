@@ -69,6 +69,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
         // intentionally left blank
     }
 
+    [Given(@"payments are calculated")]
     [When (@"payments are calculated")]
     public async Task PublishApprenticeshipCreatedEvent()
     {
