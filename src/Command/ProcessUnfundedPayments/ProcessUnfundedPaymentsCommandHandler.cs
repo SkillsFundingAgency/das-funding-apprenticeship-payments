@@ -16,14 +16,27 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
     public async Task Process(ProcessUnfundedPaymentsCommand command)
     {
         ArgumentNullException.ThrowIfNull(command.Model);
+        var apprenticeshipKey = command.Model.ApprenticeshipKey;
+
+        if(command.Model.PaymentsFrozen)
+        {
+            _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} - Payments are frozen, no payments will be published", apprenticeshipKey);
+            return;
+        }
 
         var paymentsToSend = command.Model.Payments
             .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.CollectionYear == command.CollectionYear && !x.SentForPayment)
             .ToArray();
 
-        _logger.LogInformation(paymentsToSend.Any()
-            ? $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  Publishing {paymentsToSend.Length} payments for collection period {command.CollectionPeriod} & year {command.CollectionYear}"
-            : $"Apprenticeship Key: {command.Model.ApprenticeshipKey} -  No payments to publish for collection period {command.CollectionPeriod} & year {command.CollectionYear}");
+        if (paymentsToSend.Any())
+        {
+            _logger.LogInformation("Apprenticeship Key: {apprenticeshipKey} -  Publishing {numberOfPayments} payments for collection period {collectionPeriod} & year {collectionYear}", apprenticeshipKey, paymentsToSend.Length, command.CollectionPeriod, command.CollectionYear);
+        }
+        else
+        {
+            _logger.LogInformation("Apprenticeship Key: {apprenticeshipKey} -  No payments to publish for collection period {collectionPeriod} & year {collectionYear}", apprenticeshipKey, command.CollectionPeriod, command.CollectionYear);
+        }
+
 
         foreach (var payment in paymentsToSend)
         {
