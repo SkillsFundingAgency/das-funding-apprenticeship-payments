@@ -41,7 +41,11 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         foreach (var payment in paymentsToSend)
         {
             var finalisedOnProgammeLearningPaymentEvent = _eventBuilder.Build(payment, command.Model);
-            await _busEndpoint.Publish(finalisedOnProgammeLearningPaymentEvent);
+            using (var monitor = _logger.LogPerformance("_busEndpoint.Publish(finalisedOnProgammeLearningPaymentEvent)"))
+            {
+                await _busEndpoint.Publish(finalisedOnProgammeLearningPaymentEvent);
+            }
+
 
             _logger.LogInformation("ApprenticeshipKey: {0} Publishing FinalisedOnProgammeLearningPaymentEvent: {1}",
                 finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey,

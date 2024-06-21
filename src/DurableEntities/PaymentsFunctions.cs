@@ -17,15 +17,29 @@ public class PaymentsFunctions
 
         do
         {
-            pageCounter++;
-            await client.CleanEntityStorageAsync(true, true, token);
-            var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
-            var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), releasePaymentsCommand));
+            using (log.BeginScope("CorrelationId: {CorrelationId}", Guid.NewGuid()))
+            {
+                pageCounter++;
 
-            allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
+                var monitorListEntitiesAsync = log.LogPerformance("ListEntitiesAsync");
 
-            log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
-            await Task.WhenAll(releasePaymentsTasks);
+                await client.CleanEntityStorageAsync(true, true, token);
+                var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
+                var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), releasePaymentsCommand));
+
+                monitorListEntitiesAsync.Dispose();
+
+                allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
+
+                log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
+
+                using (var monitor = log.LogPerformance("Release Tasks"))
+                {
+                    await Task.WhenAll(releasePaymentsTasks);
+                }
+            }
+
+                
 
         } while (allApprenticeshipEntitiesQuery.ContinuationToken != null);
 
