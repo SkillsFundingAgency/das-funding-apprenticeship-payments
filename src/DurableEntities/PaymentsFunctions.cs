@@ -27,9 +27,12 @@ public class PaymentsFunctions
 
                     await client.CleanEntityStorageAsync(true, true, token);
                     var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
-                    var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), releasePaymentsCommand));
-
                     monitorListEntitiesAsync.Dispose();
+
+                    var monitorSignalEntityAsync = log.LogPerformance("SignalEntityAsync");
+                    var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), releasePaymentsCommand));
+                    monitorSignalEntityAsync.Dispose();
+
 
                     allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
 
