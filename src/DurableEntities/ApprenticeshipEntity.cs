@@ -68,7 +68,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model.PaymentsFrozen = true;
         }
 
-        public void HandlePaymentsUnfrozenEvent(PaymentsUnfrozenEvent paymentsUnfrozenEvent) //todo new event to consume from 769 das-apprenticeships ticket
+        public void HandlePaymentsUnfrozenEvent(PaymentsUnfrozenEvent paymentsUnfrozenEvent)
         {
             _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} Received {eventName}",
                 paymentsUnfrozenEvent.ApprenticeshipKey,
