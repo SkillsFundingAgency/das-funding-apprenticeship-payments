@@ -10,5 +10,6 @@
         public bool SentForPayment { get; set; }
         public string FundingLineType { get; set; } = null!;
         public Guid EarningsProfileId { get; set; }
+        public bool NotPaidDueToFreeze { get; set; }
     }
 }

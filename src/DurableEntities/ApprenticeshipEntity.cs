@@ -68,6 +68,15 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model.PaymentsFrozen = true;
         }
 
+        public void HandlePaymentsUnfrozenEvent(PaymentsUnfrozenEvent paymentsUnfrozenEvent)
+        {
+            _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} Received {eventName}",
+                paymentsUnfrozenEvent.ApprenticeshipKey,
+                nameof(PaymentsUnfrozenEvent));
+
+            Model.PaymentsFrozen = false;
+        }
+
         [FunctionName(nameof(ApprenticeshipEntity))]
         public static Task Run([EntityTrigger] IDurableEntityContext ctx) => ctx.DispatchAsync<ApprenticeshipEntity>();
 

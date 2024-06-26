@@ -20,7 +20,13 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
     [Then("the correct payments are released")]
     public async Task AssertCorrectPaymentsAreReleased()
     {
-        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesExpectation), "Failed to find published FinalisedOnProgammeLearningPaymentEvent");
+        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesExpectation), $"Failed to find expected published FinalisedOnProgammeLearningPaymentEvent when asserting correct payments are released");
+    }
+
+    [Then("the correct unfrozen payments are released")]
+    public async Task AssertCorrectUnfrozenPaymentsAreReleased()
+    {
+        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesUnfrozenExpectation), "Failed to find expected published FinalisedOnProgammeLearningPaymentEvent when asserting correct unfrozen payments are released");
     }
 
     private bool ReleasedPaymentMatchesExpectation(FinalisedOnProgammeLearningPaymentEvent finalisedOnProgammeLearningPaymentEvent)
@@ -29,18 +35,34 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
 
         if (finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey != (Guid)_scenarioContext["apprenticeshipKey"]) return false;
 
-        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey.Should().Be(earningsGeneratedEvent.ApprenticeshipKey);
-        finalisedOnProgammeLearningPaymentEvent.CollectionPeriod.Should().Be(((byte)DateTime.Now.Month).ToDeliveryPeriod());
-        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString().Should().Be(earningsGeneratedEvent.Uln);
-        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate.Should().Be(earningsGeneratedEvent.StartDate);
-        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate.Should().Be(earningsGeneratedEvent.PlannedEndDate);
-        finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier.Should().Be(earningsGeneratedEvent.ProviderId);
+        var expectedAmount = earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount;
+
+        return 
+            finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == earningsGeneratedEvent.ApprenticeshipKey
+            && finalisedOnProgammeLearningPaymentEvent.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod()
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString() == earningsGeneratedEvent.Uln
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate == earningsGeneratedEvent.StartDate
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate == earningsGeneratedEvent.PlannedEndDate
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier == earningsGeneratedEvent.ProviderId
+            && finalisedOnProgammeLearningPaymentEvent.Amount == expectedAmount;
+    }
+
+    private bool ReleasedPaymentMatchesUnfrozenExpectation(FinalisedOnProgammeLearningPaymentEvent finalisedOnProgammeLearningPaymentEvent)
+    {
+        var earningsGeneratedEvent = (EarningsGeneratedEvent)_scenarioContext[ContextKeys.EarningsGeneratedEvent];
+
+        if (finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey != (Guid)_scenarioContext["apprenticeshipKey"]) return false;
 
         var expectedAmount = earningsGeneratedEvent.DeliveryPeriods.First(x => x.Period == ((byte)DateTime.Now.Month).ToDeliveryPeriod()).LearningAmount;
-        finalisedOnProgammeLearningPaymentEvent.Amount.Should().Be(expectedAmount);
 
-
-        return true;
-
+        return
+            finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == earningsGeneratedEvent.ApprenticeshipKey
+            && finalisedOnProgammeLearningPaymentEvent.CollectionPeriod == ((byte)DateTime.Now.AddMonths(1).Month).ToDeliveryPeriod()
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString() == earningsGeneratedEvent.Uln
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate == earningsGeneratedEvent.StartDate
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate == earningsGeneratedEvent.PlannedEndDate
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier == earningsGeneratedEvent.ProviderId
+            && finalisedOnProgammeLearningPaymentEvent.Amount == expectedAmount
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.DeliveryPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod();
     }
 }

@@ -19,6 +19,7 @@ public class PaymentsFreezeStepDefinitions
         _testContext = testContext;
     }
 
+    [Given(@"the payments are frozen")]
     [When(@"the payments are frozen")]
     public async Task WhenThePaymentsAreFrozen()
     {
@@ -34,6 +35,7 @@ public class PaymentsFreezeStepDefinitions
         });
     }
 
+    [Given("no payments are released")]
     [Then("no payments are released")]
     public async Task AssertCorrectPaymentsAreReleased()
     {
@@ -43,5 +45,16 @@ public class PaymentsFreezeStepDefinitions
             FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(x => x.ApprenticeshipKey == apprenticeshipKey),
             "No payments should have been published");
 
+    }
+
+    [When(@"the payments are unfrozen")]
+    public async Task WhenThePaymentsAreUnfrozen()
+    {
+        var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];
+
+        await _testContext.UnfreezePaymentsEndpoint.Publish(new PaymentsUnfrozenEvent
+        {
+            ApprenticeshipKey = apprenticeshipKey
+        });
     }
 }

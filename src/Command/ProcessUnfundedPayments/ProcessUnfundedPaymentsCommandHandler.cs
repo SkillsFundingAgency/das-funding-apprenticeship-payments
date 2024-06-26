@@ -17,16 +17,33 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
     {
         ArgumentNullException.ThrowIfNull(command.Model);
         var apprenticeshipKey = command.Model.ApprenticeshipKey;
+        
+        var paymentsToSend = command.Model.Payments
+            .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.CollectionYear == command.CollectionYear && !x.SentForPayment)
+            .ToArray();
 
-        if(command.Model.PaymentsFrozen)
+        if (command.Model.PaymentsFrozen)
         {
+            foreach (var paymentEntityModel in paymentsToSend)
+            {
+                paymentEntityModel.NotPaidDueToFreeze = true;
+            }
             _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} - Payments are frozen, no payments will be published", apprenticeshipKey);
             return;
         }
 
-        var paymentsToSend = command.Model.Payments
-            .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.CollectionYear == command.CollectionYear && !x.SentForPayment)
+        
+        var previouslyFrozenPaymentsToSend = command.Model.Payments
+            .Where(x => x.NotPaidDueToFreeze)
             .ToArray();
+
+        foreach (var payment in previouslyFrozenPaymentsToSend)
+        {
+            payment.CollectionYear = command.CollectionYear;
+            payment.CollectionPeriod = command.CollectionPeriod;
+        }
+
+        paymentsToSend = paymentsToSend.Union(previouslyFrozenPaymentsToSend).ToArray();
 
         if (paymentsToSend.Any())
         {
@@ -48,6 +65,7 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
                 finalisedOnProgammeLearningPaymentEvent.SerialiseForLogging());
 
             payment.SentForPayment = true;
+            payment.NotPaidDueToFreeze = false;
         }
     }
 }
