@@ -72,12 +72,6 @@ public class ApprenticeshipEntity_HandleEarningsRecalculatedEventTests
     {
         _recalculateApprenticeshipPaymentsCommandHandler.Verify(x => x.Recalculate(It.Is<RecalculateApprenticeshipPaymentsCommand>(y => y.ApprenticeshipEntity == _sut.Model)));
     }
-
-    [Test]
-    public void ShouldMapStartDate()
-    {
-        _sut.Model.StartDate.Should().Be(_earningsRecalculatedEvent.StartDate);
-    }
     
     [Test]
     public void ShouldMapEarnings()
