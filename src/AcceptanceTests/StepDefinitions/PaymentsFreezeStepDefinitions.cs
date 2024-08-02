@@ -35,8 +35,8 @@ public class PaymentsFreezeStepDefinitions
         });
     }
 
-    [Given("no payments are released")]
-    [Then("no payments are released")]
+    [Given("no payments are released for this apprenticeship")]
+    [Then("no payments are released for this apprenticeship")]
     public async Task AssertCorrectPaymentsAreReleased()
     {
         var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];

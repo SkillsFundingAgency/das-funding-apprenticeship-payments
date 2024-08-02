@@ -17,7 +17,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
                         .WithTransientLifetime();
                 })
                 .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>()
-                .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>();
+                .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
+                .AddSingleton<ISystemClockService, SystemClockService>();
 
             return serviceCollection;
         }

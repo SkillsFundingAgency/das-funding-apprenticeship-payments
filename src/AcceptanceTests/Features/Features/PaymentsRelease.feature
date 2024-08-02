@@ -24,7 +24,7 @@ Scenario: Payments Frozen
 	And the payments are frozen
 	And payments are generated with the correct learning amounts
 	And payments are released
-	Then no payments are released
+	Then no payments are released for this apprenticeship
 
 Scenario: Payments Unfrozen
 	Given earnings have been generated
@@ -34,8 +34,21 @@ Scenario: Payments Unfrozen
 	And the payments are frozen
 	And payments are generated with the correct learning amounts
 	And payments are released
-	And no payments are released
+	And no payments are released for this apprenticeship
 	When the payments are unfrozen
 	And payments are released for the next collection period
 	Then the correct unfrozen payments are released
+
+Scenario: Unfrozen payments which are in the previous academic year are not released
+	Given earnings have been generated
+	And the earnings started in academic year 23/24 and run for 2 years
+	And the date is now 2023-11-15
+	And payments are calculated
+	And the date is now 2023-12-15
+	And the payments are frozen
+	And the date is now 2024-10-15
+	When the payments are unfrozen
+	And payments are released
+	Then payments are not released for academic year 23/24
+	#And payments for academic year 24/25 are released
 	

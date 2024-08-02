@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Testing.AzureStorageEmulator;
@@ -63,6 +64,7 @@ public class TestFunction : IDisposable
                     });
                     new Startup().Configure(builder);
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
+                    s.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup
                 })
             )
             .Build();
