@@ -1,5 +1,6 @@
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
@@ -10,10 +11,12 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
 {
     private readonly TestContext _testContext;
     private ReleasePaymentsCommand _releasePaymentsCommand = null!;
+    private ISystemClockService _systemClockService;
 
     public ReleasePaymentsCommandPublishingStepDefinitions(TestContext testContext)
     {
         _testContext = testContext;
+        _systemClockService = TestSystemClock.Instance();
     }
 
     [Given("payments are released")]
@@ -22,16 +25,36 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     {
         _releasePaymentsCommand = new ReleasePaymentsCommand
         {
-            CollectionPeriod = ((byte)DateTime.Now.Month).ToDeliveryPeriod(),
-            CollectionYear = ((short)DateTime.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
+            CollectionPeriod = ((byte)_systemClockService.Now.Month).ToDeliveryPeriod(),
+            CollectionYear = ((short)_systemClockService.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
         };
         await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
+    }
+
+    [Given(@"payments are released every month until (.*)")]
+    [When(@"payments are released every month until (.*)")]
+    public async Task PublishReleasePaymentsCommandUntil(string endDateString)
+    {
+        var releaseDate = _systemClockService.Now;
+        var endDate = DateTime.Parse(endDateString).AddDays(1);
+
+        while (releaseDate < endDate)
+        {
+            _releasePaymentsCommand = new ReleasePaymentsCommand
+            {
+                CollectionPeriod = ((byte)releaseDate.Month).ToDeliveryPeriod(),
+                CollectionYear = ((short)releaseDate.Year).ToAcademicYear((byte)releaseDate.Month)
+            };
+            await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
+            releaseDate = releaseDate.AddMonths(1);
+            Task.Delay(1000).Wait();
+        }
     }
 
     [When("payments are released for the next collection period")]
     public async Task PublishReleasePaymentsCommandNextCollectionPeriod()
     {
-        var nextCollectionPeriodDate = DateTime.Now.AddMonths(1);
+        var nextCollectionPeriodDate = _systemClockService.Now.AddMonths(1);
         _releasePaymentsCommand = new ReleasePaymentsCommand
         {
             CollectionPeriod = ((byte)nextCollectionPeriodDate.Month).ToDeliveryPeriod(),

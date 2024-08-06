@@ -32,7 +32,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     {
         var periods = new List<DeliveryPeriod>();
         var startYear = 2000 + int.Parse(academicYear.Substring(0,2));
-        var deliveryDateTime = new DateTime(startYear, 9, 1); // Starting delivery DateTime
+        var deliveryDateTime = new DateTime(startYear, 8, 1); // Starting delivery DateTime
         var duration = 12 * numberOfYears;
 
         for (var i = 0; i < duration; i++)

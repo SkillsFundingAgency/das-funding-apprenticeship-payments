@@ -1,6 +1,8 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using System.Linq;
+using TechTalk.SpecFlow;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
@@ -8,6 +10,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 public class ExpectationStepDefinitions
 {
     private static List<ExpectedPayments> _expectedPayments = new List<ExpectedPayments>();
+    private readonly ScenarioContext _scenarioContext;
+
+    public ExpectationStepDefinitions(ScenarioContext scenarioContext)
+    {
+        _scenarioContext = scenarioContext;
+    }
 
     public static void AddExpectedPayment(ExpectedPayments expectedPayments)
     {
@@ -20,85 +28,161 @@ public class ExpectationStepDefinitions
         _expectedPayments = new List<ExpectedPayments>();
     }
 
+    [AfterStep]
+    public async Task AfterEachStep()
+    {
+        await Task.Delay(10000);
+    }
+
     [AfterScenario]
     public async Task AfterEachScenario()
     {
         if (!_expectedPayments.Any())
             return;
 
+        var expectedCalculatedPayments = _expectedPayments.Where(x => x.ExpectedType == ExpectedType.Calculated).ToList();
+        await ValidateCalculatedPayments(expectedCalculatedPayments);
+
+        var expectedReleasedPayments = _expectedPayments.Where(x => x.ExpectedType == ExpectedType.Released).ToList();
+        await ValidateReleasedPayments(expectedReleasedPayments);
+    }
+
+    [Then(@"there are (.*) payments of (.*)")]
+    public void AddExpectedCalulatedPayments(int paymentCount, decimal paymentAmount)
+    {
+        _expectedPayments.Add(new ExpectedPayments { 
+            ExpectedType = ExpectedType.Calculated, 
+            Count = paymentCount, 
+            Amount = paymentAmount, 
+            ApprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"] 
+        });
+    }
+
+    [Then(@"for academic year (.*) there are (.*) payments of (.*) released")]
+    public void AddExpectedReleasedPayments(string academicYear, int paymentCount, decimal paymentAmount)
+    {
+        _expectedPayments.Add(new ExpectedPayments { 
+            ExpectedType = ExpectedType.Released, 
+            AcademicYear = short.Parse(academicYear.Replace("/", "")), 
+            Count = paymentCount, 
+            Amount = paymentAmount, 
+            ApprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"] 
+        });
+    }
+
+    private static async Task ValidateCalculatedPayments(List<ExpectedPayments> expected)
+    {
+        if (expected == null || !expected.Any()) return;
+
         var processedEvents = new List<PaymentsGeneratedEvent>();
 
         await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Except(processedEvents).Any(e =>
         {
-            //  Inspect event to see if it contains the expected payments
+            var outcome = true;
+
             processedEvents.Add(e);
 
             foreach (var expectedPayment in _expectedPayments)
             {
-                if (!ValidateExpectedPayments(e, expectedPayment.Amount, expectedPayment.Count, out int actualCount))
+                expectedPayment.ActualCountFound = e.Payments.Where(p =>
+                    (p.Amount == expectedPayment.Amount || expectedPayment.Amount == null) &&
+                    (p.AcademicYear == expectedPayment.AcademicYear || expectedPayment.AcademicYear == null)
+                    ).Count(); 
+
+                if (!expectedPayment.MeetsExpectations())
                 {
-                    expectedPayment.ActualCountFound = actualCount;
-                    return false;
-                }
-                else
-                {
-                    expectedPayment.Found = true;
+                    outcome = false;
                 }
             }
 
-            return true;
+            return outcome;
         }),
         () =>
         {
-            //  Generate message to show failure reason
             if (!processedEvents.Any())
                 return "Expected to find PaymentsGeneratedEvent, but none where received";
 
-            var failmessage = string.Empty;
-
-            foreach (var expectedPayment in _expectedPayments.Where(x => !x.Found))
-            {
-                failmessage += $"Expected {expectedPayment.Count} payments of {expectedPayment.Amount}, but found {expectedPayment.ActualCountFound}. ";
-            }
-
-            return failmessage;
+            return _expectedPayments.FailMessages();
         });
     }
 
-    [Then(@"there are (.*) payments of (.*)")]
-    public static void AddExpectedPayments(int paymentCount, decimal paymentAmount)
+    private static async Task ValidateReleasedPayments(List<ExpectedPayments> expected)
     {
-        _expectedPayments.Add(new ExpectedPayments { Amount = paymentAmount, Count = paymentCount });
-    }
+        if (expected == null || !expected.Any()) return;
 
-    private static bool ValidateExpectedPayments(
-    PaymentsGeneratedEvent paymentsGeneratedEvent, decimal? expectedAmount, int expectedNumberOfPayments, out int actualCount)
-    {
-        var matchingPayments = new List<Payment>();
-            
-        if(expectedAmount != null)
+        var processedEvents = new List<FinalisedOnProgammeLearningPaymentEvent>();
+
+        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Except(processedEvents).Any(e =>
         {
-            matchingPayments.AddRange(paymentsGeneratedEvent.Payments.Where(p => p.Amount == expectedAmount));
-        }
+            processedEvents.Add(e);
 
+            var matchingExpectedPayment = expected.FirstOrDefault(x => x.AcademicYear == e.CollectionYear && x.Amount == e.Amount && x.ApprenticeshipKey == e.ApprenticeshipKey);
+            if(matchingExpectedPayment != null)
+            {
+                matchingExpectedPayment.ActualCountFound++;
+            }
 
-        actualCount = matchingPayments.Count();
-
-        if (actualCount != expectedNumberOfPayments)
+            return expected.All(x=>x.MeetsExpectations());
+        }),
+        () =>
         {
-            return false;
-        }
+            if (!processedEvents.Any())
+                return "Expected to find FinalisedOnProgammeLearningPaymentEvent, but none where received";
 
-        return true;
+            return _expectedPayments.FailMessages();
+        });
+
     }
-
 }
 
 public class ExpectedPayments
 {
+    public Guid ApprenticeshipKey { get; set; }
     public decimal? Amount { get; set; }
     public int Count { get; set; }
-    public bool Found { get; set; }
     public int ActualCountFound { get; set; }
+    public short? AcademicYear { get; set; }
+    public ExpectedType ExpectedType { get; set; }
+}
 
+public enum ExpectedType
+{
+    Calculated,
+    Released
+}
+
+public static class ExpectedPaymentsExtensions
+{
+    public static bool MeetsExpectations(this ExpectedPayments expected)
+    {
+        return expected.Count == expected.ActualCountFound;
+    }
+
+    public static string FailMessages(this List<ExpectedPayments> expected)
+    {
+        var message = string.Empty;
+
+        foreach (var expectedPayment in expected.Where(x => !x.MeetsExpectations()))
+        {
+            message += expectedPayment.FailMessage();
+        }
+
+        return message;
+    }
+
+    public static string FailMessage(this ExpectedPayments expected)
+    {
+        var message = $"Expected {expected.Count}";
+
+        if (expected.Amount.HasValue)
+            message += $" payments of {expected.Amount}";
+
+        if (expected.AcademicYear.HasValue)
+            message += $" for academic year {expected.AcademicYear}";
+
+
+        message += $", but found {expected.ActualCountFound}. ";
+
+        return message;
+    }
 }

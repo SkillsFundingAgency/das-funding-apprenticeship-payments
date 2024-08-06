@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
@@ -17,6 +18,7 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessFrozenTests
     private short _collectionYear;
     private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
     private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder = null!;
+    private Mock<ISystemClockService> _systemClockService = null!;
     private FinalisedOnProgammeLearningPaymentEvent _expectedEvent = null!;
     private ProcessUnfundedPaymentsCommandHandler _sut = null!;
 
@@ -37,8 +39,11 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessFrozenTests
 
         _busEndpoint = new Mock<IDasServiceBusEndpoint>();
         _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
+        _systemClockService = new Mock<ISystemClockService>();
+        _systemClockService.Setup(x => x.Now).Returns(DateTime.Now);
+
         _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), _command.Model)).Returns(_expectedEvent);
-        _sut = new ProcessUnfundedPaymentsCommandHandler(_busEndpoint.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
+        _sut = new ProcessUnfundedPaymentsCommandHandler(_busEndpoint.Object, _eventBuilder.Object, _systemClockService.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
         await _sut.Process(_command);
     }

@@ -1,15 +1,24 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Extensions;
+
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 
 public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCommandHandler
 {
     private readonly IDasServiceBusEndpoint _busEndpoint;
     private readonly IFinalisedOnProgammeLearningPaymentEventBuilder _eventBuilder;
+    private readonly ISystemClockService _systemClock;
     private readonly ILogger<ProcessUnfundedPaymentsCommandHandler> _logger;
 
-    public ProcessUnfundedPaymentsCommandHandler(IDasServiceBusEndpoint busEndpoint, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
+    public ProcessUnfundedPaymentsCommandHandler(
+        IDasServiceBusEndpoint busEndpoint, 
+        IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder,
+        ISystemClockService systemClock,
+        ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
     {
         _busEndpoint = busEndpoint;
         _eventBuilder = eventBuilder;
+        _systemClock = systemClock;
         _logger = logger;
     }
 
@@ -32,9 +41,8 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
             return;
         }
 
-        
         var previouslyFrozenPaymentsToSend = command.Model.Payments
-            .Where(x => x.NotPaidDueToFreeze)
+            .Where(x => x.NotPaidDueToFreeze && x.AcademicYear == _systemClock.Now.ToAcademicYear())
             .ToArray();
 
         foreach (var payment in previouslyFrozenPaymentsToSend)
@@ -53,7 +61,6 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         {
             _logger.LogInformation("Apprenticeship Key: {apprenticeshipKey} -  No payments to publish for collection period {collectionPeriod} & year {collectionYear}", apprenticeshipKey, command.CollectionPeriod, command.CollectionYear);
         }
-
 
         foreach (var payment in paymentsToSend)
         {

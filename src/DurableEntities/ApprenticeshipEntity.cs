@@ -44,6 +44,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         public async Task HandleEarningsRecalculatedEvent(ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent)
         {
+            if (IsModelNull(nameof(HandleEarningsRecalculatedEvent))) return;
+
             _logger.LogInformation("ApprenticeshipKey: {0} Received EarningsRecalculatedEvent: {1}",
                 earningsRecalculatedEvent.ApprenticeshipKey,
                 earningsRecalculatedEvent.SerialiseForLogging());
@@ -56,11 +58,15 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         public async Task ReleasePaymentsForCollectionPeriod(ReleasePaymentsCommand releasePaymentsCommand)
         {
+            if (IsModelNull(nameof(ReleasePaymentsForCollectionPeriod))) return;
+
             await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, Model));
         }
 
         public void HandlePaymentFrozenEvent(PaymentsFrozenEvent paymentsFrozenEvent)
         {
+            if (IsModelNull(nameof(HandlePaymentFrozenEvent))) return;
+
             _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} Received {eventName}",
                 paymentsFrozenEvent.ApprenticeshipKey,
                 nameof(PaymentsFrozenEvent));
@@ -70,6 +76,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
         public void HandlePaymentsUnfrozenEvent(PaymentsUnfrozenEvent paymentsUnfrozenEvent)
         {
+            if (IsModelNull(nameof(HandlePaymentsUnfrozenEvent))) return;
+
             _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} Received {eventName}",
                 paymentsUnfrozenEvent.ApprenticeshipKey,
                 nameof(PaymentsUnfrozenEvent));
@@ -136,6 +144,17 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         {
             Model.StartDate = earningsRecalculatedEvent.StartDate;
             Model.PlannedEndDate = earningsRecalculatedEvent.PlannedEndDate;
+        }
+
+        private bool IsModelNull(string methodName)
+        {
+            if (Model == null)
+            {
+                _logger.LogWarning("{method} was triggered for entity with null model", methodName);
+                return true;
+            }
+
+            return false;
         }
     }
 }

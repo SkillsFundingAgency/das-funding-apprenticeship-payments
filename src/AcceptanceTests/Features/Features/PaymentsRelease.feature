@@ -44,11 +44,12 @@ Scenario: Unfrozen payments which are in the previous academic year are not rele
 	And the earnings started in academic year 23/24 and run for 2 years
 	And the date is now 2023-11-15
 	And payments are calculated
+	And payments are released
 	And the date is now 2023-12-15
 	And the payments are frozen
+	And payments are released every month until 2024-10-15
 	And the date is now 2024-11-15
 	When the payments are unfrozen
 	And payments are released
-	Then their are 4 payments paid for academic year 23/24
-	Then their are 3 payments paid for academic year 24/25
-	
+	Then for academic year 23/24 there are 4 payments of 1000 released
+	Then for academic year 24/25 there are 4 payments of 1000 released	
