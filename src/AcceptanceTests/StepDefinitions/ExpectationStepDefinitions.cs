@@ -28,12 +28,6 @@ public class ExpectationStepDefinitions
         _expectedPayments = new List<ExpectedPayments>();
     }
 
-    [AfterStep]
-    public async Task AfterEachStep()
-    {
-        await Task.Delay(10000);
-    }
-
     [AfterScenario]
     public async Task AfterEachScenario()
     {

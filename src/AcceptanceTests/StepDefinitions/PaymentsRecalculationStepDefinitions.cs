@@ -158,9 +158,10 @@ public class PaymentsRecalculationStepDefinitions
 			.Create();
 
 		_scenarioContext[ContextKeys.EarningsRecalculatedEvent] = _earningsRecalculatedEvent;
+        _scenarioContext["apprenticeshipKey"] = _earningsRecalculatedEvent.ApprenticeshipKey;
 
-		//publish event for recalculated earnings
-		await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
+        //publish event for recalculated earnings
+        await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
 		_expectedNumberOfEventsPublished++;
 	}
 
