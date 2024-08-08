@@ -1,7 +1,9 @@
 using AutoFixture;
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
@@ -80,9 +82,21 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     [When (@"payments are calculated")]
     public async Task PublishApprenticeshipCreatedEvent()
     {
+        
         _scenarioContext["apprenticeshipKey"] = _earningsGeneratedEvent.ApprenticeshipKey;
         _scenarioContext[ContextKeys.EarningsGeneratedEvent] = _earningsGeneratedEvent;
+
+        var existingPaymentsGenerated = PaymentsGeneratedEventHandler.ReceivedEvents.Where(x => x.ApprenticeshipKey == _earningsGeneratedEvent.ApprenticeshipKey).ToList();
+
         await _testContext.EarningsGeneratedEndpoint.Publish(_earningsGeneratedEvent);
+
+        await WaitHelper.WaitForIt(() =>
+        {
+            var newReceivedEvents = PaymentsGeneratedEventHandler.ReceivedEvents.Except(existingPaymentsGenerated).ToList();
+            return newReceivedEvents.Any(x => x.ApprenticeshipKey == _earningsGeneratedEvent.ApprenticeshipKey);
+        },
+            "Failed to find expected published PaymentsGeneratedEvent when calculating payments"
+        );
     }
 
     private void SetEarningsGeneratedEvent(List<DeliveryPeriod> periods, int numberOfPayments, int paymentAmount)

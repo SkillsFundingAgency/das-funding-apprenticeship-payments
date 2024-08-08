@@ -26,9 +26,8 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessUnfrozenTests
     public async Task Setup()
     {
         _fixture = new Fixture();
-        _collectionPeriod = _fixture.Create<byte>();
-        _collectionPeriod = _collectionPeriod++;
-        _collectionYear = _fixture.Create<short>();
+        _collectionPeriod = 4;
+        _collectionYear = 2425;
         _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<ApprenticeshipEntityModel>());
         _command.Model.PaymentsFrozen = false;
         _command.Model.Payments = new List<PaymentEntityModel>
@@ -40,7 +39,7 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessUnfrozenTests
         _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
         _systemClockService = new Mock<ISystemClockService>();
-        _systemClockService.Setup(x => x.Now).Returns(DateTime.Now);
+        _systemClockService.Setup(x => x.Now).Returns(new DateTime(2024,11,15));
 
         _busEndpoint = new Mock<IDasServiceBusEndpoint>();
         _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();

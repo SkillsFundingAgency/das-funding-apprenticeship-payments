@@ -28,7 +28,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
             CollectionPeriod = ((byte)_systemClockService.Now.Month).ToDeliveryPeriod(),
             CollectionYear = ((short)_systemClockService.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
         };
-        await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
+        await ReleasePayments();
     }
 
     [Given(@"payments are released every month until (.*)")]
@@ -45,7 +45,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
                 CollectionPeriod = ((byte)releaseDate.Month).ToDeliveryPeriod(),
                 CollectionYear = ((short)releaseDate.Year).ToAcademicYear((byte)releaseDate.Month)
             };
-            await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
+            await ReleasePayments();
             releaseDate = releaseDate.AddMonths(1);
             Task.Delay(1000).Wait();
         }
@@ -60,7 +60,12 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
             CollectionPeriod = ((byte)nextCollectionPeriodDate.Month).ToDeliveryPeriod(),
             CollectionYear = ((short)nextCollectionPeriodDate.Year).ToAcademicYear((byte)nextCollectionPeriodDate.Month)
         };
-        await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
+        await ReleasePayments();
     }
 
+    private async Task ReleasePayments()
+    {
+        await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
+        await Task.Delay(10000);
+    }
 }

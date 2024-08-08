@@ -42,7 +42,7 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         }
 
         var previouslyFrozenPaymentsToSend = command.Model.Payments
-            .Where(x => x.NotPaidDueToFreeze && x.AcademicYear == _systemClock.Now.ToAcademicYear())
+            .Where(x => x.NotPaidDueToFreeze && x.CollectionYear == _systemClock.Now.ToAcademicYear())
             .ToArray();
 
         foreach (var payment in previouslyFrozenPaymentsToSend)
