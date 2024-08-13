@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
@@ -32,7 +33,7 @@ public class ApprenticeshipEntity_ReleaseTests
         _sut = new ApprenticeshipEntity(Mock.Of<ICalculateApprenticeshipPaymentsCommandHandler>(), _processUnfundedPaymentsCommandHandler.Object, Mock.Of<IRecalculateApprenticeshipPaymentsCommandHandler>(), Mock.Of<ILogger<ApprenticeshipEntity>>());
         _sut.Model = _fixture.Create<ApprenticeshipEntityModel>();
 
-        await _sut.ReleasePaymentsForCollectionPeriod(new ReleasePaymentsCommand(){CollectionPeriod = _collectionPeriod, CollectionYear = _collectionYear});
+        await _sut.ReleasePaymentsForCollectionPeriod(new ReleasePaymentsDto(){CollectionPeriod = _collectionPeriod, CollectionYear = _collectionYear});
     }
 
     [Test]

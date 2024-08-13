@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
 {
@@ -19,6 +21,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
                 .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>()
                 .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
                 .AddSingleton<ISystemClockService, SystemClockService>();
+
+            serviceCollection.AddHttpClient<IApiClient, ApiClient>(); 
 
             return serviceCollection;
         }

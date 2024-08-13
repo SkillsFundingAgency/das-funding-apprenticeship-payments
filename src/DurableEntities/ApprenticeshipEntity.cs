@@ -4,8 +4,10 @@ using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using System.Collections.Generic;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
@@ -56,11 +58,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapNewEarningsAndPayments(apprenticeship);
         }
 
-        public async Task ReleasePaymentsForCollectionPeriod(ReleasePaymentsCommand releasePaymentsCommand)
+        public async Task ReleasePaymentsForCollectionPeriod(ReleasePaymentsDto dto)
         {
             if (IsModelNull(nameof(ReleasePaymentsForCollectionPeriod))) return;
 
-            await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, Model));
+            await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(dto.CollectionPeriod, dto.CollectionYear, dto.PreviousAcademicYear, dto.HardCloseDate, Model));
+
         }
 
         public void HandlePaymentFrozenEvent(PaymentsFrozenEvent paymentsFrozenEvent)

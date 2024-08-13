@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Testing.AzureStorageEmulator;
@@ -35,7 +36,9 @@ public class TestFunction : IDisposable
             { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
             { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true;NServiceBusConnectionString" },
             { "ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true;DCServiceBusConnectionString" },
-            { "ApplicationSettings:LogLevel", "DEBUG" }
+            { "ApplicationSettings:LogLevel", "DEBUG" },
+            { "ApprenticeshipsOuterApi:Key","" },
+            { "ApprenticeshipsOuterApi:BaseUrl","https://localhost:7101/" }
         };
 
         _host = new HostBuilder()
@@ -64,7 +67,8 @@ public class TestFunction : IDisposable
                     });
                     new Startup().Configure(builder);
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
-                    s.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup
+                    s.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup, must come after new Startup().Configure(builder);
+                    s.AddSingleton<IApiClient, TestApprenticeshipApi>();// override DI in Startup, must come after new Startup().Configure(builder);
                 })
             )
             .Build();

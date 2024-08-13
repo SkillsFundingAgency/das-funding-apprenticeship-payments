@@ -16,6 +16,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         private Fixture _fixture = null!;
         private byte _collectionPeriod;
         private short _collectionYear;
+        private short _previousAcademicYear;
+        private DateTime _hardCloseDate;
         private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
         private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder = null!;
         private Mock<ISystemClockService> _systemClockService = null!;
@@ -27,8 +29,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         {
             _fixture = new Fixture();
             _collectionPeriod = _fixture.Create<byte>();
-            _collectionYear = _fixture.Create<short>();
-            _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<ApprenticeshipEntityModel>());
+            _collectionYear = 2425;
+            _previousAcademicYear = 2324;
+            _hardCloseDate = new DateTime(2025, 10, 15);
+            _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _previousAcademicYear, _hardCloseDate, _fixture.Create<ApprenticeshipEntityModel>());
             _command.Model.PaymentsFrozen = false;
             _command.Model.Payments = new List<PaymentEntityModel>
             {

@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
@@ -16,6 +18,8 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessUnfrozenTests
     private Fixture _fixture = null!;
     private byte _collectionPeriod;
     private short _collectionYear;
+    private short _previousAcademicYear;
+    private DateTime _hardCloseDate;
     private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
     private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder = null!;
     private Mock<ISystemClockService> _systemClockService = null!;
@@ -28,7 +32,10 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessUnfrozenTests
         _fixture = new Fixture();
         _collectionPeriod = 4;
         _collectionYear = 2425;
-        _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<ApprenticeshipEntityModel>());
+        _previousAcademicYear = 2324;
+        _hardCloseDate = new DateTime(2025,10,15);
+
+        _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _previousAcademicYear, _hardCloseDate, _fixture.Create<ApprenticeshipEntityModel>());
         _command.Model.PaymentsFrozen = false;
         _command.Model.Payments = new List<PaymentEntityModel>
         {
@@ -39,7 +46,7 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessUnfrozenTests
         _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
         _systemClockService = new Mock<ISystemClockService>();
-        _systemClockService.Setup(x => x.Now).Returns(new DateTime(2024,11,15));
+        _systemClockService.Setup(x => x.Now).Returns(new DateTime(2024, 11, 15));
 
         _busEndpoint = new Mock<IDasServiceBusEndpoint>();
         _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();

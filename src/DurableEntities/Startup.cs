@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
@@ -47,6 +48,9 @@ public class Startup : FunctionsStartup
         Configuration.Bind(nameof(ApplicationSettings), applicationSettings);
         EnsureConfig(applicationSettings);
         Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
+
+        builder.Services.Configure<ApprenticeshipsOuterApi>(configuration.GetSection(nameof(ApprenticeshipsOuterApi)));
+        builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsOuterApi>>()!.Value);
 
         builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
         builder.Services.AddSingleton(x => applicationSettings);
