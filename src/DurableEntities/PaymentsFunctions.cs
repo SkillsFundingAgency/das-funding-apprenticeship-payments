@@ -10,25 +10,46 @@ public class PaymentsFunctions
         [DurableClient] IDurableEntityClient client,
         ILogger log)
     {
-        using CancellationTokenSource source = new CancellationTokenSource();
-        var token = source.Token;
-        var allApprenticeshipEntitiesQuery = new EntityQuery { EntityName = nameof(ApprenticeshipEntity) }; //default page size is 100, we may wish to tweak this in future to improve performance
-        var pageCounter = 0;
-
-        do
+        using (var releasePaymentsMonitor = log.LogPerformance("ReleasePaymentsEventServiceBusTrigger"))
         {
-            pageCounter++;
-            await client.CleanEntityStorageAsync(true, true, token);
-            var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
-            var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), releasePaymentsCommand));
+            using CancellationTokenSource source = new CancellationTokenSource();
+            var token = source.Token;
+            var allApprenticeshipEntitiesQuery = new EntityQuery { EntityName = nameof(ApprenticeshipEntity) }; //default page size is 100, we may wish to tweak this in future to improve performance
+            var pageCounter = 0;
 
-            allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
+            do
+            {
+                using (log.BeginScope("Loop CorrelationId: {loop_correlationId}", Guid.NewGuid()))
+                {
+                    pageCounter++;
 
-            log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
-            await Task.WhenAll(releasePaymentsTasks);
+                    var monitorListEntitiesAsync = log.LogPerformance("ListEntitiesAsync");
 
-        } while (allApprenticeshipEntitiesQuery.ContinuationToken != null);
+                    await client.CleanEntityStorageAsync(true, true, token);
+                    var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
+                    monitorListEntitiesAsync.Dispose();
 
-        log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} complete.");
+                    var monitorSignalEntityAsync = log.LogPerformance("SignalEntityAsync");
+                    var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), releasePaymentsCommand));
+                    monitorSignalEntityAsync.Dispose();
+
+
+                    allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
+
+                    log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
+
+                    using (var monitor = log.LogPerformance("Release Tasks"))
+                    {
+                        await Task.WhenAll(releasePaymentsTasks);
+                    }
+                }
+
+
+
+            } while (allApprenticeshipEntitiesQuery.ContinuationToken != null);
+
+            log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} complete.");
+        }
+
     }
 }
