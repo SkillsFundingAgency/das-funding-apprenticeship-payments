@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
@@ -40,6 +41,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             MapEarningsGeneratedEventProperties(earningsGeneratedEvent);
             await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(Model));
         }
+
         public async Task HandleEarningsRecalculatedEvent(ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent)
         {
             _logger.LogInformation("ApprenticeshipKey: {0} Received EarningsRecalculatedEvent: {1}",
@@ -55,6 +57,24 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         public async Task ReleasePaymentsForCollectionPeriod(ReleasePaymentsCommand releasePaymentsCommand)
         {
             await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, Model));
+        }
+
+        public void HandlePaymentFrozenEvent(PaymentsFrozenEvent paymentsFrozenEvent)
+        {
+            _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} Received {eventName}",
+                paymentsFrozenEvent.ApprenticeshipKey,
+                nameof(PaymentsFrozenEvent));
+
+            Model.PaymentsFrozen = true;
+        }
+
+        public void HandlePaymentsUnfrozenEvent(PaymentsUnfrozenEvent paymentsUnfrozenEvent)
+        {
+            _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} Received {eventName}",
+                paymentsUnfrozenEvent.ApprenticeshipKey,
+                nameof(PaymentsUnfrozenEvent));
+
+            Model.PaymentsFrozen = false;
         }
 
         [FunctionName(nameof(ApprenticeshipEntity))]
@@ -84,6 +104,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model.CourseCode = earningsGeneratedEvent.TrainingCode;
             Model.FundingEmployerAccountId = earningsGeneratedEvent.EmployerAccountId;
             Model.ApprovalsApprenticeshipId = earningsGeneratedEvent.ApprovalsApprenticeshipId;
+            Model.PaymentsFrozen = false;
         }
 
         private void MapNewEarningsAndPayments(Apprenticeship apprenticeship)

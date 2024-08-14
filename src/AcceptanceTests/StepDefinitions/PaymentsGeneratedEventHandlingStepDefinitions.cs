@@ -16,6 +16,7 @@ public class PaymentsGeneratedEventHandlingStepDefinitions
         _scenarioContext = scenarioContext;
     }
 
+    [Given(@"payments are generated with the correct learning amounts")]
     [Then(@"payments are generated with the correct learning amounts")]
     [When(@"payments are generated with the correct learning amounts")]
     public async Task AssertFutureEarningsGeneratedEvent()

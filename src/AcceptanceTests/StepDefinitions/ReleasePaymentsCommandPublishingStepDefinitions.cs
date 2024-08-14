@@ -16,6 +16,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
         _testContext = testContext;
     }
 
+    [Given("payments are released")]
     [When("payments are released")]
     public async Task PublishReleasePaymentsCommand()
     {
@@ -26,4 +27,17 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
         };
         await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
     }
+
+    [When("payments are released for the next collection period")]
+    public async Task PublishReleasePaymentsCommandNextCollectionPeriod()
+    {
+        var nextCollectionPeriodDate = DateTime.Now.AddMonths(1);
+        _releasePaymentsCommand = new ReleasePaymentsCommand
+        {
+            CollectionPeriod = ((byte)nextCollectionPeriodDate.Month).ToDeliveryPeriod(),
+            CollectionYear = ((short)nextCollectionPeriodDate.Year).ToAcademicYear((byte)nextCollectionPeriodDate.Month)
+        };
+        await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
+    }
+
 }
