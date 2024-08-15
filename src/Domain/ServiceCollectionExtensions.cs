@@ -1,15 +1,17 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
 {
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDomainServices(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddDomainServices(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
             serviceCollection.Scan(scan =>
                 {
@@ -20,7 +22,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
                 })
                 .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>()
                 .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
-                .AddSingleton<ISystemClockService, SystemClockService>();
+                .AddSystemClock(configuration);
 
             serviceCollection.AddHttpClient<IApiClient, ApiClient>(); 
 

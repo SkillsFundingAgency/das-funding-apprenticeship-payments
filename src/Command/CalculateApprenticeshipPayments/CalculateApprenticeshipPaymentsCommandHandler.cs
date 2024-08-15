@@ -1,5 +1,5 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
 using Payment = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Payment;

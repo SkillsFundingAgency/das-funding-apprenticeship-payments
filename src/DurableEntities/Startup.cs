@@ -56,7 +56,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton(x => applicationSettings);
 
         builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddCommandServices().AddDomainServices();
+        builder.Services.AddCommandServices().AddDomainServices(configuration);
     }
 
     private static void EnsureConfig(ApplicationSettings applicationSettings)
