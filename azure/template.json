@@ -41,6 +41,9 @@
         "sharedApimName": {
             "type": "string"
         },
+        "sharedApimResourceGroup": {
+          "type": "string"
+        },
         "subnetServiceEndpointList": {
             "type": "array"
         },
