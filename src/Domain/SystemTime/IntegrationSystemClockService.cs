@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 
+[ExcludeFromCodeCoverage]
 public class IntegrationSystemClockService : ISystemClockService
 {
     public DateTimeOffset UtcNow => GetUtcNow().Result.DateTime;
@@ -22,6 +24,8 @@ public class IntegrationSystemClockService : ISystemClockService
 
     public async Task<DateTimeOffset> GetUtcNow()
     {
+        _logger.LogWarning("IntegrationSystemClockService is in use. This should not be used in production.");
+
         var response = await _httpClient.GetAsync(string.Empty);
 
         if (!response.IsSuccessStatusCode)
@@ -51,12 +55,13 @@ public class IntegrationSystemClockService : ISystemClockService
     }
 }
 
-
+[ExcludeFromCodeCoverage]
 public class IntegrationSystemClockSettings
 {
     public string Url { get; set; } = string.Empty;
 }
 
+[ExcludeFromCodeCoverage]
 public class SystemClockResponse
 {
     /// <summary>
