@@ -29,7 +29,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
             CollectionYear = ((short)_systemClockService.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
         };
         await ReleasePayments();
-        Task.Delay(3000).Wait();
+        Task.Delay(3500).Wait();
     }
 
     [Given(@"payments are released every month until (.*)")]
@@ -48,7 +48,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
             };
             await ReleasePayments();
             releaseDate = releaseDate.AddMonths(1);
-            Task.Delay(3000).Wait();
+            Task.Delay(3500).Wait();
         }
     }
 
