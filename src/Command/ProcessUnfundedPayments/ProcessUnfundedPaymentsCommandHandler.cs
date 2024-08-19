@@ -1,11 +1,6 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Requests;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Responses;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Extensions;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Extensions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
-using SFA.DAS.NServiceBus;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 

@@ -6,8 +6,6 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
-using SFA.DAS.Funding.ApprenticeshipPayments.Types;
-using System.Collections.Generic;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
