@@ -5,6 +5,12 @@ using System.Text.Json;
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 
 [ExcludeFromCodeCoverage]
+/// <summary>
+/// This class is used to get the current time from an external source and is only to be used for testing.
+/// </summary>
+/// <remarks>
+/// Internally, this class uses a cache to reduce the number of calls to the external source.
+/// </remarks>
 public class IntegrationSystemClockService : ISystemClockService
 {
     public DateTimeOffset UtcNow => GetUtcNow().Result.DateTime;
