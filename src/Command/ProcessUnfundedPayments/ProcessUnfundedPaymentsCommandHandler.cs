@@ -1,15 +1,25 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Extensions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
+using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 
 public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCommandHandler
 {
     private readonly IDasServiceBusEndpoint _busEndpoint;
     private readonly IFinalisedOnProgammeLearningPaymentEventBuilder _eventBuilder;
+    private readonly ISystemClockService _systemClock;
     private readonly ILogger<ProcessUnfundedPaymentsCommandHandler> _logger;
 
-    public ProcessUnfundedPaymentsCommandHandler(IDasServiceBusEndpoint busEndpoint, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
+    public ProcessUnfundedPaymentsCommandHandler(
+        IDasServiceBusEndpoint busEndpoint, 
+        IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder,
+        ISystemClockService systemClock,
+        ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
     {
         _busEndpoint = busEndpoint;
         _eventBuilder = eventBuilder;
+        _systemClock = systemClock;
         _logger = logger;
     }
 
@@ -18,30 +28,16 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         ArgumentNullException.ThrowIfNull(command.Model);
         var apprenticeshipKey = command.Model.ApprenticeshipKey;
         
-        var paymentsToSend = command.Model.Payments
-            .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.CollectionYear == command.CollectionYear && !x.SentForPayment)
-            .ToArray();
+        var paymentsToSend = GetPaymentsForRequestedCollectionPeriod(command);
 
         if (command.Model.PaymentsFrozen)
         {
-            foreach (var paymentEntityModel in paymentsToSend)
-            {
-                paymentEntityModel.NotPaidDueToFreeze = true;
-            }
+            MarkPaymentsNotPaidDueToFreeze(paymentsToSend);
             _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} - Payments are frozen, no payments will be published", apprenticeshipKey);
             return;
         }
 
-        
-        var previouslyFrozenPaymentsToSend = command.Model.Payments
-            .Where(x => x.NotPaidDueToFreeze)
-            .ToArray();
-
-        foreach (var payment in previouslyFrozenPaymentsToSend)
-        {
-            payment.CollectionYear = command.CollectionYear;
-            payment.CollectionPeriod = command.CollectionPeriod;
-        }
+        var previouslyFrozenPaymentsToSend = GetPreviouslyFrozenPayments(command);
 
         paymentsToSend = paymentsToSend.Union(previouslyFrozenPaymentsToSend).ToArray();
 
@@ -53,7 +49,6 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
         {
             _logger.LogInformation("Apprenticeship Key: {apprenticeshipKey} -  No payments to publish for collection period {collectionPeriod} & year {collectionYear}", apprenticeshipKey, command.CollectionPeriod, command.CollectionYear);
         }
-
 
         foreach (var payment in paymentsToSend)
         {
@@ -67,5 +62,42 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
             payment.SentForPayment = true;
             payment.NotPaidDueToFreeze = false;
         }
+    }
+
+    private PaymentEntityModel[] GetPaymentsForRequestedCollectionPeriod(ProcessUnfundedPaymentsCommand command)
+    {
+        return command.Model.Payments
+                .Where(x => x.CollectionPeriod == command.CollectionPeriod && x.CollectionYear == command.CollectionYear && !x.SentForPayment)
+                .ToArray();
+    }
+
+    private void MarkPaymentsNotPaidDueToFreeze(PaymentEntityModel[] payments)
+    {
+        foreach (var paymentEntityModel in payments)
+        {
+            paymentEntityModel.NotPaidDueToFreeze = true;
+        }
+    }
+
+    private PaymentEntityModel[] GetPreviouslyFrozenPayments(ProcessUnfundedPaymentsCommand command)
+    {
+        var validAcademicYears = new List<short> { _systemClock.Now.ToAcademicYear() };
+
+        if(command.HardCloseDate.Date >= _systemClock.Now.Date)
+        {
+            validAcademicYears.Add(command.PreviousAcademicYear);
+        }
+
+        var previouslyFrozenPaymentsToSend = command.Model.Payments
+            .Where(x => x.NotPaidDueToFreeze && validAcademicYears.Contains(x.CollectionYear))
+            .ToArray();
+
+        foreach (var payment in previouslyFrozenPaymentsToSend)
+        {
+            payment.CollectionYear = command.CollectionYear;
+            payment.CollectionPeriod = command.CollectionPeriod;
+        }
+
+        return previouslyFrozenPaymentsToSend;
     }
 }

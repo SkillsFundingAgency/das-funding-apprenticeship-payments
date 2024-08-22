@@ -15,7 +15,6 @@ public class PaymentsRecalculationStepDefinitions
 	private readonly ScenarioContext _scenarioContext;
 	private readonly TestContext _testContext;
 	private static Guid _apprenticeshipKey;
-	private static List<ExpectedPayments> _expectedPayments = new List<ExpectedPayments>();
 	private static int _expectedNumberOfEventsPublished = 0;
 	private static EarningsGeneratedEvent _previousEarningsGeneratedEvent;
 	private static ApprenticeshipEarningsRecalculatedEvent _earningsRecalculatedEvent;
@@ -29,54 +28,8 @@ public class PaymentsRecalculationStepDefinitions
 	[BeforeScenario]
 	public void BeforeEachScenario()
 	{
-		_expectedPayments = new List<ExpectedPayments>();
 		_expectedNumberOfEventsPublished = 0;
 		PaymentsGeneratedEventHandler.ReceivedEvents.Clear();
-	}
-
-	[AfterScenario]
-	public async Task AfterEachScenario()
-	{
-		if (!_expectedPayments.Any())
-			return;
-
-		var processedEvents = new List<PaymentsGeneratedEvent>();
-
-		await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Except(processedEvents).Any(e =>
-		{
-			//  Inspect event to see if it contains the expected payments
-			processedEvents.Add(e);
-
-			foreach (var expectedPayment in _expectedPayments)
-			{
-				if (!ValidateExpectedPayments(e, expectedPayment.Amount, expectedPayment.Count, out int actualCount))
-				{
-					expectedPayment.ActualCountFound = actualCount;
-					return false;
-				}
-				else
-				{
-					expectedPayment.Found = true;
-				}
-			}
-
-			return true;
-		}),
-		() => 
-		{
-			//  Generate message to show failure reason
-			if (!processedEvents.Any())
-				return "Expected to find PaymentsGeneratedEvent, but none where received";
-
-			var failmessage = string.Empty;
-
-			foreach (var expectedPayment in _expectedPayments.Where(x=> !x.Found))
-			{
-				failmessage += $"Expected {expectedPayment.Count} payments of {expectedPayment.Amount}, but found {expectedPayment.ActualCountFound}. ";
-			}
-
-			return failmessage; 
-		});
 	}
 
 	[Given(@"some previous earnings have been paid")]
@@ -154,12 +107,6 @@ public class PaymentsRecalculationStepDefinitions
             "Failed to find published PaymentsGenerated event for recalculated payments");
     }
 
-	[Then(@"there are (.*) payments of (.*)")]
-	public static void AddExpectedPayments(int paymentCount, decimal paymentAmount)
-	{
-		_expectedPayments.Add(new ExpectedPayments { Amount = paymentAmount, Count = paymentCount });
-	}
-
 	private async Task GenerateExistingPayments(List<DeliveryPeriod> periods)
 	{
 		_apprenticeshipKey = Guid.NewGuid();
@@ -211,9 +158,10 @@ public class PaymentsRecalculationStepDefinitions
 			.Create();
 
 		_scenarioContext[ContextKeys.EarningsRecalculatedEvent] = _earningsRecalculatedEvent;
+        _scenarioContext["apprenticeshipKey"] = _earningsRecalculatedEvent.ApprenticeshipKey;
 
-		//publish event for recalculated earnings
-		await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
+        //publish event for recalculated earnings
+        await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
 		_expectedNumberOfEventsPublished++;
 	}
 
@@ -230,12 +178,4 @@ public class PaymentsRecalculationStepDefinitions
 		return true;
 	}
 
-}
-
-public class ExpectedPayments
-{
-	public decimal Amount { get; set; }
-	public int Count { get; set; }
-	public bool Found { get; set; }
-	public int ActualCountFound { get; set; }
 }

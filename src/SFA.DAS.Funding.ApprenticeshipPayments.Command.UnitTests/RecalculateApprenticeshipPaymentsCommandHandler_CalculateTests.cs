@@ -6,6 +6,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPaym
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
@@ -28,6 +29,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
     private Mock<IApprenticeshipFactory> _apprenticeshipFactory = null!;
     private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
     private Mock<IPaymentsGeneratedEventBuilder> _paymentsGeneratedEventBuilder = null!;
+    private Mock<ISystemClockService> _mockSystemClockService;
     private Apprenticeship _result;
     private decimal _currentMonthlyLearningAmount;
     private decimal _newMonthlyLearningAmount;
@@ -42,6 +44,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
         _existingPayments = _fixture.CreateMany<Payment>().ToList();
         _currentMonthlyLearningAmount = _fixture.Create<decimal>();
         _newMonthlyLearningAmount = _fixture.Create<decimal>();
+        _mockSystemClockService = new Mock<ISystemClockService>();
 
         //Expectation:
         //Delivery Period 1 - diff payment calculated
@@ -72,10 +75,13 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
         _paymentsGeneratedEventBuilder.Setup(x => x.Build(It.IsAny<Apprenticeship>()))
             .Returns(new PaymentsGeneratedEvent());
 
+        _mockSystemClockService.Setup(x => x.Now).Returns(DateTime.UtcNow);
+
         _sut = new RecalculateApprenticeshipPaymentsCommandHandler(
             _apprenticeshipFactory.Object,
             _busEndpoint.Object,
             _paymentsGeneratedEventBuilder.Object,
+            _mockSystemClockService.Object,
             Mock.Of<ILogger<CalculateApprenticeshipPaymentsCommandHandler>>());
         _result = await _sut.Recalculate(_command);
     }
