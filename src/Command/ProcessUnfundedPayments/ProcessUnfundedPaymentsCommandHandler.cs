@@ -83,7 +83,7 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
     {
         var validAcademicYears = new List<short> { _systemClock.Now.ToAcademicYear() };
 
-        if(command.HardCloseDate >= _systemClock.Now)
+        if(command.HardCloseDate.Date >= _systemClock.Now.Date)
         {
             validAcademicYears.Add(command.PreviousAcademicYear);
         }

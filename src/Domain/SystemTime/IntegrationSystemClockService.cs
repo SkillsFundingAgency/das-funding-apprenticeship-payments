@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
@@ -15,10 +14,16 @@ public class IntegrationSystemClockService : ISystemClockService
     private readonly HttpClient _httpClient;
     private readonly ILogger<IntegrationSystemClockService> _logger;
 
-    public IntegrationSystemClockService(HttpClient httpClient, IOptions<IntegrationSystemClockSettings> config, ILogger<IntegrationSystemClockService> logger)
+    // Cache fields
+    private DateTimeOffset _cachedTime;
+    private DateTimeOffset _lastFetchTime;
+    private readonly TimeSpan _cacheDuration = TimeSpan.FromSeconds(5);
+
+    private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
+    public IntegrationSystemClockService(HttpClient httpClient, ILogger<IntegrationSystemClockService> logger)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = new Uri(config.Value.Url);
         _logger = logger;
     }
 
@@ -26,32 +31,66 @@ public class IntegrationSystemClockService : ISystemClockService
     {
         _logger.LogWarning("IntegrationSystemClockService is in use. This should not be used in production.");
 
-        var response = await _httpClient.GetAsync(string.Empty);
+        if (ShouldReturnCachedTime())
+            return ReturnCachedTime();
 
-        if (!response.IsSuccessStatusCode)
+        await _semaphore.WaitAsync();
+
+        try
         {
-            _logger.LogError($"Failed to get system clock. Status code: {response.StatusCode}");
-            return DateTime.UtcNow;
+            if (ShouldReturnCachedTime()) // Check again in case another thread has updated the cache
+                return ReturnCachedTime();
+
+            var response = await _httpClient.GetAsync(string.Empty);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"Failed to get system clock. Status code: {response.StatusCode}");
+                return DateTime.UtcNow;
+            }
+
+
+            var json = await response.Content.ReadAsStringAsync();
+            var systemClockResponse = JsonSerializer.Deserialize<SystemClockResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (systemClockResponse == null)
+            {
+                _logger.LogError("System clock response is invalid");
+                return DateTime.UtcNow;
+            }
+
+            if (systemClockResponse.TimeValidUntil < DateTime.UtcNow)
+            {
+                _logger.LogInformation("System clock response is expired :{timeValidUntil}", systemClockResponse.TimeValidUntil);
+                return DateTime.UtcNow;
+            }
+
+            _logger.LogInformation("Returning system clock time :{timeNow}", systemClockResponse.TimeNow);
+            UpdateCache(systemClockResponse.TimeNow);
+            return systemClockResponse.TimeNow;
         }
-
-
-        var json = await response.Content.ReadAsStringAsync();
-        var systemClockResponse = JsonSerializer.Deserialize<SystemClockResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-        if (systemClockResponse == null)
+        finally
         {
-            _logger.LogError("System clock response is invalid");
-            return DateTime.UtcNow;
+            // Always release the semaphore
+            _semaphore.Release();
         }
+    }
 
-        if (systemClockResponse.TimeValidUntil < DateTime.UtcNow)
-        {
-            _logger.LogInformation("System clock response is expired :{timeValidUntil}", systemClockResponse.TimeValidUntil);
-            return DateTime.UtcNow;
-        }
+    private bool ShouldReturnCachedTime()
+    {
+        return DateTimeOffset.UtcNow - _lastFetchTime < _cacheDuration;
+    }
 
-        _logger.LogInformation("Returning system clock time :{timeNow}", systemClockResponse.TimeNow);
-        return systemClockResponse.TimeNow;
+    private DateTimeOffset ReturnCachedTime()
+    {
+        _logger.LogInformation("Returning cached system clock time :{timeNow}", _cachedTime);
+        return _cachedTime;
+    }
+
+    private void UpdateCache(DateTimeOffset time)
+    {
+        _cachedTime = time;
+        _lastFetchTime = DateTimeOffset.UtcNow;
     }
 }
 
