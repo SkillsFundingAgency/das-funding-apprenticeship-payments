@@ -2,6 +2,7 @@ using System;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
@@ -24,6 +25,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
 
         _paymentEntityModel = _fixture.Create<PaymentEntityModel>();
         _apprenticeship = _fixture.Create<ApprenticeshipEntityModel>();
+        _apprenticeship.AgeAtStartOfApprenticeship = 22;
 
         _result = _sut.Build(_paymentEntityModel, _apprenticeship);
     }
@@ -56,6 +58,16 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     public void ShouldPopulate_GovernmentContributionPercentage_Correctly()
     {
         _result.ApprenticeshipEarning.GovernmentContributionPercentage.Should().Be(0.95m);
+    }
+
+    [Test]
+    public void WhenUnder22AndNoneLevy_ShouldPopulate_GovernmentContributionPercentage_Correctly()
+    {
+        _apprenticeship.EmployerType = EmployerType.NonLevy;
+        _apprenticeship.AgeAtStartOfApprenticeship = 21;
+
+        var result = _sut.Build(_paymentEntityModel, _apprenticeship);
+        result.ApprenticeshipEarning.GovernmentContributionPercentage.Should().Be(1);
     }
 
     [Test]
