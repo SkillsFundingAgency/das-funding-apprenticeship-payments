@@ -7,7 +7,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
 {
     internal static class CalculateRequiredLevyAmountCommandExtensions
     {
-        internal static CalculateOnProgrammePayment MapToCalculatedRequiredLevyAmountEvent(this CalculateRequiredLevyAmountCommand command)
+        internal static CalculateOnProgrammePayment MapToCalculateOnProgrammePaymentEvent(this CalculateRequiredLevyAmountCommand command)
         {
             var e = new CalculateOnProgrammePayment();
             ArgumentNullException.ThrowIfNull(command.Data);

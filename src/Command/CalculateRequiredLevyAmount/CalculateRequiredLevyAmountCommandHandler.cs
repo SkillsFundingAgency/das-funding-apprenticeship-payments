@@ -15,7 +15,7 @@ public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyA
 
     public async Task Publish(CalculateRequiredLevyAmountCommand command)
     {
-        var @event = command.MapToCalculatedRequiredLevyAmountEvent();
+        var @event = command.MapToCalculateOnProgrammePaymentEvent();
 
         _logger.LogInformation(
             "Apprenticeship Key: {ApprenticeshipKey} - Publishing {event} for CollectionPeriod: {Period}/{AcademicYear}",
