@@ -53,7 +53,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.StartDate = command.Data.Apprenticeship.StartDate;
             e.TransferSenderAccountId = command.Data.EmployerDetails.FundingAccountId;
             e.Ukprn = command.Data.ApprenticeshipEarning.ProviderIdentifier;
-            //e.FundingPlatformType = ; **** ISSUE WITH PACAKGE
+            e.FundingPlatformType = FundingPlatformType.DigitalApprenticeshipService; 
             return e;
         }
     }
