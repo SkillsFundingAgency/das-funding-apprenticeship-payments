@@ -114,6 +114,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
             Model.FundingEmployerAccountId = earningsGeneratedEvent.EmployerAccountId;
             Model.ApprovalsApprenticeshipId = earningsGeneratedEvent.ApprovalsApprenticeshipId;
             Model.PaymentsFrozen = false;
+            Model.AgeAtStartOfApprenticeship = earningsGeneratedEvent.AgeAtStartOfApprenticeship;
         }
 
         private void MapNewEarningsAndPayments(Apprenticeship apprenticeship)
@@ -145,6 +146,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         {
             Model.StartDate = earningsRecalculatedEvent.StartDate;
             Model.PlannedEndDate = earningsRecalculatedEvent.PlannedEndDate;
+            Model.AgeAtStartOfApprenticeship = earningsRecalculatedEvent.AgeAtStartOfApprenticeship;
         }
 
         private bool IsModelNull(string methodName)
