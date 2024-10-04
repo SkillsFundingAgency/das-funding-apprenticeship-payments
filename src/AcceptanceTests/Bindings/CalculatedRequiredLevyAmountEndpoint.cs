@@ -14,7 +14,7 @@ public static class CalculatedRequiredLevyAmountEndpoint
         if (context.CalculatedRequiredLevyAmountEndpoint is not null) return;
 
         context.CalculatedRequiredLevyAmountEndpoint = await EndpointHelper
-            .StartEndpoint(QueueNames.CalculatedRequiredLevyAmount + "-test", false, new[]
+            .StartEndpoint(QueueNames.CalculatedRequiredLevyAmount, false, new[]
             {
                 typeof(CalculateOnProgrammePayment)
             });

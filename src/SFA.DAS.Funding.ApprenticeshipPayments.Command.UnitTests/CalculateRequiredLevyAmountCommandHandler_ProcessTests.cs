@@ -45,7 +45,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_AccountId()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.AccountId == _finalisedOnProgammeLearningPaymentEvent.EmployerDetails.EmployingAccountId)),
             Times.Once());
     }
@@ -53,7 +53,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_ActualEndDate()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.ActualEndDate == null)),
             Times.Once());
     }
@@ -61,7 +61,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_AgreedOnDate()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.AgreedOnDate == null)),
             Times.Once());
     }
@@ -69,7 +69,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_AmountDue()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.AmountDue == _finalisedOnProgammeLearningPaymentEvent.Amount)),
             Times.Once());
     }
@@ -81,7 +81,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
                        EmployerType.Levy ? ApprenticeshipEmployerType.Levy : ApprenticeshipEmployerType.NonLevy;
         _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEmployerType = EmployerType.NonLevy;
 
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.ApprenticeshipEmployerType == expected)),
             Times.Once());
     }
@@ -89,7 +89,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_ApprenticeshipId()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.ApprenticeshipId == _finalisedOnProgammeLearningPaymentEvent.Apprenticeship.ApprovalsApprenticeshipId)),
             Times.Once());
     }
@@ -97,7 +97,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_ApprenticeshipPriceEpisodeId_Null()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.ApprenticeshipPriceEpisodeId == null)),
             Times.Once());
     }
@@ -105,7 +105,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_CollectionPeriodAcademicYear_MatchesFinalisedOnProgammeLearningPaymentEventCollectionYear()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.CollectionPeriod.AcademicYear == _finalisedOnProgammeLearningPaymentEvent.CollectionYear)),
             Times.Once());
     }
@@ -113,7 +113,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_CompletionStatus_1()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.CompletionStatus == 1)),
             Times.Once());
     }
@@ -121,7 +121,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_DeliveryPeriod_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsDeliveryPeriod()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.DeliveryPeriod == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.DeliveryPeriod)),
             Times.Once());
     }
@@ -129,7 +129,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_EventId_NotEmpty()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.EventId != Guid.Empty)),
             Times.Once());
     }
@@ -137,7 +137,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_EventTime_InCorrectRange()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.EventTime < DateTime.UtcNow && e.EventTime > DateTime.UtcNow.AddSeconds(-5))),
             Times.Once());
     }
@@ -145,7 +145,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_InstalmentAmount_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsDeliveryPeriodAmount()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.InstalmentAmount == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.DeliveryPeriodAmount)),
             Times.Once());
     }
@@ -153,7 +153,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearnerReferenceNumber_IsUln()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.Learner.ReferenceNumber == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString())),
             Times.Once());
     }
@@ -161,7 +161,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearnerUln_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsUln()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.Learner.Uln == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln)),
             Times.Once());
     }
@@ -169,7 +169,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimFrameworkCode_0()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.FrameworkCode == 0)),
             Times.Once());
     }
@@ -177,7 +177,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimFundingLineType_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsFundingLineType()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.FundingLineType == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.FundingLineType)),
             Times.Once());
     }
@@ -185,7 +185,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimPathwayCode_0()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.PathwayCode == 0)),
             Times.Once());
     }
@@ -193,7 +193,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimProgrammeType_0()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.ProgrammeType == 0)),
             Times.Once());
     }
@@ -201,7 +201,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimReference_MatchesFinalisedOnProgammeLearningPaymentEventCourseCode()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.Reference == "ZPROG001")),
             Times.Once());
     }
@@ -210,7 +210,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimStandardCode_MatchesFinalisedOnProgammeLearningPaymentEventCourseCode()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.StandardCode.ToString() == _finalisedOnProgammeLearningPaymentEvent.CourseCode)),
             Times.Once());
     }
@@ -218,7 +218,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimStartDate_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipStartDate()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.StartDate == _finalisedOnProgammeLearningPaymentEvent.Apprenticeship.StartDate)),
             Times.Once());
     }
@@ -226,7 +226,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimSequenceNumber_0()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.SequenceNumber == 0)),
             Times.Once());
     }
@@ -234,7 +234,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningStartDate_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipStartDate()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.LearningStartDate == _finalisedOnProgammeLearningPaymentEvent.Apprenticeship.StartDate)),
             Times.Once());
     }
@@ -242,7 +242,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_NumberOfInstalments_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsNumberOfInstalments()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.NumberOfInstalments == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.NumberOfInstalments)),
             Times.Once());
     }
@@ -250,7 +250,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_OnProgrammeEarningType_Learning()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.OnProgrammeEarningType == OnProgrammeEarningType.Learning)),
             Times.Once());
     }
@@ -258,7 +258,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_PlannedEndDate_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipEarningsPlannedEndDate()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.PlannedEndDate == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate)),
             Times.Once());
     }
@@ -266,7 +266,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_PriceEpisodeIdentifier_EmptyString()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.PriceEpisodeIdentifier == "")),
             Times.Once());
     }
@@ -274,7 +274,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     [Test]
     public void Process_Publishes_CalculatedRequiredLevyAmount_StartDate_MatchesFinalisedOnProgammeLearningPaymentEventApprenticeshipStartDate()
     {
-        _bus.Verify(ms => ms.Publish(
+        _bus.Verify(ms => ms.Send(
                 It.Is<CalculateOnProgrammePayment>(e => e.StartDate == _finalisedOnProgammeLearningPaymentEvent.Apprenticeship.StartDate)),
             Times.Once());
     }

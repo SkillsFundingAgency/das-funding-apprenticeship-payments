@@ -29,6 +29,6 @@ public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyA
             command.Data.ApprenticeshipKey,
             @event.SerialiseForLogging());
 
-        await _busEndpoint.Publish(@event);
+        await _busEndpoint.Send(@event);
     }
 }
