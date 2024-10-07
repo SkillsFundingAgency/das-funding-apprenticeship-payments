@@ -1,40 +1,45 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions
 {
     public class EarningsFunctions
     {
+        private readonly ICalculateApprenticeshipPaymentsCommandHandler _calculateApprenticeshipPaymentsCommandHandler;
+        private readonly IRecalculateApprenticeshipPaymentsCommandHandler _recalculateApprenticeshipPaymentsCommandHandler;
+
+        public EarningsFunctions(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler, IRecalculateApprenticeshipPaymentsCommandHandler recalculateApprenticeshipPaymentsCommandHandler)
+        {
+            _calculateApprenticeshipPaymentsCommandHandler = calculateApprenticeshipPaymentsCommandHandler;
+            _recalculateApprenticeshipPaymentsCommandHandler = recalculateApprenticeshipPaymentsCommandHandler;
+        }
+
         [FunctionName(nameof(EarningsGeneratedEventServiceBusTrigger))]
         public async Task EarningsGeneratedEventServiceBusTrigger(
             [NServiceBusTrigger(Endpoint = QueueNames.EarningsGenerated)] EarningsGeneratedEvent earningsGeneratedEvent,
-            [DurableClient] IDurableEntityClient client,
             ILogger log)
         {
-            var entityId = new EntityId(nameof(ApprenticeshipEntity), earningsGeneratedEvent.ApprenticeshipKey.ToString());
-            await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsGeneratedEvent), earningsGeneratedEvent);
+            await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(earningsGeneratedEvent));
         }
 
         [FunctionName(nameof(EarningsGeneratedEventHttpTrigger))]
         public async Task EarningsGeneratedEventHttpTrigger(
-            [HttpTrigger(AuthorizationLevel.Function, "get")]HttpRequest request,
-            [DurableClient] IDurableEntityClient client,
+            [HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request,
             ILogger log)
         {
             var earningsGeneratedEvent = new EarningsGeneratedEvent { ApprenticeshipKey = Guid.NewGuid() };
-            var entityId = new EntityId(nameof(ApprenticeshipEntity), earningsGeneratedEvent.ApprenticeshipKey.ToString());
-            await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsGeneratedEvent), earningsGeneratedEvent);
+            await _calculateApprenticeshipPaymentsCommandHandler.Calculate(new CalculateApprenticeshipPaymentsCommand(earningsGeneratedEvent));
         }
 
         [FunctionName(nameof(EarningsRecalculatedEventServiceBusTrigger))]
         public async Task EarningsRecalculatedEventServiceBusTrigger(
             [NServiceBusTrigger(Endpoint = QueueNames.EarningsRecalculated)] ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent,
-            [DurableClient] IDurableEntityClient client,
             ILogger log)
         {
-            var entityId = new EntityId(nameof(ApprenticeshipEntity), earningsRecalculatedEvent.ApprenticeshipKey.ToString());
-            await client.SignalEntityAsync(entityId, nameof(ApprenticeshipEntity.HandleEarningsRecalculatedEvent), earningsRecalculatedEvent);
+            await _recalculateApprenticeshipPaymentsCommandHandler.Recalculate(new RecalculateApprenticeshipPaymentsCommand(earningsRecalculatedEvent.ApprenticeshipKey, earningsRecalculatedEvent.DeliveryPeriods.ToEarnings(earningsRecalculatedEvent.EarningsProfileId)));
         }
     }
 }

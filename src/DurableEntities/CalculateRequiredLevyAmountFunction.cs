@@ -1,7 +1,7 @@
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
 public class CalculateRequiredLevyAmountFunction
 {

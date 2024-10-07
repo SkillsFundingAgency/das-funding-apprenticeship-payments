@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.Apprentices
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers", "TestHelpers\SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.csproj", "{44B8941D-9B56-4024-A04B-E819AFCECA1F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities", "DurableEntities\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.csproj", "{DE9DC81B-42B9-4890-A3EF-8315CA9A6D43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Functions", "DurableEntities\SFA.DAS.Funding.ApprenticeshipPayments.Functions.csproj", "{DE9DC81B-42B9-4890-A3EF-8315CA9A6D43}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure", "Infrastructure\SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.csproj", "{BC323D44-59D1-48C6-B8A3-EC87A5901204}"
 EndProject
@@ -34,6 +34,8 @@ EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SFA.DAS.Funding.ApprenticeshipPayments.Database", "SFA.DAS.Funding.ApprenticeshipPayments.Database\SFA.DAS.Funding.ApprenticeshipPayments.Database.sqlproj", "{6C1EB731-6B25-49D0-A03C-4FC76577D42B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.DataAccess", "DataAccess\SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.csproj", "{45972EAB-D567-47F5-8D22-87A94770F8E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.ApprenticeshipPayments.Query", "SFA.DAS.ApprenticeshipPayments.Query\SFA.DAS.ApprenticeshipPayments.Query.csproj", "{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +105,10 @@ Global
 		{45972EAB-D567-47F5-8D22-87A94770F8E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45972EAB-D567-47F5-8D22-87A94770F8E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45972EAB-D567-47F5-8D22-87A94770F8E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

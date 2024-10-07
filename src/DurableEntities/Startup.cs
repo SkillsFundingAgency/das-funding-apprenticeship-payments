@@ -5,14 +5,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
 [ExcludeFromCodeCoverage]
 public class Startup : FunctionsStartup
@@ -40,7 +40,7 @@ public class Startup : FunctionsStartup
                 options.EnvironmentName = configuration["EnvironmentName"];
                 options.PreFixConfigurationKeys = false;
             });
-        } 
+        }
 
         Configuration = configBuilder.Build();
 

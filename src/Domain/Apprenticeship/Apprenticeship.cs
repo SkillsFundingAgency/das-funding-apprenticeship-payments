@@ -181,5 +181,15 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
                 payment.Send();
             }
         }
+
+        public void FreezePayments()
+        {
+            PaymentsFrozen = true;
+        }
+
+        public void UnfreezePayments()
+        {
+            PaymentsFrozen = false;
+        }
     }
 }
