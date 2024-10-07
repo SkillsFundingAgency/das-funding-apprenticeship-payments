@@ -1,55 +1,37 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
-using Payment = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Payment;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments
 {
     public class CalculateApprenticeshipPaymentsCommandHandler : ICalculateApprenticeshipPaymentsCommandHandler
     {
-        private readonly IApprenticeshipFactory _apprenticeshipFactory;
+        private readonly IApprenticeshipRepository _apprenticeshipRepository;
         private readonly IDasServiceBusEndpoint _busEndpoint;
         private readonly IPaymentsGeneratedEventBuilder _paymentsGeneratedEventBuilder;
         private readonly ILogger<CalculateApprenticeshipPaymentsCommandHandler> _logger;
 
-        public CalculateApprenticeshipPaymentsCommandHandler(IApprenticeshipFactory apprenticeshipFactory,
+        public CalculateApprenticeshipPaymentsCommandHandler(IApprenticeshipRepository apprenticeshipRepository,
             IDasServiceBusEndpoint busEndpoint,
             IPaymentsGeneratedEventBuilder paymentsGeneratedEventBuilder,
             ILogger<CalculateApprenticeshipPaymentsCommandHandler> logger)
         {
-            _apprenticeshipFactory = apprenticeshipFactory;
+            _apprenticeshipRepository = apprenticeshipRepository;
             _busEndpoint = busEndpoint;
             _paymentsGeneratedEventBuilder = paymentsGeneratedEventBuilder;
             _logger = logger;
         }
 
-        public async Task<Apprenticeship> Calculate(CalculateApprenticeshipPaymentsCommand command)
+        public async Task Calculate(CalculateApprenticeshipPaymentsCommand command)
         {
-            var apprenticeship = _apprenticeshipFactory.CreateNew(command.ApprenticeshipEntity);
+            var apprenticeship = new Apprenticeship(command.EarningsGeneratedEvent);
             apprenticeship.CalculatePayments(DateTime.Now);
-            command.ApprenticeshipEntity.Payments = MapPaymentsToModel(apprenticeship.Payments);
-            _logger.LogInformation($"Publishing payments generated event for apprenticeship key {command.ApprenticeshipEntity.ApprenticeshipKey}. Number of payments: {command.ApprenticeshipEntity.Payments.Count}");
+            _logger.LogInformation($"Publishing payments generated event for apprenticeship key {command.EarningsGeneratedEvent.ApprenticeshipKey}. Number of payments: {apprenticeship.Payments.Count}");
 
             var @event = _paymentsGeneratedEventBuilder.Build(apprenticeship);
             _logger.LogInformation("ApprenticeshipKey: {0} Publishing PaymentsGeneratedEvent: {1}", @event.ApprenticeshipKey, @event.SerialiseForLogging());
 
             await _busEndpoint.Publish(@event);
-            return apprenticeship;
-        }
-
-        private static List<PaymentEntityModel> MapPaymentsToModel(IReadOnlyCollection<Payment> apprenticeshipPayments)
-        {
-            return apprenticeshipPayments.Select(x => new PaymentEntityModel
-            {
-                CollectionYear = x.CollectionYear,
-                AcademicYear = x.AcademicYear,
-                Amount = x.Amount,
-                DeliveryPeriod = x.DeliveryPeriod,
-                CollectionPeriod = x.CollectionPeriod,
-                SentForPayment = x.SentForPayment,
-                FundingLineType = x.FundingLineType,
-                EarningsProfileId = x.EarningsProfileId
-            }).ToList();
+            await _apprenticeshipRepository.Add(apprenticeship);
         }
     }
 }

@@ -9,6 +9,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
@@ -52,6 +53,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton(x => applicationSettings);
 
         builder.Services.AddNServiceBus(applicationSettings);
+        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(configuration));
         builder.Services.AddCommandServices().AddDomainServices();
     }
 

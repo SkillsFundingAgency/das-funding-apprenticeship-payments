@@ -1,18 +1,16 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
-
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments
 {
     public class ProcessUnfundedPaymentsCommand
     {
-        public ProcessUnfundedPaymentsCommand(byte collectionPeriod, short collectionYear, ApprenticeshipEntityModel model)
+        public ProcessUnfundedPaymentsCommand(byte collectionPeriod, short collectionYear, Guid apprenticeshipKey)
         {
             CollectionPeriod = collectionPeriod;
             CollectionYear = collectionYear;
-            Model = model;
+            ApprenticeshipKey = apprenticeshipKey;
         }
 
         public byte CollectionPeriod { get; }
         public short CollectionYear { get; set; }
-        public ApprenticeshipEntityModel Model { get; }
+        public Guid ApprenticeshipKey { get; }
     }
 }

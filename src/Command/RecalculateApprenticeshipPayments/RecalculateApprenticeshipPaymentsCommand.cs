@@ -1,17 +1,16 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments
 {
     public class RecalculateApprenticeshipPaymentsCommand
     {
-        public RecalculateApprenticeshipPaymentsCommand(ApprenticeshipEntityModel apprenticeshipEntity, List<Earning> newEarnings)
+        public RecalculateApprenticeshipPaymentsCommand(Guid apprenticeshipKey, List<Earning> newEarnings)
         {
-            ApprenticeshipEntity = apprenticeshipEntity;
+            ApprenticeshipKey = apprenticeshipKey;
             NewEarnings = newEarnings;
         }
 
-        public ApprenticeshipEntityModel ApprenticeshipEntity { get; }
+        public Guid ApprenticeshipKey { get; }
         public List<Earning> NewEarnings { get; set; }
     }
 }

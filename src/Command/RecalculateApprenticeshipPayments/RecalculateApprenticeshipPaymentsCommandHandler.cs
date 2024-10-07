@@ -1,30 +1,29 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
+using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
 
 public class RecalculateApprenticeshipPaymentsCommandHandler : IRecalculateApprenticeshipPaymentsCommandHandler
 {
-    private readonly IApprenticeshipFactory _apprenticeshipFactory;
+    private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IDasServiceBusEndpoint _busEndpoint;
     private readonly IPaymentsGeneratedEventBuilder _paymentsGeneratedEventBuilder;
     private readonly ILogger<CalculateApprenticeshipPaymentsCommandHandler> _logger;
 
-    public RecalculateApprenticeshipPaymentsCommandHandler(IApprenticeshipFactory apprenticeshipFactory,
+    public RecalculateApprenticeshipPaymentsCommandHandler(IApprenticeshipRepository apprenticeshipRepository,
         IDasServiceBusEndpoint busEndpoint,
         IPaymentsGeneratedEventBuilder paymentsGeneratedEventBuilder,
         ILogger<CalculateApprenticeshipPaymentsCommandHandler> logger)
     {
-        _apprenticeshipFactory = apprenticeshipFactory;
+        _apprenticeshipRepository = apprenticeshipRepository;
         _busEndpoint = busEndpoint;
         _paymentsGeneratedEventBuilder = paymentsGeneratedEventBuilder;
         _logger = logger;
     }
 
-    public async Task<Apprenticeship> Recalculate(RecalculateApprenticeshipPaymentsCommand command)
+    public async Task Recalculate(RecalculateApprenticeshipPaymentsCommand command)
     {
-        var apprenticeship = _apprenticeshipFactory.LoadExisting(command.ApprenticeshipEntity);
+        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
 
         apprenticeship.ClearEarnings();
         
@@ -39,6 +38,6 @@ public class RecalculateApprenticeshipPaymentsCommandHandler : IRecalculateAppre
         _logger.LogInformation("ApprenticeshipKey: {0} Publishing PaymentsGeneratedEvent: {1}", @event.ApprenticeshipKey, @event.SerialiseForLogging());
 
         await _busEndpoint.Publish(@event);
-        return apprenticeship;
+        await _apprenticeshipRepository.Update(apprenticeship);
     }
 }

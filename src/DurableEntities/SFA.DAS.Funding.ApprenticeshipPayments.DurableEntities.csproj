@@ -22,8 +22,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Command\SFA.DAS.Funding.ApprenticeshipPayments.Command.csproj" />
+    <ProjectReference Include="..\DataAccess\SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.csproj" />
     <ProjectReference Include="..\Domain\SFA.DAS.Funding.ApprenticeshipPayments.Domain.csproj" />
-    <ProjectReference Include="..\DurableEntities.Models\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models.csproj" />
     <ProjectReference Include="..\Infrastructure\SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Funding.ApprenticeshipPayments.Types.csproj" />
   </ItemGroup>

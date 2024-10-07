@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DurableEntities.Models\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Funding.ApprenticeshipPayments.Types.csproj" />
   </ItemGroup>
 
