@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 {
+    [Table("Apprenticeship", Schema = "Domain")]
     public class Apprenticeship : AggregateRoot
     {
         public Apprenticeship(Guid apprenticeshipKey)
@@ -18,6 +20,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             _payments = payments;
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid ApprenticeshipKey { get; }
 
         private readonly List<Earning> _earnings;

@@ -1,9 +1,13 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 {
+    [Table("Earning", Schema = "Domain")]
     public class Earning
     {
-        public Earning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId)
+        public Earning(Guid key, short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId)
         {
+            Key = key;
             AcademicYear = academicYear;
             DeliveryPeriod = deliveryPeriod;
             Amount = amount;
@@ -13,6 +17,8 @@
             EarningsProfileId = earningsProfileId;
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Key { get; }
         public short AcademicYear { get; }
         public decimal Amount { get; }
         public byte CollectionMonth { get; }
