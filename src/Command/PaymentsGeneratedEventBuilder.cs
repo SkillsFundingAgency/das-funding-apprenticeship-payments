@@ -1,16 +1,16 @@
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
-using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command;
 
 public interface IPaymentsGeneratedEventBuilder
 {
-    PaymentsGeneratedEvent Build(Apprenticeship apprenticeship);
+    PaymentsGeneratedEvent Build(IApprenticeship apprenticeship);
 }
 
 public class PaymentsGeneratedEventBuilder : IPaymentsGeneratedEventBuilder
 {
-    public PaymentsGeneratedEvent Build(Apprenticeship apprenticeship)
+    public PaymentsGeneratedEvent Build(IApprenticeship apprenticeship)
     {
         return new PaymentsGeneratedEvent
         {

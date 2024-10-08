@@ -39,7 +39,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions
             [NServiceBusTrigger(Endpoint = QueueNames.EarningsRecalculated)] ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent,
             ILogger log)
         {
-            await _recalculateApprenticeshipPaymentsCommandHandler.Recalculate(new RecalculateApprenticeshipPaymentsCommand(earningsRecalculatedEvent.ApprenticeshipKey, earningsRecalculatedEvent.DeliveryPeriods.ToEarnings(earningsRecalculatedEvent.EarningsProfileId)));
+            await _recalculateApprenticeshipPaymentsCommandHandler.Recalculate(
+                new RecalculateApprenticeshipPaymentsCommand(earningsRecalculatedEvent.ApprenticeshipKey,
+                    earningsRecalculatedEvent.DeliveryPeriods.ToEarnings(earningsRecalculatedEvent.ApprenticeshipKey,
+                        earningsRecalculatedEvent.EarningsProfileId)));
         }
     }
 }

@@ -15,13 +15,13 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
         _domainEventDispatcher = domainEventDispatcher;
     }
 
-    public async Task Add(Domain.Apprenticeship.Apprenticeship apprenticeship)
+    public async Task Add(Domain.Apprenticeship.IApprenticeship apprenticeship)
     {
         await DbContext.AddAsync(apprenticeship);
         await DbContext.SaveChangesAsync();
     }
 
-    public async Task<Domain.Apprenticeship.Apprenticeship> Get(Guid key)
+    public async Task<Domain.Apprenticeship.IApprenticeship> Get(Guid key)
     {
         var apprenticeship = await DbContext.Apprenticeships
             .Include(x => x.Earnings)
@@ -31,7 +31,7 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
         return apprenticeship;
     }
 
-    public async Task Update(Domain.Apprenticeship.Apprenticeship apprenticeship)
+    public async Task Update(Domain.Apprenticeship.IApprenticeship apprenticeship)
     {
         await DbContext.SaveChangesAsync();
     }

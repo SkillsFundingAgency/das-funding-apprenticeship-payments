@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
-using SFA.DAS.Payments.Model.Core;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 {
     [Table("Apprenticeship", Schema = "Domain")]
-    public class Apprenticeship : AggregateRoot
+    public class Apprenticeship : AggregateRoot, IApprenticeship
     {
         public Apprenticeship(EarningsGeneratedEvent earningsGeneratedEvent)
         {

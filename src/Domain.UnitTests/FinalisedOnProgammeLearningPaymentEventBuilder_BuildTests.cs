@@ -3,7 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests;
@@ -13,17 +13,19 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     private FinalisedOnProgammeLearningPaymentEventBuilder _sut = null!;
     private FinalisedOnProgammeLearningPaymentEvent _result = null!;
     private Fixture _fixture = null!;
-    private PaymentEntityModel _paymentEntityModel = null!;
-    private ApprenticeshipEntityModel _apprenticeship = null!;
+    private Domain.Apprenticeship.Payment _paymentEntityModel = null!;
+    private Domain.Apprenticeship.Apprenticeship _apprenticeship = null!;
 
     [SetUp]
     public void SetUp()
     {
         _sut = new FinalisedOnProgammeLearningPaymentEventBuilder();
         _fixture = new Fixture();
+        _fixture.Customize(new EarningsGeneratedEventCustomization());
 
-        _paymentEntityModel = _fixture.Create<PaymentEntityModel>();
-        _apprenticeship = _fixture.Create<ApprenticeshipEntityModel>();
+        _paymentEntityModel = _fixture.Create<Domain.Apprenticeship.Payment>();
+        _apprenticeship = _fixture.Create<Domain.Apprenticeship.Apprenticeship>();
+        _apprenticeship.CalculatePayments(DateTime.Now);
 
         _result = _sut.Build(_paymentEntityModel, _apprenticeship);
     }

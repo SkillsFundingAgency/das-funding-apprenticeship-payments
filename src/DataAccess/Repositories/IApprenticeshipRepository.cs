@@ -1,8 +1,10 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+
+namespace SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 
 public interface IApprenticeshipRepository
 {
-    Task Add(Domain.Apprenticeship.Apprenticeship apprenticeship);
-    Task<Domain.Apprenticeship.Apprenticeship> Get(Guid key);
-    Task Update(Domain.Apprenticeship.Apprenticeship apprenticeship);
+    Task Add(IApprenticeship apprenticeship);
+    Task<IApprenticeship> Get(Guid key);
+    Task Update(IApprenticeship apprenticeship);
 }

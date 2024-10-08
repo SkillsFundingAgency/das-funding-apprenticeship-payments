@@ -1,16 +1,19 @@
 using AutoFixture;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using Payment = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Payment;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
 {
     public class ProcessUnfundedPaymentsCommandHandler_ProcessTests
     {
+        private Mock<IApprenticeship> _apprenticeship = null!;
+        private List<Payment> _expectedPayments = null!;
         private ProcessUnfundedPaymentsCommand _command = null!;
         private Fixture _fixture = null!;
         private byte _collectionPeriod;
@@ -18,30 +21,32 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
         private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder = null!;
         private FinalisedOnProgammeLearningPaymentEvent _expectedEvent = null!;
+        private Mock<IApprenticeshipRepository> _repository = null!;
         private ProcessUnfundedPaymentsCommandHandler _sut = null!;
 
         [SetUp]
         public async Task Setup()
         {
             _fixture = new Fixture();
-            _collectionPeriod = _fixture.Create<byte>();
-            _collectionYear = _fixture.Create<short>();
-            _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<ApprenticeshipEntityModel>());
-            _command.Model.PaymentsFrozen = false;
-            _command.Model.Payments = new List<PaymentEntityModel>
+            _apprenticeship = new Mock<IApprenticeship>();
+            _apprenticeship.SetupGet(x => x.PaymentsFrozen).Returns(false);
+            _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<Guid>());
+            
+            _expectedPayments = new List<Payment>
             {
-                new PaymentEntityModel { Amount = 100, CollectionYear = _collectionYear, CollectionPeriod = _collectionPeriod, SentForPayment = false }, //to be sent
-                new PaymentEntityModel { Amount = 200, CollectionYear = _collectionYear, CollectionPeriod = _collectionPeriod, SentForPayment = true }, //already sent
-                new PaymentEntityModel { Amount = 300, CollectionYear = _collectionYear, CollectionPeriod = (byte)(_collectionPeriod + 1), SentForPayment = false }, //wrong period
-                new PaymentEntityModel { Amount = 400, CollectionYear = (short)(_collectionYear + 1), CollectionPeriod = _collectionPeriod, SentForPayment = false } //wrong year
+                _fixture.Create<Payment>(),
+                _fixture.Create<Payment>()
             };
 
             _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
             _busEndpoint = new Mock<IDasServiceBusEndpoint>();
             _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
-            _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), _command.Model)).Returns(_expectedEvent);
-            _sut = new ProcessUnfundedPaymentsCommandHandler(_busEndpoint.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
+            _eventBuilder.Setup(x => x.Build(It.IsAny<Payment>(), _apprenticeship.Object)).Returns(_expectedEvent);
+            _repository = new Mock<IApprenticeshipRepository>();
+            _repository.Setup(x => x.Get(_command.ApprenticeshipKey)).ReturnsAsync(_apprenticeship.Object);
+            _apprenticeship.Setup(x => x.DuePayments(_collectionYear, _collectionPeriod)).Returns(_expectedPayments.AsReadOnly());
+            _sut = new ProcessUnfundedPaymentsCommandHandler(_repository.Object, _busEndpoint.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
             await _sut.Process(_command);
         }
@@ -49,14 +54,15 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
         [Test]
         public void ThenOnlyExpectedPaymentIsReleased()
         {
-            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount == 100), _command.Model));
-            _eventBuilder.Verify(x => x.Build(It.Is<PaymentEntityModel>(y => y.Amount != 100), _command.Model), Times.Never);
+            _eventBuilder.Verify(x => x.Build(_expectedPayments.First(), _apprenticeship.Object), Times.Once);
+            _eventBuilder.Verify(x => x.Build(_expectedPayments.Last(), _apprenticeship.Object), Times.Once);
         }
 
         [Test]
-        public void ThenOnlyExpectedPaymentIsMarkedAsSent()
+        public void ThenPaymentsAreMarkedAsSent()
         {
-            _command.Model.Payments.Single(x => x.Amount == 100).SentForPayment.Should().BeTrue();
+            _apprenticeship.Verify(x => x.MarkPaymentsAsSent(_collectionYear, _collectionPeriod), Times.Once);
+            _repository.Verify(x => x.Update(_apprenticeship.Object));
         }
 
     }

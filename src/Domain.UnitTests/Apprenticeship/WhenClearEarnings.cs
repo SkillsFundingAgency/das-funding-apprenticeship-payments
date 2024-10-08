@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship;
 
@@ -18,7 +17,10 @@ public class WhenClearEarnings
     public void SetUp()
     {
         _fixture = new Fixture();
-        _sut = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid(), _fixture.CreateMany<Earning>().ToList(), new List<Payment>());
+        _fixture.Customize(new EarningsGeneratedEventCustomization());
+        var earningGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
+        _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
+        _sut.CalculatePayments(DateTime.Now);
     }
 
     [Test]

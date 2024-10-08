@@ -5,6 +5,8 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
 {
@@ -18,7 +20,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         public void SetUp()
         {
             _fixture = new Fixture();
-            _sut = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid());
+            _fixture.Customize(new EarningsGeneratedEventCustomization());
+            var earningsGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
+            _sut = new Domain.Apprenticeship.Apprenticeship(earningsGeneratedEvent);
+            _sut.ClearEarnings();
         }
 
         [Test]
@@ -26,9 +31,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship
         {
             var earnings = new List<Earning>
             {
-                new ((short)DateTime.Now.Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month,_fixture.Create<string>(), Guid.NewGuid()),
-                new ((short)DateTime.Now.AddMonths(1).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month, _fixture.Create<string>(), Guid.NewGuid()),
-                new ((short)DateTime.Now.AddMonths(2).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month, _fixture.Create<string>(), Guid.NewGuid())
+                new (_sut.ApprenticeshipKey, (short)DateTime.Now.Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month,_fixture.Create<string>(), Guid.NewGuid()),
+                new (_sut.ApprenticeshipKey,(short)DateTime.Now.AddMonths(1).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month, _fixture.Create<string>(), Guid.NewGuid()),
+                new (_sut.ApprenticeshipKey,(short)DateTime.Now.AddMonths(2).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month, _fixture.Create<string>(), Guid.NewGuid())
             };
             foreach (var earning in earnings)
             {

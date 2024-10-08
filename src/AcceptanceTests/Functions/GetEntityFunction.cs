@@ -20,13 +20,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Functions
             using var cts = new CancellationTokenSource();
             cts.CancelAfter(timeout);
 
-            var entityResponse = await client.ReadEntityStateAsync<ApprenticeshipEntity>(new EntityId(entityType, entityKey));
+            /*var entityResponse = await client.ReadEntityStateAsync<ApprenticeshipEntity>(new EntityId(entityType, entityKey));
             while (!entityResponse.EntityExists && !cts.IsCancellationRequested)
             {
                 await Task.Delay(200);
                 entityResponse = await client.ReadEntityStateAsync<ApprenticeshipEntity>(new EntityId(entityType, entityKey));
             }
-            _orchestrationData.Entity = entityResponse.EntityState;
+            _orchestrationData.Entity = entityResponse.EntityState; */
         }
     }
 }

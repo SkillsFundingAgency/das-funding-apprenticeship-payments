@@ -4,12 +4,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command;
 
 public interface IFinalisedOnProgammeLearningPaymentEventBuilder
 {
-    public FinalisedOnProgammeLearningPaymentEvent Build(Domain.Apprenticeship.Payment payment, Domain.Apprenticeship.Apprenticeship apprenticeship);
+    public FinalisedOnProgammeLearningPaymentEvent Build(Domain.Apprenticeship.Payment payment, Domain.Apprenticeship.IApprenticeship apprenticeship);
 }
 
 public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgammeLearningPaymentEventBuilder
 {
-    public FinalisedOnProgammeLearningPaymentEvent Build(Domain.Apprenticeship.Payment payment, Domain.Apprenticeship.Apprenticeship apprenticeship)
+    public FinalisedOnProgammeLearningPaymentEvent Build(Domain.Apprenticeship.Payment payment, Domain.Apprenticeship.IApprenticeship apprenticeship)
     {
         var @event = new FinalisedOnProgammeLearningPaymentEvent();
         @event.Amount = payment.Amount;

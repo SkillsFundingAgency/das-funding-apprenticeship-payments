@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Testing.AzureStorageEmulator;
 
