@@ -121,5 +121,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests
         {
             _sut.Model.EmployerType.Should().Be(_earningsGeneratedEvent.EmployerType);
         }
+
+        [Test]
+        public void ShouldMapAgeAtStartOfApprenticeship()
+        {
+            _sut.Model.AgeAtStartOfApprenticeship.Should().Be(_earningsGeneratedEvent.AgeAtStartOfApprenticeship);
+        }
     }
 }

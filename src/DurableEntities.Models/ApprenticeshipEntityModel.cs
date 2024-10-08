@@ -18,5 +18,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models
         public DateTime StartDate { get; set; }
         public long ApprovalsApprenticeshipId { get; set; }
         public bool PaymentsFrozen { get; set; }
+        public int AgeAtStartOfApprenticeship { get; set; }
     }
 }
