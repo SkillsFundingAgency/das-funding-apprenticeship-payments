@@ -22,7 +22,7 @@ public class PaymentsFunctions
     {
         var result = await _getApprenticeshipsWithDuePaymentsQueryHandler.Get(new GetApprenticeshipsWithDuePaymentsQuery(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear));
 
-        var releasePaymentsTasks = result.Apprenticeships.Select(x => _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionPeriod, x.ApprenticeshipKey)));
+        var releasePaymentsTasks = result.Apprenticeships.Select(x => _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, x.ApprenticeshipKey)));
         log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for apprenticeships. (Count: {result.Apprenticeships.Count()})");
         await Task.WhenAll(releasePaymentsTasks);
 

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [Domain].[Apprenticeship]
 (
-	[Key] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+	[ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
 	[FundingEmployerAccountId] BIGINT NOT NULL,
 	[EmployerType] NVARCHAR(50) NOT NULL,
 	[FundingCommitmentId] BIGINT NOT NULL,
