@@ -12,11 +12,11 @@
 
     public class GetApprenticeshipsWithDuePaymentsResponse
     {
-        public GetApprenticeshipsWithDuePaymentsResponse(List<Apprenticeship> apprenticeships)
+        public GetApprenticeshipsWithDuePaymentsResponse(IEnumerable<Apprenticeship> apprenticeships)
         {
             Apprenticeships = apprenticeships;
         }
 
-        public List<Apprenticeship> Apprenticeships { get; }
+        public IEnumerable<Apprenticeship> Apprenticeships { get; }
     }
 }

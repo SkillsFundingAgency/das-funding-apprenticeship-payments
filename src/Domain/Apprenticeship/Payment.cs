@@ -5,6 +5,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
     [Table("Payment", Schema = "Domain")]
     public class Payment
     {
+        private Payment() { }
+
         public Payment(Guid apprenticeshipKey, short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionPeriod, string fundingLineType, Guid earningsProfileId)
         {
             Key = Guid.NewGuid();

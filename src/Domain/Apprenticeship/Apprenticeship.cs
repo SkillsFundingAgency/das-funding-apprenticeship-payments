@@ -7,6 +7,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
     [Table("Apprenticeship", Schema = "Domain")]
     public class Apprenticeship : AggregateRoot, IApprenticeship
     {
+        private Apprenticeship() { }
+
         public Apprenticeship(EarningsGeneratedEvent earningsGeneratedEvent)
         {
             ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey;
@@ -43,10 +45,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public long ApprovalsApprenticeshipId { get; private set; }
         public bool PaymentsFrozen { get; private set; }
 
-        private readonly List<Earning> _earnings;
-        public ReadOnlyCollection<Earning> Earnings => _earnings.AsReadOnly();
-        private readonly List<Payment> _payments;
-        public ReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
+        private List<Earning> _earnings = new List<Earning>();
+        public IReadOnlyCollection<Earning> Earnings => _earnings.AsReadOnly();
+        private List<Payment> _payments = new List<Payment>();
+        public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
         public void CalculatePayments(DateTime now)
         {

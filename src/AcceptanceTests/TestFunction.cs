@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Testing.AzureStorageEmulator;
 
@@ -34,7 +35,8 @@ public class TestFunction : IDisposable
             { "AzureWebJobsStorage", "UseDevelopmentStorage=true" },
             { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true;NServiceBusConnectionString" },
             { "ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true;DCServiceBusConnectionString" },
-            { "ApplicationSettings:LogLevel", "DEBUG" }
+            { "ApplicationSettings:LogLevel", "DEBUG" },
+            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! }
         };
 
         _host = new HostBuilder()
@@ -60,6 +62,13 @@ public class TestFunction : IDisposable
                     {
                         options.SetMinimumLevel(LogLevel.Trace);
                         options.AddConsole();
+                    });
+                    s.Configure<ApplicationSettings>(a =>
+                    {
+                        a.AzureWebJobsStorage = appConfig["AzureWebJobsStorage"];
+                        a.NServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
+                        a.DCServiceBusConnectionString = appConfig["DCServiceBusConnectionString"];
+                        a.DbConnectionString = appConfig["DbConnectionString"];
                     });
                     new Startup().Configure(builder);
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);

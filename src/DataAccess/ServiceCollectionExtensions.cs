@@ -27,6 +27,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DataAccess
             });
 
             services.AddScoped<IApprenticeshipRepository, ApprenticeshipRepository>();
+            services.AddScoped<IApprenticeshipQueryRepository, ApprenticeshipQueryRepository>();
 
             return services.AddScoped(provider =>
             {
