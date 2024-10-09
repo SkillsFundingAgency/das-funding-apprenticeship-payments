@@ -33,6 +33,7 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessFrozenTests
         _busEndpoint = new Mock<IDasServiceBusEndpoint>();
         _repository = new Mock<IApprenticeshipRepository>();
         _repository.Setup(x => x.Get(_command.ApprenticeshipKey)).ReturnsAsync(_apprenticeship.Object);
+        _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
         _sut = new ProcessUnfundedPaymentsCommandHandler(_repository.Object, _busEndpoint.Object, _eventBuilder.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
         await _sut.Process(_command);

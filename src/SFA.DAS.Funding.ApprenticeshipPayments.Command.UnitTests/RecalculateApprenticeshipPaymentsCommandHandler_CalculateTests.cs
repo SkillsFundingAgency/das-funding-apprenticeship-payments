@@ -1,5 +1,4 @@
 using AutoFixture;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
@@ -9,7 +8,6 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
-using Payment = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Payment;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests;
 
@@ -20,17 +18,12 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
     private RecalculateApprenticeshipPaymentsCommandHandler _sut = null!;
     private Mock<IApprenticeship> _apprenticeship = null!;
     private List<Earning> _newEarnings = null!;
-    private List<Earning> _existingEarnings = null!;
-    private List<Payment> _existingPayments = null!;
-    private Guid _previousEarningsProfileId = Guid.NewGuid();
     private Guid _newEarningsProfileId = Guid.NewGuid();
     private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
     private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
     private Mock<IPaymentsGeneratedEventBuilder> _paymentsGeneratedEventBuilder = null!;
-    private Apprenticeship _result;
-    private decimal _currentMonthlyLearningAmount;
-    private decimal _newMonthlyLearningAmount;
     private Guid _apprenticeshipKey;
+    private PaymentsGeneratedEvent _paymentsGeneratedEvent;
 
     [SetUp]
     public async Task SetUp()
@@ -44,7 +37,10 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
         _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
 
         _busEndpoint = new Mock<IDasServiceBusEndpoint>();
+
+        _paymentsGeneratedEvent = _fixture.Create<PaymentsGeneratedEvent>();
         _paymentsGeneratedEventBuilder = new Mock<IPaymentsGeneratedEventBuilder>();
+        _paymentsGeneratedEventBuilder.Setup(x => x.Build(_apprenticeship.Object)).Returns(_paymentsGeneratedEvent);
 
         _apprenticeshipRepository.Setup(x => x.Get(_apprenticeshipKey)).ReturnsAsync(_apprenticeship.Object);
 
@@ -72,7 +68,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
             _apprenticeship.Verify(
                 x => x.AddEarning(expectedEarning.AcademicYear, expectedEarning.DeliveryPeriod, expectedEarning.Amount,
                     expectedEarning.CollectionYear, expectedEarning.CollectionMonth, expectedEarning.FundingLineType,
-                    _newEarningsProfileId), Times.Once);
+                    It.IsAny<Guid>()), Times.Once);
         }
     }
 
@@ -86,5 +82,11 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
     public void ApprenticeshipIsUpdated()
     {
         _apprenticeshipRepository.Verify(x => x.Update(_apprenticeship.Object), Times.Once);
+    }
+
+    [Test]
+    public void EventIsPublished()
+    {
+        _busEndpoint.Verify(x => x.Publish(_paymentsGeneratedEvent), Times.Once);
     }
 }

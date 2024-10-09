@@ -31,6 +31,7 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessUnfrozenTests
         _collectionYear = _fixture.Create<short>();
         _apprenticeship = new Mock<IApprenticeship>();
         _apprenticeship.SetupGet(x => x.PaymentsFrozen).Returns(false);
+        _apprenticeship.Setup(x => x.DuePayments(_collectionYear, _collectionPeriod)).Returns(new List<Domain.Apprenticeship.Payment>().AsReadOnly());
         _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<Guid>());
 
         _busEndpoint = new Mock<IDasServiceBusEndpoint>();
