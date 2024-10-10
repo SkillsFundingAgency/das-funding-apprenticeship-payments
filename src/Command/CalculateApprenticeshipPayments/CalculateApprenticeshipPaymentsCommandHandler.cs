@@ -30,8 +30,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeship
             var @event = _paymentsGeneratedEventBuilder.Build(apprenticeship);
             _logger.LogInformation("ApprenticeshipKey: {0} Publishing PaymentsGeneratedEvent: {1}", @event.ApprenticeshipKey, @event.SerialiseForLogging());
 
-            await _busEndpoint.Publish(@event);
             await _apprenticeshipRepository.Add(apprenticeship);
+            await _busEndpoint.Publish(@event);
         }
     }
 }

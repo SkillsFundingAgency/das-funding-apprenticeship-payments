@@ -1,7 +1,9 @@
 using AutoFixture;
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 

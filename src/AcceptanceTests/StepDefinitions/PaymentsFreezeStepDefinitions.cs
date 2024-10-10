@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Types;
+﻿using Microsoft.EntityFrameworkCore;
+using SFA.DAS.Apprenticeships.Types;
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
@@ -33,6 +34,8 @@ public class PaymentsFreezeStepDefinitions
         {
             ApprenticeshipKey = apprenticeshipKey
         });
+        
+        await WaitHelper.WaitForItAsync(async () => await ApprenticeshipFrozen(apprenticeshipKey), "Payments have not been frozen");
     }
 
     [Given("no payments are released")]
@@ -56,5 +59,19 @@ public class PaymentsFreezeStepDefinitions
         {
             ApprenticeshipKey = apprenticeshipKey
         });
+
+        await WaitHelper.WaitForItAsync(async () => await ApprenticeshipUnfrozen(apprenticeshipKey), "Payments have not been defrosted");
+    }
+
+    private async Task<bool> ApprenticeshipFrozen(Guid apprenticeshipKey)
+    {
+        var apprenticeship = await _testContext.SqlDatabase.GetApprenticeship(apprenticeshipKey);
+        return apprenticeship != null && apprenticeship.PaymentsFrozen;
+    }
+
+    private async Task<bool> ApprenticeshipUnfrozen(Guid apprenticeshipKey)
+    {
+        var apprenticeship = await _testContext.SqlDatabase.GetApprenticeship(apprenticeshipKey);
+        return apprenticeship != null && !apprenticeship.PaymentsFrozen;
     }
 }

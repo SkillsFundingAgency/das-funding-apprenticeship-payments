@@ -92,7 +92,6 @@ public class TestFunction : IDisposable
     
     public async Task DisposeAsync()
     {
-        await Jobs.Purge();
         await Jobs.StopAsync();
         Dispose();
     }

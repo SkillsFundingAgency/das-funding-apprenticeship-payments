@@ -29,6 +29,7 @@ public class SqlDatabase : IDisposable
     public async Task<Apprenticeship?> GetApprenticeship(Guid apprenticeshipKey)
     {
         var apprenticeship = await DbContext.Apprenticeships
+            .AsNoTracking()
             .Include(x => x.Payments)
             .Include(x => x.Earnings)
             .SingleOrDefaultAsync(x => x.ApprenticeshipKey == apprenticeshipKey);
