@@ -5,8 +5,8 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests;
 
@@ -47,7 +47,6 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessFrozenTests
         _systemClockService = new Mock<ISystemClockService>();
         _systemClockService.Setup(x => x.Now).Returns(DateTime.Now);
 
-        _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), _command.Model)).Returns(_expectedEvent);
         _sut = new ProcessUnfundedPaymentsCommandHandler(_repository.Object, _busEndpoint.Object, _eventBuilder.Object, _systemClockService.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
         await _sut.Process(_command);

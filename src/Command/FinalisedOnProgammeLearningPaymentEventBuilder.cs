@@ -48,7 +48,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         return @event;
     }
 
-    private decimal CalculateGovernmentContributionPercentage(ApprenticeshipEntityModel apprenticeship)
+    private decimal CalculateGovernmentContributionPercentage(Domain.Apprenticeship.IApprenticeship apprenticeship)
     {
         if (apprenticeship.EmployerType == EmployerType.NonLevy && apprenticeship.AgeAtStartOfApprenticeship < 22)
             return 1;

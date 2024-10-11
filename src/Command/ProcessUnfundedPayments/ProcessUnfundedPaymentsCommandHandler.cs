@@ -1,4 +1,6 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Extensions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 
@@ -7,13 +9,15 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IDasServiceBusEndpoint _busEndpoint;
     private readonly IFinalisedOnProgammeLearningPaymentEventBuilder _eventBuilder;
+    private readonly ISystemClockService _systemClock;
     private readonly ILogger<ProcessUnfundedPaymentsCommandHandler> _logger;
 
-    public ProcessUnfundedPaymentsCommandHandler(IApprenticeshipRepository apprenticeshipRepository, IDasServiceBusEndpoint busEndpoint, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
+    public ProcessUnfundedPaymentsCommandHandler(IApprenticeshipRepository apprenticeshipRepository, IDasServiceBusEndpoint busEndpoint, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ISystemClockService systemClock, ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
     {
         _apprenticeshipRepository = apprenticeshipRepository;
         _busEndpoint = busEndpoint;
         _eventBuilder = eventBuilder;
+        _systemClock = systemClock;
         _logger = logger;
     }
 
@@ -30,7 +34,7 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
             return;
         }
 
-        apprenticeship.UnfreezeFrozenPayments(command.CollectionYear, command.CollectionPeriod);
+        apprenticeship.UnfreezeFrozenPayments(command.CollectionYear, command.CollectionPeriod, _systemClock.Now.ToAcademicYear(), command.PreviousAcademicYear, command.HardCloseDate, _systemClock.Now);
         var paymentsToSend = apprenticeship.DuePayments(command.CollectionYear, command.CollectionPeriod);
         if (paymentsToSend.Any())
         {

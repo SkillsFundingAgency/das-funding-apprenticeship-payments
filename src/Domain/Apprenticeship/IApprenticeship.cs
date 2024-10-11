@@ -17,6 +17,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public DateTime StartDate { get; }
         public long ApprovalsApprenticeshipId { get; }
         public bool PaymentsFrozen { get; }
+        public int AgeAtStartOfApprenticeship { get; }
         public IReadOnlyCollection<Earning> Earnings { get; }
         public IReadOnlyCollection<Payment> Payments { get; }
 
@@ -26,7 +27,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public void ClearEarnings();
         public void MarkPaymentsAsFrozen(short collectionYear, byte collectionPeriod);
         public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod);
-        public void UnfreezeFrozenPayments(short collectionYear, byte collectionPeriod);
+        public void UnfreezeFrozenPayments(short collectionYear, byte collectionPeriod, short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate);
         public void MarkPaymentsAsSent(short collectionYear, byte collectionPeriod);
         public void FreezePayments();
         public void UnfreezePayments();

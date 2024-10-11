@@ -2,7 +2,7 @@
 {
     public class ProcessUnfundedPaymentsCommand
     {
-        public ProcessUnfundedPaymentsCommand(byte collectionPeriod, short collectionYear, Guid apprenticeshipKey, short previousAcademicYear, DateTime hardCloseDate,)
+        public ProcessUnfundedPaymentsCommand(byte collectionPeriod, short collectionYear, Guid apprenticeshipKey, short previousAcademicYear, DateTime hardCloseDate)
         {
             CollectionPeriod = collectionPeriod;
             CollectionYear = collectionYear;

@@ -8,7 +8,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture
         public void Customize(IFixture fixture)
         {
             fixture.Customize(new DeliveryPeriodCustomization());
-            fixture.Customize<EarningsGeneratedEvent>(c => c.With(x => x.Uln, fixture.Create<long>().ToString()));
+            fixture.Customize<EarningsGeneratedEvent>(c =>
+                c.With(x => x.Uln, fixture.Create<long>().ToString()).With(x => x.EmployerType, EmployerType.NonLevy)
+                    .With(x => x.AgeAtStartOfApprenticeship, 22));
         }
     }
 }

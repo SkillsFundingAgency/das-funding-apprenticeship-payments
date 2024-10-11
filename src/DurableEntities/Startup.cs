@@ -7,12 +7,11 @@ using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using SFA.DAS.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
@@ -40,6 +39,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton(x => applicationSettings);
 
         builder.Services.AddNServiceBus(applicationSettings);
+        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(Configuration));
         builder.Services.AddCommandServices().AddDomainServices(Configuration);
     }
 
@@ -64,17 +64,6 @@ public class Startup : FunctionsStartup
             });
         }
 
-        var applicationSettings = new ApplicationSettings();
-        Configuration.Bind(nameof(ApplicationSettings), applicationSettings);
-        EnsureConfig(applicationSettings);
-        Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
-
-        builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
-        builder.Services.AddSingleton(x => applicationSettings);
-
-        builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(configuration));
-        builder.Services.AddCommandServices().AddDomainServices().AddQueryServices();
         return configBuilder.Build();
     }
 

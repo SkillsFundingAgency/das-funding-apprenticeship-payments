@@ -25,7 +25,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
         _fixture.Customize(new EarningsGeneratedEventCustomization());
 
         _paymentEntityModel = _fixture.Create<Domain.Apprenticeship.Payment>();
-        _apprenticeship = _fixture.Create<Domain.Apprenticeship.Apprenticeship>();
+        _apprenticeship = new Domain.Apprenticeship.Apprenticeship(_fixture.Create<EarningsGeneratedEvent>());
         _apprenticeship.CalculatePayments(DateTime.Now);
 
         _result = _sut.Build(_paymentEntityModel, _apprenticeship);
@@ -64,10 +64,13 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     [Test]
     public void WhenUnder22AndNoneLevy_ShouldPopulate_GovernmentContributionPercentage_Correctly()
     {
-        _apprenticeship.EmployerType = EmployerType.NonLevy;
-        _apprenticeship.AgeAtStartOfApprenticeship = 21;
+        var earningsGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
+        earningsGeneratedEvent.EmployerType = EmployerType.NonLevy;
+        earningsGeneratedEvent.AgeAtStartOfApprenticeship = 21;
 
-        var result = _sut.Build(_paymentEntityModel, _apprenticeship);
+        var apprenticeship = new Domain.Apprenticeship.Apprenticeship(earningsGeneratedEvent);
+
+        var result = _sut.Build(_paymentEntityModel, apprenticeship);
         result.ApprenticeshipEarning.GovernmentContributionPercentage.Should().Be(1);
     }
 

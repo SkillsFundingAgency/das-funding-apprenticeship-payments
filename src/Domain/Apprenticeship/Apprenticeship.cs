@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.NServiceBus;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,6 +28,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             ApprovalsApprenticeshipId = earningsGeneratedEvent.ApprovalsApprenticeshipId;
             TransferSenderAccountId = earningsGeneratedEvent.TransferSenderEmployerId;
             PaymentsFrozen = false;
+            AgeAtStartOfApprenticeship = earningsGeneratedEvent.AgeAtStartOfApprenticeship;
             _payments = new List<Payment>();
         }
 
@@ -44,6 +46,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public DateTime StartDate { get; private set; }
         public long ApprovalsApprenticeshipId { get; private set; }
         public bool PaymentsFrozen { get; private set; }
+        public int AgeAtStartOfApprenticeship { get; private set; }
 
         private List<Earning> _earnings = new List<Earning>();
         public IReadOnlyCollection<Earning> Earnings => _earnings.AsReadOnly();
@@ -166,9 +169,16 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             return _payments.Where(x => x.CollectionPeriod == collectionPeriod && x.CollectionYear == collectionYear && !x.SentForPayment).ToList().AsReadOnly();
         }
 
-        public void UnfreezeFrozenPayments(short collectionYear, byte collectionPeriod)
+        public void UnfreezeFrozenPayments(short collectionYear, byte collectionPeriod, short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate)
         {
-            foreach (var payment in _payments.Where(x => x.NotPaidDueToFreeze))
+            var validAcademicYears = new List<short> { currentAcademicYear };
+
+            if (previousAcademicYearHardClose.Date >= currentDate.Date)
+            {
+                validAcademicYears.Add(previousAcademicYear);
+            }
+
+            foreach (var payment in _payments.Where(x => x.NotPaidDueToFreeze && validAcademicYears.Contains(x.CollectionYear)))
             {
                 payment.Unfreeze(collectionYear, collectionPeriod);
             }

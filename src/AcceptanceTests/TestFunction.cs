@@ -39,7 +39,7 @@ public class TestFunction : IDisposable
             { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true;NServiceBusConnectionString" },
             { "ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true;DCServiceBusConnectionString" },
             { "ApplicationSettings:LogLevel", "DEBUG" },
-            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! }
+            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! },
             { "ApprenticeshipsOuterApi:Key","" },
             { "ApprenticeshipsOuterApi:BaseUrl","https://localhost:7101/" }
         };

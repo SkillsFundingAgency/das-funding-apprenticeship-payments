@@ -5,9 +5,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPaym
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
@@ -21,17 +19,13 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
     private RecalculateApprenticeshipPaymentsCommandHandler _sut = null!;
     private Mock<IApprenticeship> _apprenticeship = null!;
     private List<Earning> _newEarnings = null!;
-    private Guid _newEarningsProfileId = Guid.NewGuid();
     private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
     private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
     private Mock<IPaymentsGeneratedEventBuilder> _paymentsGeneratedEventBuilder = null!;
     private Guid _apprenticeshipKey;
     private PaymentsGeneratedEvent _paymentsGeneratedEvent;
     private Mock<ISystemClockService> _mockSystemClockService;
-    private Apprenticeship _result;
-    private decimal _currentMonthlyLearningAmount;
-    private decimal _newMonthlyLearningAmount;
-
+    
     [SetUp]
     public async Task SetUp()
     {
@@ -40,10 +34,6 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
         _newEarnings = _fixture.CreateMany<Earning>().ToList();
         _apprenticeshipKey = Guid.NewGuid();
         _command = new RecalculateApprenticeshipPaymentsCommand(_apprenticeshipKey, _newEarnings);
-        _existingEarnings = _fixture.CreateMany<Earning>().ToList();
-        _existingPayments = _fixture.CreateMany<Payment>().ToList();
-        _currentMonthlyLearningAmount = _fixture.Create<decimal>();
-        _newMonthlyLearningAmount = _fixture.Create<decimal>();
         _mockSystemClockService = new Mock<ISystemClockService>();
 
         _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();

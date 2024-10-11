@@ -5,7 +5,6 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using Payment = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Payment;
@@ -41,8 +40,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests
             _apprenticeship = new Mock<IApprenticeship>();
             _apprenticeship.SetupGet(x => x.PaymentsFrozen).Returns(false);
             _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<Guid>(), _previousAcademicYear, _hardCloseDate);
-            
+
             _expectedPayments = new List<Payment>
+            {
+                _fixture.Create<Payment>(),
+                _fixture.Create<Payment>()
+            };
             _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
             _systemClockService = new Mock<ISystemClockService>();

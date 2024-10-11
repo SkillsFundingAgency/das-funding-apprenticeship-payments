@@ -11,5 +11,6 @@
 	[CourseCode] NVARCHAR(10) NULL,
 	[StartDate] DATETIME NOT NULL,
 	[ApprovalsApprenticeshipId] BIGINT NOT NULL,
-	[PaymentsFrozen] BIT NOT NULL DEFAULT(0)
+	[PaymentsFrozen] BIT NOT NULL DEFAULT(0),
+	[AgeAtStartOfApprenticeship] INT NOT NULL
 )

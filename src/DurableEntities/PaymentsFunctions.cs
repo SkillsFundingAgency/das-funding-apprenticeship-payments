@@ -16,12 +16,15 @@ public class PaymentsFunctions
 	private readonly ISystemClockService _systemClock;
     private readonly IApiClient _apiClient;
 
-    public PaymentsFunctions(IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler, IGetApprenticeshipsWithDuePaymentsQueryHandler getApprenticeshipsWithDuePaymentsQueryHandler, IApiClient apiClient, ISystemClockService systemClock)
+    public PaymentsFunctions(IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler,
+        IGetApprenticeshipsWithDuePaymentsQueryHandler getApprenticeshipsWithDuePaymentsQueryHandler,
+        IApiClient apiClient, ISystemClockService systemClock)
     {
         _getApprenticeshipsWithDuePaymentsQueryHandler = getApprenticeshipsWithDuePaymentsQueryHandler;
         _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
-		_systemClock = systemClock;
+        _systemClock = systemClock;
         _apiClient = apiClient;
+    }
 
     [FunctionName(nameof(ReleasePaymentsEventServiceBusTrigger))]
     public async Task ReleasePaymentsEventServiceBusTrigger(
@@ -32,7 +35,7 @@ public class PaymentsFunctions
 		
         var result = await _getApprenticeshipsWithDuePaymentsQueryHandler.Get(new GetApprenticeshipsWithDuePaymentsQuery(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear));
 
-        var releasePaymentsTasks = result.Apprenticeships.Select(x => _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, x.ApprenticeshipKey)));
+        var releasePaymentsTasks = result.Apprenticeships.Select(x => _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, x.ApprenticeshipKey, short.Parse(previousAcademicYear.AcademicYear), previousAcademicYear.HardCloseDate)));
         log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for apprenticeships. (Count: {result.Apprenticeships.Count()})");
         await Task.WhenAll(releasePaymentsTasks);
 
