@@ -9,6 +9,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using SFA.DAS.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
@@ -40,7 +41,7 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(Configuration));
-        builder.Services.AddCommandServices().AddDomainServices(Configuration);
+        builder.Services.AddCommandServices().AddDomainServices(Configuration).AddQueryServices();
     }
 
     private static IConfiguration GetConfiguration(ServiceProvider serviceProvider)
