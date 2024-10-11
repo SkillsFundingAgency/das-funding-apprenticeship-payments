@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 
@@ -21,7 +20,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
                         .WithTransientLifetime();
                 })
                 .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>()
-                .AddScoped<IApprenticeshipFactory, ApprenticeshipFactory>()
                 .AddSystemClock(configuration);
 
             serviceCollection.AddHttpClient<IApiClient, ApiClient>(); 

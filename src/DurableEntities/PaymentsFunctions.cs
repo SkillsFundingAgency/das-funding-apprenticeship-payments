@@ -1,3 +1,5 @@
+using SFA.DAS.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Requests;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Responses;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
@@ -5,16 +7,21 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
 public class PaymentsFunctions
 {
-
-    private readonly ISystemClockService _systemClock;
+    private readonly IProcessUnfundedPaymentsCommandHandler _processUnfundedPaymentsCommandHandler;
+    private readonly IGetApprenticeshipsWithDuePaymentsQueryHandler _getApprenticeshipsWithDuePaymentsQueryHandler;
+	private readonly ISystemClockService _systemClock;
     private readonly IApiClient _apiClient;
 
-    public PaymentsFunctions(IApiClient apiClient, ISystemClockService systemClock)
+    public PaymentsFunctions(IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler,
+        IGetApprenticeshipsWithDuePaymentsQueryHandler getApprenticeshipsWithDuePaymentsQueryHandler,
+        IApiClient apiClient, ISystemClockService systemClock)
     {
+        _getApprenticeshipsWithDuePaymentsQueryHandler = getApprenticeshipsWithDuePaymentsQueryHandler;
+        _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
         _systemClock = systemClock;
         _apiClient = apiClient;
     }
@@ -22,13 +29,15 @@ public class PaymentsFunctions
     [FunctionName(nameof(ReleasePaymentsEventServiceBusTrigger))]
     public async Task ReleasePaymentsEventServiceBusTrigger(
         [NServiceBusTrigger(Endpoint = QueueNames.ReleasePayments)] ReleasePaymentsCommand releasePaymentsCommand,
-        [DurableClient] IDurableEntityClient client,
         ILogger log)
     {
-        using CancellationTokenSource source = new CancellationTokenSource();
-        var token = source.Token;
+		var previousAcademicYear = await GetPreviousAcademicYear();
+		
+        var result = await _getApprenticeshipsWithDuePaymentsQueryHandler.Get(new GetApprenticeshipsWithDuePaymentsQuery(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear));
 
-        var previousAcademicYear = await GetPreviousAcademicYear();
+        var releasePaymentsTasks = result.Apprenticeships.Select(x => _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, x.ApprenticeshipKey, short.Parse(previousAcademicYear.AcademicYear), previousAcademicYear.HardCloseDate)));
+        log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for apprenticeships. (Count: {result.Apprenticeships.Count()})");
+        await Task.WhenAll(releasePaymentsTasks);
 
         var operationInput = new ReleasePaymentsDto
         {
@@ -37,23 +46,6 @@ public class PaymentsFunctions
             PreviousAcademicYear = short.Parse(previousAcademicYear.AcademicYear),
             HardCloseDate = previousAcademicYear.HardCloseDate 
         };
-
-        var allApprenticeshipEntitiesQuery = new EntityQuery { EntityName = nameof(ApprenticeshipEntity) }; //default page size is 100, we may wish to tweak this in future to improve performance
-        var pageCounter = 0;
-
-        do
-        {
-            pageCounter++;
-            await client.CleanEntityStorageAsync(true, true, token);
-            var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
-            var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), operationInput));
-
-            allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
-
-            log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
-            await Task.WhenAll(releasePaymentsTasks);
-
-        } while (allApprenticeshipEntitiesQuery.ContinuationToken != null);
 
         log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} complete.");
     }

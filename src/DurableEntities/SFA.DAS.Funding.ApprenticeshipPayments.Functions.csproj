@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.18.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.10.0" />
+	<PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.10.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.5.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.22.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.4.1" />
@@ -22,9 +22,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Command\SFA.DAS.Funding.ApprenticeshipPayments.Command.csproj" />
+    <ProjectReference Include="..\DataAccess\SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.csproj" />
     <ProjectReference Include="..\Domain\SFA.DAS.Funding.ApprenticeshipPayments.Domain.csproj" />
-    <ProjectReference Include="..\DurableEntities.Models\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models.csproj" />
     <ProjectReference Include="..\Infrastructure\SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.csproj" />
+    <ProjectReference Include="..\SFA.DAS.ApprenticeshipPayments.Query\SFA.DAS.Funding.ApprenticeshipPayments.Query.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Funding.ApprenticeshipPayments.Types.csproj" />
   </ItemGroup>
   <ItemGroup>

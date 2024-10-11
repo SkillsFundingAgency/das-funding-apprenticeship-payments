@@ -1,29 +1,57 @@
-﻿using System.Collections.ObjectModel;
+﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.NServiceBus;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 {
-    public class Apprenticeship : AggregateRoot
+    [Table("Apprenticeship", Schema = "Domain")]
+    public class Apprenticeship : AggregateRoot, IApprenticeship
     {
-        public Apprenticeship(Guid apprenticeshipKey)
+        private Apprenticeship() { }
+
+        public Apprenticeship(EarningsGeneratedEvent earningsGeneratedEvent)
         {
-            ApprenticeshipKey = apprenticeshipKey;
-            _earnings = new List<Earning>();
+            ApprenticeshipKey = earningsGeneratedEvent.ApprenticeshipKey;
+            _earnings = earningsGeneratedEvent.DeliveryPeriods.Select(y =>
+            {
+                var model = new Earning(earningsGeneratedEvent.ApprenticeshipKey, y.AcademicYear, y.Period, y.LearningAmount, y.CalenderYear, y.CalendarMonth, y.FundingLineType, earningsGeneratedEvent.EarningsProfileId);
+                return model;
+            }).ToList();
+            EmployerType = earningsGeneratedEvent.EmployerType;
+            StartDate = earningsGeneratedEvent.StartDate;
+            Ukprn = earningsGeneratedEvent.ProviderId;
+            Uln = long.Parse(earningsGeneratedEvent.Uln);
+            PlannedEndDate = earningsGeneratedEvent.PlannedEndDate;
+            CourseCode = earningsGeneratedEvent.TrainingCode;
+            FundingEmployerAccountId = earningsGeneratedEvent.EmployerAccountId;
+            ApprovalsApprenticeshipId = earningsGeneratedEvent.ApprovalsApprenticeshipId;
+            TransferSenderAccountId = earningsGeneratedEvent.TransferSenderEmployerId;
+            PaymentsFrozen = false;
+            AgeAtStartOfApprenticeship = earningsGeneratedEvent.AgeAtStartOfApprenticeship;
             _payments = new List<Payment>();
         }
 
-        public Apprenticeship(Guid apprenticeshipKey, List<Earning> earnings, List<Payment> payments)
-        {
-            ApprenticeshipKey = apprenticeshipKey;
-            _earnings = earnings;
-            _payments = payments;
-        }
-
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid ApprenticeshipKey { get; }
 
-        private readonly List<Earning> _earnings;
-        public ReadOnlyCollection<Earning> Earnings => _earnings.AsReadOnly();
-        private readonly List<Payment> _payments;
-        public ReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
+        public long FundingEmployerAccountId { get; private set; }
+        public EmployerType EmployerType { get; private set; }
+        public long FundingCommitmentId { get; private set; }
+        public long? TransferSenderAccountId { get; private set; }
+        public long Uln { get; private set; }
+        public long Ukprn { get; private set; }
+        public DateTime PlannedEndDate { get; private set; }
+        public string? CourseCode { get; private set; }
+        public DateTime StartDate { get; private set; }
+        public long ApprovalsApprenticeshipId { get; private set; }
+        public bool PaymentsFrozen { get; private set; }
+        public int AgeAtStartOfApprenticeship { get; private set; }
+
+        private List<Earning> _earnings = new List<Earning>();
+        public IReadOnlyCollection<Earning> Earnings => _earnings.AsReadOnly();
+        private List<Payment> _payments = new List<Payment>();
+        public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
         public void CalculatePayments(DateTime now)
         {
@@ -31,7 +59,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
             foreach (var earning in Earnings)
             {
                 var collectionPeriod = DetermineCollectionPeriod(earning, now);
-                var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
+                var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
                 _payments.Add(payment);
             }
         }
@@ -48,7 +76,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 
                 if (!_payments.Any(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear))
                 {
-                    var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
+                    var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
                     _payments.Add(payment);
                 }
                 else
@@ -57,7 +85,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
                         .Where(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear)
                         .Sum(p => p.Amount);
 
-                    var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
+                    var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
                     _payments.Add(payment);
                 }
             }
@@ -65,7 +93,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 
         public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId)
         {
-            _earnings.Add(new Earning(academicYear, deliveryPeriod, amount, collectionYear, collectionMonth, fundingLineType, earningsProfileId));
+            _earnings.Add(new Earning(ApprenticeshipKey, academicYear, deliveryPeriod, amount, collectionYear, collectionMonth, fundingLineType, earningsProfileId));
         }
 
         public void ClearEarnings()
@@ -116,7 +144,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 			{
 				if (!earningsToProcess.Any(e=> e.DeliveryPeriod == payment.DeliveryPeriod && e.AcademicYear == payment.AcademicYear))
                 {
-                    var earning = new Earning(payment.AcademicYear, payment.DeliveryPeriod, 0, (short)now.Year, (byte)now.Month, payment.FundingLineType, payment.EarningsProfileId);
+                    var earning = new Earning(ApprenticeshipKey, payment.AcademicYear, payment.DeliveryPeriod, 0, (short)now.Year, (byte)now.Month, payment.FundingLineType, payment.EarningsProfileId);
                     earningsToProcess.Add(earning);
                 }
             }
@@ -126,6 +154,52 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
                 .OrderBy(x => x.AcademicYear)
                 .ThenBy(x => x.DeliveryPeriod)
                 .ToList();
+        }
+
+        public void MarkPaymentsAsFrozen(short collectionYear, byte collectionPeriod)
+        {
+            foreach (var payment in DuePayments(collectionYear, collectionPeriod))
+            {
+                payment.MarkAsNotPaid();
+            }
+        }
+
+        public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod)
+        {
+            return _payments.Where(x => x.CollectionPeriod == collectionPeriod && x.CollectionYear == collectionYear && !x.SentForPayment).ToList().AsReadOnly();
+        }
+
+        public void UnfreezeFrozenPayments(short collectionYear, byte collectionPeriod, short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate)
+        {
+            var validAcademicYears = new List<short> { currentAcademicYear };
+
+            if (previousAcademicYearHardClose.Date >= currentDate.Date)
+            {
+                validAcademicYears.Add(previousAcademicYear);
+            }
+
+            foreach (var payment in _payments.Where(x => x.NotPaidDueToFreeze && validAcademicYears.Contains(x.CollectionYear)))
+            {
+                payment.Unfreeze(collectionYear, collectionPeriod);
+            }
+        }
+
+        public void MarkPaymentsAsSent(short collectionYear, byte collectionPeriod)
+        {
+            foreach (var payment in DuePayments(collectionYear, collectionPeriod))
+            {
+                payment.Send();
+            }
+        }
+
+        public void FreezePayments()
+        {
+            PaymentsFrozen = true;
+        }
+
+        public void UnfreezePayments()
+        {
+            PaymentsFrozen = false;
         }
     }
 }

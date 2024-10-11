@@ -6,14 +6,16 @@ using Microsoft.Extensions.Options;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using SFA.DAS.ApprenticeshipPayments.Query;
+using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
 [ExcludeFromCodeCoverage]
 public class Startup : FunctionsStartup
@@ -38,7 +40,8 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton(x => applicationSettings);
 
         builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddCommandServices().AddDomainServices(Configuration);
+        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(Configuration));
+        builder.Services.AddCommandServices().AddDomainServices(Configuration).AddQueryServices();
     }
 
     private static IConfiguration GetConfiguration(ServiceProvider serviceProvider)

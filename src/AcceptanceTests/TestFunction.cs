@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
@@ -37,6 +39,7 @@ public class TestFunction : IDisposable
             { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true;NServiceBusConnectionString" },
             { "ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true;DCServiceBusConnectionString" },
             { "ApplicationSettings:LogLevel", "DEBUG" },
+            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! },
             { "ApprenticeshipsOuterApi:Key","" },
             { "ApprenticeshipsOuterApi:BaseUrl","https://localhost:7101/" }
         };
@@ -65,6 +68,13 @@ public class TestFunction : IDisposable
                         options.SetMinimumLevel(LogLevel.Trace);
                         options.AddConsole();
                     });
+                    s.Configure<ApplicationSettings>(a =>
+                    {
+                        a.AzureWebJobsStorage = appConfig["AzureWebJobsStorage"];
+                        a.NServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
+                        a.DCServiceBusConnectionString = appConfig["DCServiceBusConnectionString"];
+                        a.DbConnectionString = appConfig["DbConnectionString"];
+                    });
                     new Startup().Configure(builder);
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
                     s.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup, must come after new Startup().Configure(builder);
@@ -79,7 +89,7 @@ public class TestFunction : IDisposable
         var timeout = new TimeSpan(0, 2, 10);
         var delayTask = Task.Delay(timeout);
 
-        await Task.WhenAny(Task.WhenAll(_host.StartAsync(), Jobs.Terminate()), delayTask);
+        await Task.WhenAny(Task.WhenAll(_host.StartAsync()), delayTask);
 
         if (delayTask.IsCompleted)
         {
@@ -89,7 +99,6 @@ public class TestFunction : IDisposable
     
     public async Task DisposeAsync()
     {
-        await Jobs.Purge();
         await Jobs.StopAsync();
         Dispose();
     }

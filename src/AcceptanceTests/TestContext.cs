@@ -5,6 +5,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
     public class TestContext : IDisposable
     {
         public TestFunction? TestFunction { get; set; }
+        public SqlDatabase? SqlDatabase { get; set; }
         public IEndpointInstance? FinalisedOnProgammeLearningPaymentEndpoint { get; set; } = null;
         public IEndpointInstance? EarningsGeneratedEndpoint { get; set; }
         public IEndpointInstance? PaymentsGeneratedEndpoint { get; set; }
@@ -29,6 +30,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
             FreezePaymentsEndpoint?.Stop();
             UnfreezePaymentsEndpoint?.Stop();
             TestFunction?.Dispose();
+            SqlDatabase?.Dispose();
         }
     }
 }

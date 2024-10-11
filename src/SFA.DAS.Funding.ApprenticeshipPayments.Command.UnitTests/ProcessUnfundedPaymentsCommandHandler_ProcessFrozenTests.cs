@@ -1,10 +1,10 @@
 using AutoFixture;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
@@ -12,6 +12,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests;
 
 public class ProcessUnfundedPaymentsCommandHandler_ProcessFrozenTests
 {
+    private Mock<IApprenticeship> _apprenticeship = null!;
     private ProcessUnfundedPaymentsCommand _command = null!;
     private Fixture _fixture = null!;
     private byte _collectionPeriod;
@@ -20,6 +21,7 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessFrozenTests
     private DateTime _hardCloseDate;
     private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
     private Mock<IFinalisedOnProgammeLearningPaymentEventBuilder> _eventBuilder = null!;
+    private Mock<IApprenticeshipRepository> _repository = null!;
     private Mock<ISystemClockService> _systemClockService = null!;
     private FinalisedOnProgammeLearningPaymentEvent _expectedEvent = null!;
     private ProcessUnfundedPaymentsCommandHandler _sut = null!;
@@ -29,25 +31,23 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessFrozenTests
     {
         _fixture = new Fixture();
         _collectionPeriod = _fixture.Create<byte>();
-        _collectionYear = 2425;
+		_collectionYear = 2425;
         _previousAcademicYear = 2324;
         _hardCloseDate = new DateTime(2025, 10, 15);
-        _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _previousAcademicYear, _hardCloseDate, _fixture.Create<ApprenticeshipEntityModel>());
-        _command.Model.PaymentsFrozen = true;
-        _command.Model.Payments = new List<PaymentEntityModel>
-        {
-            new PaymentEntityModel { Amount = 100, CollectionYear = _collectionYear, CollectionPeriod = _collectionPeriod, SentForPayment = false }
-        };
+        _apprenticeship = new Mock<IApprenticeship>();
+        _apprenticeship.SetupGet(x => x.PaymentsFrozen).Returns(true);
+        _command = new ProcessUnfundedPaymentsCommand(_collectionPeriod, _collectionYear, _fixture.Create<Guid>(), _previousAcademicYear, _hardCloseDate);
 
         _expectedEvent = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
         _busEndpoint = new Mock<IDasServiceBusEndpoint>();
+        _repository = new Mock<IApprenticeshipRepository>();
+        _repository.Setup(x => x.Get(_command.ApprenticeshipKey)).ReturnsAsync(_apprenticeship.Object);
         _eventBuilder = new Mock<IFinalisedOnProgammeLearningPaymentEventBuilder>();
         _systemClockService = new Mock<ISystemClockService>();
         _systemClockService.Setup(x => x.Now).Returns(DateTime.Now);
 
-        _eventBuilder.Setup(x => x.Build(It.IsAny<PaymentEntityModel>(), _command.Model)).Returns(_expectedEvent);
-        _sut = new ProcessUnfundedPaymentsCommandHandler(_busEndpoint.Object, _eventBuilder.Object, _systemClockService.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
+        _sut = new ProcessUnfundedPaymentsCommandHandler(_repository.Object, _busEndpoint.Object, _eventBuilder.Object, _systemClockService.Object, Mock.Of<ILogger<ProcessUnfundedPaymentsCommandHandler>>());
 
         await _sut.Process(_command);
     }
@@ -55,19 +55,13 @@ public class ProcessUnfundedPaymentsCommandHandler_ProcessFrozenTests
     [Test]
     public void ThenNoPaymentIsReleased()
     {
-        _eventBuilder.Verify(x => x.Build(It.IsAny<PaymentEntityModel>(), It.IsAny<ApprenticeshipEntityModel>()), Times.Never());
+        _eventBuilder.Verify(x => x.Build(It.IsAny<Domain.Apprenticeship.Payment>(), It.IsAny<Domain.Apprenticeship.Apprenticeship>()), Times.Never());
     }
 
     [Test]
-    public void ThenExpectedPaymentIsMarkedAsNotPaidDueToFreeze()
+    public void ThenPaymentsAreMarkedAsNotPaidDueToFreeze()
     {
-        _command.Model.Payments.Single(x => x.Amount == 100).NotPaidDueToFreeze.Should().BeTrue();
+        _apprenticeship.Verify(x => x.MarkPaymentsAsFrozen(_collectionYear, _collectionPeriod), Times.Once);
+        _repository.Verify(x => x.Update(_apprenticeship.Object), Times.Once);
     }
-
-    [Test]
-    public void ThenExpectedPaymentIsMarkedAsNotSentForPayment()
-    {
-        _command.Model.Payments.Single(x => x.Amount == 100).SentForPayment.Should().BeFalse();
-    }
-
 }

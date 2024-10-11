@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests;
@@ -14,18 +14,19 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     private FinalisedOnProgammeLearningPaymentEventBuilder _sut = null!;
     private FinalisedOnProgammeLearningPaymentEvent _result = null!;
     private Fixture _fixture = null!;
-    private PaymentEntityModel _paymentEntityModel = null!;
-    private ApprenticeshipEntityModel _apprenticeship = null!;
+    private Domain.Apprenticeship.Payment _paymentEntityModel = null!;
+    private Domain.Apprenticeship.Apprenticeship _apprenticeship = null!;
 
     [SetUp]
     public void SetUp()
     {
         _sut = new FinalisedOnProgammeLearningPaymentEventBuilder();
         _fixture = new Fixture();
+        _fixture.Customize(new EarningsGeneratedEventCustomization());
 
-        _paymentEntityModel = _fixture.Create<PaymentEntityModel>();
-        _apprenticeship = _fixture.Create<ApprenticeshipEntityModel>();
-        _apprenticeship.AgeAtStartOfApprenticeship = 22;
+        _paymentEntityModel = _fixture.Create<Domain.Apprenticeship.Payment>();
+        _apprenticeship = new Domain.Apprenticeship.Apprenticeship(_fixture.Create<EarningsGeneratedEvent>());
+        _apprenticeship.CalculatePayments(DateTime.Now);
 
         _result = _sut.Build(_paymentEntityModel, _apprenticeship);
     }
@@ -63,10 +64,13 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     [Test]
     public void WhenUnder22AndNoneLevy_ShouldPopulate_GovernmentContributionPercentage_Correctly()
     {
-        _apprenticeship.EmployerType = EmployerType.NonLevy;
-        _apprenticeship.AgeAtStartOfApprenticeship = 21;
+        var earningsGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
+        earningsGeneratedEvent.EmployerType = EmployerType.NonLevy;
+        earningsGeneratedEvent.AgeAtStartOfApprenticeship = 21;
 
-        var result = _sut.Build(_paymentEntityModel, _apprenticeship);
+        var apprenticeship = new Domain.Apprenticeship.Apprenticeship(earningsGeneratedEvent);
+
+        var result = _sut.Build(_paymentEntityModel, apprenticeship);
         result.ApprenticeshipEarning.GovernmentContributionPercentage.Should().Be(1);
     }
 
