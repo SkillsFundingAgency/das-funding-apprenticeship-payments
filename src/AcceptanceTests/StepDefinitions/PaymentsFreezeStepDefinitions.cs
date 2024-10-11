@@ -38,8 +38,8 @@ public class PaymentsFreezeStepDefinitions
         await WaitHelper.WaitForItAsync(async () => await ApprenticeshipFrozen(apprenticeshipKey), "Payments have not been frozen");
     }
 
-    [Given("no payments are released")]
-    [Then("no payments are released")]
+    [Given("no payments are released for this apprenticeship")]
+    [Then("no payments are released for this apprenticeship")]
     public async Task AssertCorrectPaymentsAreReleased()
     {
         var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];

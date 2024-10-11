@@ -1,3 +1,4 @@
+using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command;
@@ -23,7 +24,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.ApprenticeshipEarning.ApprenticeshipEarningsId = Guid.NewGuid();
         @event.ApprenticeshipEarning.DeliveryPeriod = payment.DeliveryPeriod;
         @event.ApprenticeshipEarning.DeliveryPeriodAmount = payment.Amount;
-        @event.ApprenticeshipEarning.GovernmentContributionPercentage = Constants.ApprenticeshipEarningGovernmentContributionPercentage;
+        @event.ApprenticeshipEarning.GovernmentContributionPercentage = CalculateGovernmentContributionPercentage(apprenticeship);
         @event.ApprenticeshipEarning.NumberOfInstalments = (short)apprenticeship.Payments.Count;
         @event.ApprenticeshipEarning.PlannedEndDate = apprenticeship.PlannedEndDate;
         @event.ApprenticeshipEarning.ProviderIdentifier = apprenticeship.Ukprn;
@@ -45,5 +46,13 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.EarningsProfileId = payment.EarningsProfileId;
 
         return @event;
+    }
+
+    private decimal CalculateGovernmentContributionPercentage(ApprenticeshipEntityModel apprenticeship)
+    {
+        if (apprenticeship.EmployerType == EmployerType.NonLevy && apprenticeship.AgeAtStartOfApprenticeship < 22)
+            return 1;
+
+        return 0.95m;
     }
 }
