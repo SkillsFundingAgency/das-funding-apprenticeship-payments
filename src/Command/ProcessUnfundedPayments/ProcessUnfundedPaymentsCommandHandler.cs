@@ -41,6 +41,9 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
             _logger.LogInformation("Apprenticeship Key: {apprenticeshipKey} -  No payments to publish for collection period {collectionPeriod} & year {collectionYear}", apprenticeshipKey, command.CollectionPeriod, command.CollectionYear);
         }
 
+        apprenticeship.MarkPaymentsAsSent(command.CollectionYear, command.CollectionPeriod);
+        await _apprenticeshipRepository.Update(apprenticeship);
+
         foreach (var payment in paymentsToSend)
         {
             var finalisedOnProgammeLearningPaymentEvent = _eventBuilder.Build(payment, apprenticeship);
@@ -50,8 +53,5 @@ public class ProcessUnfundedPaymentsCommandHandler : IProcessUnfundedPaymentsCom
                 finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey,
                 finalisedOnProgammeLearningPaymentEvent.SerialiseForLogging());
         }
-
-        apprenticeship.MarkPaymentsAsSent(command.CollectionYear, command.CollectionPeriod);
-        await _apprenticeshipRepository.Update(apprenticeship);
     }
 }
