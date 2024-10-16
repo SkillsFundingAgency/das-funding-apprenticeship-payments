@@ -18,6 +18,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public long ApprovalsApprenticeshipId { get; }
         public bool PaymentsFrozen { get; }
         public int AgeAtStartOfApprenticeship { get; }
+        public string LearnerReference { get; }
         public IReadOnlyCollection<Earning> Earnings { get; }
         public IReadOnlyCollection<Payment> Payments { get; }
 
@@ -31,5 +32,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public void MarkPaymentsAsSent(short collectionYear, byte collectionPeriod);
         public void FreezePayments();
         public void UnfreezePayments();
+        public void SetLearnerReference(string learnerReference);
     }
 }

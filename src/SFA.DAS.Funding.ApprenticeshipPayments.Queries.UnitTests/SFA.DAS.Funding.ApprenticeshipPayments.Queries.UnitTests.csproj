@@ -35,4 +35,9 @@
     <PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.csproj" />
+    <ProjectReference Include="..\SFA.DAS.ApprenticeshipPayments.Query\SFA.DAS.Funding.ApprenticeshipPayments.Query.csproj" />
+  </ItemGroup>
+
 </Project>
