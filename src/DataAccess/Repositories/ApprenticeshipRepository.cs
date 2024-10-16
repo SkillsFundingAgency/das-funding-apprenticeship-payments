@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 
 public class ApprenticeshipRepository : IApprenticeshipRepository
 {
     private readonly Lazy<ApprenticeshipPaymentsDataContext> _lazyContext;
-    private readonly IDomainEventDispatcher _domainEventDispatcher;
+    private readonly IDasServiceBusEndpoint _busEndpoint;
     private ApprenticeshipPaymentsDataContext DbContext => _lazyContext.Value;
 
-    public ApprenticeshipRepository(Lazy<ApprenticeshipPaymentsDataContext> dbContext, IDomainEventDispatcher domainEventDispatcher)
+    public ApprenticeshipRepository(Lazy<ApprenticeshipPaymentsDataContext> dbContext, IDasServiceBusEndpoint busEndpoint)
     {
+        _busEndpoint = busEndpoint;
         _lazyContext = dbContext;
-        _domainEventDispatcher = domainEventDispatcher;
     }
 
     public async Task Add(Domain.Apprenticeship.IApprenticeship apprenticeship)
@@ -33,6 +33,15 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
 
     public async Task Update(Domain.Apprenticeship.IApprenticeship apprenticeship)
     {
+        await using var transaction = await DbContext.Database.BeginTransactionAsync();
+
         await DbContext.SaveChangesAsync();
+
+        foreach (dynamic domainEvent in apprenticeship.FlushEvents())
+        {
+            await _busEndpoint.Publish(domainEvent);
+        }
+
+        await transaction.CommitAsync();
     }
 }

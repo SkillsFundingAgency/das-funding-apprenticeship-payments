@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.NServiceBus;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -47,6 +46,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public long ApprovalsApprenticeshipId { get; private set; }
         public bool PaymentsFrozen { get; private set; }
         public int AgeAtStartOfApprenticeship { get; private set; }
+        public string LearnerReference { get; private set; }
 
         private List<Earning> _earnings = new List<Earning>();
         public IReadOnlyCollection<Earning> Earnings => _earnings.AsReadOnly();
@@ -200,6 +200,18 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public void UnfreezePayments()
         {
             PaymentsFrozen = false;
+        }
+
+        public void SetLearnerReference(string learnerReference)
+        {
+            LearnerReference = learnerReference;
+        }
+
+        public void SendPayment(Guid paymentKey, Func<Payment, IApprenticeship, IDomainEvent> eventBuilder)
+        {
+            var payment = Payments.Single(x => x.Key == paymentKey);
+            payment.Send();
+            AddEvent(eventBuilder(payment, this));
         }
     }
 }

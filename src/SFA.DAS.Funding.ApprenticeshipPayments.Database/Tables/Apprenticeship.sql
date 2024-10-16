@@ -12,5 +12,6 @@
 	[StartDate] DATETIME NOT NULL,
 	[ApprovalsApprenticeshipId] BIGINT NOT NULL,
 	[PaymentsFrozen] BIT NOT NULL DEFAULT(0),
-	[AgeAtStartOfApprenticeship] INT NOT NULL
+	[AgeAtStartOfApprenticeship] INT NOT NULL,
+	[LearnerReference] NVARCHAR(50) NULL
 )

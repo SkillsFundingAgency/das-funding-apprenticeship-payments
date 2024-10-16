@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments
 {
     public class Apprenticeship
     {

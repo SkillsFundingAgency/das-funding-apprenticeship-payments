@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments;
+
+namespace SFA.DAS.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments
 {
     public interface IGetApprenticeshipsWithDuePaymentsQueryHandler
     {

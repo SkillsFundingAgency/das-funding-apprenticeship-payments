@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
+using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments;
 
 namespace SFA.DAS.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments
 {

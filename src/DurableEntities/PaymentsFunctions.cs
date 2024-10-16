@@ -1,10 +1,10 @@
 using SFA.DAS.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Requests;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Responses;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Requests;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Responses;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
