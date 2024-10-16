@@ -1,6 +1,6 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Requests;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Requests;
 
 public class GetAcademicYearsRequest : IGetApiRequest
 {

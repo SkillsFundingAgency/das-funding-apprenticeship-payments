@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Extensions;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 

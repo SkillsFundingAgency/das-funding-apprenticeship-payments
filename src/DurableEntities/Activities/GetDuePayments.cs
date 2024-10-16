@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
+using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetDuePayments;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
 {
@@ -16,7 +17,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
         public async Task<IEnumerable<Guid>> Get([ActivityTrigger] object input)
         {
             var duePaymentsInput = (GetDuePaymentsInput)input;
-            var payments = (await _queryHandler.Get(new GetDuePaymentsQuery())).Payments;
+            var payments = (await _queryHandler.Get(new GetDuePaymentsQuery(duePaymentsInput.ApprenticeshipKey, duePaymentsInput.CollectionDetails.CollectionYear, duePaymentsInput.CollectionDetails.CollectionPeriod))).Payments;
             return payments.Select(x => x.Key);
         }
     }

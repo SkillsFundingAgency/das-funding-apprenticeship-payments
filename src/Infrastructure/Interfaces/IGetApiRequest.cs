@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
 public interface IGetApiRequest : IApiRequest
 {

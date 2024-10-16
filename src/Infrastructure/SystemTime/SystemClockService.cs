@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 public class SystemClockService : ISystemClockService
 {

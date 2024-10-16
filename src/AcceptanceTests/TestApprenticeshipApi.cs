@@ -1,8 +1,8 @@
 ﻿using Azure;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Requests;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Responses;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Requests;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Responses;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 

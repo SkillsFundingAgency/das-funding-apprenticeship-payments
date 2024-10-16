@@ -41,7 +41,7 @@ public class Startup : FunctionsStartup
 
         builder.Services.AddNServiceBus(applicationSettings);
         builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(Configuration));
-        builder.Services.AddCommandServices().AddDomainServices(Configuration).AddQueryServices();
+        builder.Services.AddCommandServices(Configuration).AddDomainServices().AddQueryServices();
     }
 
     private static IConfiguration GetConfiguration(ServiceProvider serviceProvider)

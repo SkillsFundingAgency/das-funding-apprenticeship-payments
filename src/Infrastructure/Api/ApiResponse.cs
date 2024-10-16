@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
 
 public class ApiResponse<TResponse>
 {

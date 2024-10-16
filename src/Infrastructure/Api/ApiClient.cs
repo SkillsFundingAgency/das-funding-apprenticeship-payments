@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
 
 public class ApiClient : IApiClient
 {

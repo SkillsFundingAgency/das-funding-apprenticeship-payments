@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.NServiceBus;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -206,6 +205,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public void SetLearnerReference(string learnerReference)
         {
             LearnerReference = learnerReference;
+        }
+
+        public void SendPayment(Guid paymentKey, Func<Payment, IApprenticeship, IDomainEvent> eventBuilder)
+        {
+            var payment = Payments.Single(x => x.Key == paymentKey);
+            payment.Send();
+            AddEvent(eventBuilder(payment, this));
         }
     }
 }

@@ -1,6 +1,6 @@
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;

@@ -12,7 +12,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
             _commandHandler = commandHandler;
         }
 
-        [FunctionName(nameof(GetProviders))]
+        [FunctionName(nameof(SetLearnerReference))]
         public async Task Set([ActivityTrigger] object input)
         {
             var learner = (SetLearnerReferenceInput)input;

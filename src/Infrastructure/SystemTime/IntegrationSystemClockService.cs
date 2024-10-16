@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 [ExcludeFromCodeCoverage]
 /// <summary>

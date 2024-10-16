@@ -4,8 +4,8 @@ using Moq;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ApplyFreezeAndUnfreeze;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests;
 

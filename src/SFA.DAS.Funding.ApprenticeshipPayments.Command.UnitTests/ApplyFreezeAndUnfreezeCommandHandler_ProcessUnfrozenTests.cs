@@ -3,13 +3,13 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ApplyFreezeAndUnfreeze;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Responses;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using System.Net;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Requests;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Requests;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Responses;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests;
 

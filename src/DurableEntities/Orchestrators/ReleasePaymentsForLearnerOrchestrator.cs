@@ -43,6 +43,16 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators
             context.SetCustomStatus("GettingDuePayments");
 
             var duePayments = await context.CallActivityAsync<IEnumerable<Guid>>(nameof(GetDuePayments), new GetDuePaymentsInput(input.CollectionDetails, apprenticeshipKey.Value));
+
+            context.SetCustomStatus("ReleasingPayments");
+            var releasePaymentsTasks = new List<Task>();
+            foreach (var payment in duePayments)
+            {
+                var releasePaymentsTask = context.CallActivityAsync(nameof(ReleasePayment), new ReleasePaymentInput(apprenticeshipKey.Value, payment));
+                releasePaymentsTasks.Add(releasePaymentsTask);
+            }
+
+            await Task.WhenAll(releasePaymentsTasks);
         }
     }
 }

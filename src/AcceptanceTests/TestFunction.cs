@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Testing.AzureStorageEmulator;
 

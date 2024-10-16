@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 {
-    public interface IApprenticeship
+    public interface IApprenticeship : IAggregateRoot
     {
         public Guid ApprenticeshipKey { get; }
         public long FundingEmployerAccountId { get; }
@@ -33,5 +33,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public void FreezePayments();
         public void UnfreezePayments();
         public void SetLearnerReference(string learnerReference);
+        public void SendPayment(Guid paymentKey, Func<Payment, IApprenticeship, IDomainEvent> eventBuilder);
     }
 }

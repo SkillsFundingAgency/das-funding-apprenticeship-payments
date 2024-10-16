@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Responses;
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Responses;
 
 public class GetAcademicYearsResponse
 {
