@@ -37,7 +37,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler_ProcessUnfrozenTests
         _previousAcademicYear = 2324;
         _hardCloseDate = new DateTime(2025, 10, 15);
         _apprenticeship = new Mock<IApprenticeship>();
-        _apprenticeship.SetupGet(x => x.PaymentsFrozen).Returns(true);
+        _apprenticeship.SetupGet(x => x.PaymentsFrozen).Returns(false);
         _command = new ApplyFreezeAndUnfreezeCommand(_fixture.Create<Guid>(), _collectionYear, _collectionPeriod);
 
         _repository = new Mock<IApprenticeshipRepository>();
