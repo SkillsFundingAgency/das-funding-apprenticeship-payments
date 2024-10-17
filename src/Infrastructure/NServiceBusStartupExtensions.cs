@@ -6,7 +6,7 @@ using SFA.DAS.NServiceBus.AzureFunction.Hosting;
 using SFA.DAS.NServiceBus.Configuration;
 using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
-using SFA.DAS.Payments.RequiredPayments.Messages.Events;
+using SFA.DAS.Payments.FundingSource.Messages.Commands;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
@@ -35,7 +35,7 @@ public static class NServiceBusStartupExtensions
         endpointConfiguration.SendOnly();
 
         var conventions = endpointConfiguration.Conventions();
-        conventions.DefiningMessagesAs(type => type == typeof(CalculatedRequiredLevyAmount)); // Treat CalculatedRequiredLevyAmount as a message
+        conventions.DefiningMessagesAs(type => type == typeof(CalculateOnProgrammePayment)); // Treat CalculatedRequiredLevyAmount as a message
 
         if (UsingLearningTransport(applicationSettings))
         {
@@ -65,7 +65,7 @@ public static class NServiceBusStartupExtensions
 
         endpointConfiguration.SendOnly();
         var conventions = endpointConfiguration.Conventions();
-        conventions.DefiningMessagesAs(type => type == typeof(CalculatedRequiredLevyAmount)); // Treat CalculatedRequiredLevyAmount as a message
+        conventions.DefiningMessagesAs(type => type == typeof(CalculateOnProgrammePayment)); // Treat CalculatedRequiredLevyAmount as a message
 
         if (UsingLearningTransport(applicationSettings))
         {
