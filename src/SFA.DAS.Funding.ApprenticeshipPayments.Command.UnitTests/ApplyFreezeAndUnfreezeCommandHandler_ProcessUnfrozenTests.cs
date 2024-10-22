@@ -24,7 +24,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler_ProcessUnfrozenTests
     private DateTime _hardCloseDate;
     private Mock<IApprenticeshipRepository> _repository = null!;
     private Mock<ISystemClockService> _systemClockService = null!;
-    private Mock<IApiClient> _apiClient = null!;
+    private Mock<IApprenticeshipsApiClient> _apiClient = null!;
     private ApplyFreezeAndUnfreezeCommandHandler _sut = null!;
     private DateTime _expectedCurrentDate;
 
@@ -46,7 +46,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler_ProcessUnfrozenTests
         _expectedCurrentDate = DateTime.Now;
         _systemClockService.Setup(x => x.Now).Returns(_expectedCurrentDate);
 
-        _apiClient = new Mock<IApiClient>();
+        _apiClient = new Mock<IApprenticeshipsApiClient>();
         _apiClient.Setup(x => x.Get<GetAcademicYearsResponse>(It.Is<GetAcademicYearsRequest>(y =>
                 y.GetUrl == $"CollectionCalendar/academicYear/{_expectedCurrentDate.ToString("yyyy-MM-dd HH:mm:ss")}")))
             .ReturnsAsync(

@@ -33,7 +33,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command
             serviceCollection.AddScoped<IReleasePaymentCommandHandler, ReleasePaymentCommandHandler>();
             serviceCollection.AddScoped<ISetLearnerReferenceCommandHandler, SetLearnerReferenceCommandHandler>();
             serviceCollection.AddSystemClock(configuration);
-            serviceCollection.AddHttpClient<IApiClient, ApiClient>();
+            serviceCollection.AddHttpClient<IApprenticeshipsApiClient, ApprenticeshipsApiClient>();
             return serviceCollection;
         }
     }

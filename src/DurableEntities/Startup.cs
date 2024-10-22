@@ -37,6 +37,9 @@ public class Startup : FunctionsStartup
         builder.Services.Configure<ApprenticeshipsOuterApi>(Configuration.GetSection(nameof(ApprenticeshipsOuterApi)));
         builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsOuterApi>>()!.Value);
 
+        builder.Services.Configure<PaymentsOuterApi>(Configuration.GetSection(nameof(PaymentsOuterApi)));
+        builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<PaymentsOuterApi>>()!.Value);
+
         builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
         builder.Services.AddSingleton(x => applicationSettings);
 

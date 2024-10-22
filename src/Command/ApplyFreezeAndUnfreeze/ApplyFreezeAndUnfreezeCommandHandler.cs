@@ -11,14 +11,14 @@ public class ApplyFreezeAndUnfreezeCommandHandler : IApplyFreezeAndUnfreezeComma
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly ISystemClockService _systemClock;
-    private readonly IApiClient _apiClient;
+    private readonly IApprenticeshipsApiClient _apprenticeshipsApiClient;
     private readonly ILogger<ApplyFreezeAndUnfreezeCommandHandler> _logger;
 
-    public ApplyFreezeAndUnfreezeCommandHandler(IApprenticeshipRepository apprenticeshipRepository, ISystemClockService systemClock, IApiClient apiClient, ILogger<ApplyFreezeAndUnfreezeCommandHandler> logger)
+    public ApplyFreezeAndUnfreezeCommandHandler(IApprenticeshipRepository apprenticeshipRepository, ISystemClockService systemClock, IApprenticeshipsApiClient apprenticeshipsApiClient, ILogger<ApplyFreezeAndUnfreezeCommandHandler> logger)
     {
         _apprenticeshipRepository = apprenticeshipRepository;
         _systemClock = systemClock;
-        _apiClient = apiClient;
+        _apprenticeshipsApiClient = apprenticeshipsApiClient;
         _logger = logger;
     }
 
@@ -43,9 +43,9 @@ public class ApplyFreezeAndUnfreezeCommandHandler : IApplyFreezeAndUnfreezeComma
 
     private async Task<GetAcademicYearsResponse> GetPreviousAcademicYear()
     {
-        var currentAcademicYearResponse = await _apiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(_systemClock.Now));
+        var currentAcademicYearResponse = await _apprenticeshipsApiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(_systemClock.Now));
         var lastDayOfPreviousYear = currentAcademicYearResponse.Body.StartDate.AddDays(-1);
-        var previousAcademicYearResponse = await _apiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(lastDayOfPreviousYear));
+        var previousAcademicYearResponse = await _apprenticeshipsApiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(lastDayOfPreviousYear));
         return previousAcademicYearResponse.Body;
     }
 }

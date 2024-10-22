@@ -6,7 +6,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
-internal class TestApprenticeshipApi : IApiClient
+internal class TestApprenticeshipApprenticeshipsApi : IApprenticeshipsApiClient
 {
     public Task<ApiResponse<TResponse>> Get<TResponse>(IGetApiRequest request)
     {

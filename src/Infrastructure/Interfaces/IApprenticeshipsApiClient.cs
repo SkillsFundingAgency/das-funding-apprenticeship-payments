@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
-public interface IApiClient
+public interface IApprenticeshipsApiClient
 {
     Task<ApiResponse<TResponse>> Get<TResponse>(IGetApiRequest request);
 }

@@ -6,12 +6,12 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
 
-public class ApiClient : IApiClient
+public class ApprenticeshipsApiClient : IApprenticeshipsApiClient
 {
     private readonly HttpClient _httpClient;
     private readonly ApprenticeshipsOuterApi _config;
 
-    public ApiClient(HttpClient httpClient, IOptions<ApprenticeshipsOuterApi> config)
+    public ApprenticeshipsApiClient(HttpClient httpClient, IOptions<ApprenticeshipsOuterApi> config)
     {
         _httpClient = httpClient;
         _config = config.Value;
