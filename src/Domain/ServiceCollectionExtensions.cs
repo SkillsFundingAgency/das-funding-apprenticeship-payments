@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
 {
@@ -16,6 +17,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
                         .WithTransientLifetime();
                 })
                 .AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+
+            serviceCollection.AddScoped<IApprenticeship, Apprenticeship.Apprenticeship>();
 
             return serviceCollection;
         }
