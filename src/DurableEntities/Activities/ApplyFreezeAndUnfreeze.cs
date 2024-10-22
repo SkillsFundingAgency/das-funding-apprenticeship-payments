@@ -13,10 +13,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
         }
 
         [FunctionName(nameof(ApplyFreezeAndUnfreeze))]
-        public async Task Set([ActivityTrigger] object input)
+        public async Task Set([ActivityTrigger] ApplyFreezeAndUnfreezeInput input)
         {
-            var applyFreezeAndUnfreezeInput = (ApplyFreezeAndUnfreezeInput)input;
-            await _commandHandler.Apply(new ApplyFreezeAndUnfreezeCommand(applyFreezeAndUnfreezeInput.ApprenticeshipKey, applyFreezeAndUnfreezeInput.CollectionDetails.CollectionYear, applyFreezeAndUnfreezeInput.CollectionDetails.CollectionPeriod));
+            await _commandHandler.Apply(new ApplyFreezeAndUnfreezeCommand(input.ApprenticeshipKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod));
         }
     }
 }

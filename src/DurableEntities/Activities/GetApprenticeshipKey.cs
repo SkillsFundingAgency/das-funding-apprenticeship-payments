@@ -13,10 +13,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
         }
 
         [FunctionName(nameof(GetApprenticeshipKey))]
-        public async Task<Guid?> Get([ActivityTrigger] object input)
+        public async Task<Guid?> Get([ActivityTrigger] Learner input)
         {
-            var learner = (Learner)input;
-            var response = await _queryHandler.Get(new GetApprenticeshipKeyQuery(learner.Ukprn, learner.Uln));
+            var response = await _queryHandler.Get(new GetApprenticeshipKeyQuery(input.Ukprn, input.Uln));
             return response.ApprenticeshipKey;
         }
     }

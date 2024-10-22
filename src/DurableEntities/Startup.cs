@@ -12,6 +12,7 @@ using System.IO;
 using SFA.DAS.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Query;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 [assembly: FunctionsStartup(typeof(Startup))]

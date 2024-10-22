@@ -14,10 +14,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
         }
 
         [FunctionName(nameof(GetDuePayments))]
-        public async Task<IEnumerable<Guid>> Get([ActivityTrigger] object input)
+        public async Task<IEnumerable<Guid>> Get([ActivityTrigger] GetDuePaymentsInput input)
         {
-            var duePaymentsInput = (GetDuePaymentsInput)input;
-            var payments = (await _queryHandler.Get(new GetDuePaymentsQuery(duePaymentsInput.ApprenticeshipKey, duePaymentsInput.CollectionDetails.CollectionYear, duePaymentsInput.CollectionDetails.CollectionPeriod))).Payments;
+            var payments = (await _queryHandler.Get(new GetDuePaymentsQuery(input.ApprenticeshipKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod))).Payments;
             return payments.Select(x => x.Key);
         }
     }

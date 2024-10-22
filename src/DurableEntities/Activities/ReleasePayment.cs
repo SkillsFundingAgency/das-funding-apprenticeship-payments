@@ -13,10 +13,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
         }
 
         [FunctionName(nameof(ReleasePayment))]
-        public async Task Set([ActivityTrigger] object input)
+        public async Task Set([ActivityTrigger] ReleasePaymentInput input)
         {
-            var releasePaymentInput = (ReleasePaymentInput)input;
-            await _commandHandler.Release(new ReleasePaymentCommand(releasePaymentInput.ApprenticeshipKey, releasePaymentInput.PaymentKey));
+            await _commandHandler.Release(new ReleasePaymentCommand(input.ApprenticeshipKey, input.PaymentKey));
         }
     }
 }

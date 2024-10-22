@@ -13,10 +13,9 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
         }
 
         [FunctionName(nameof(SetLearnerReference))]
-        public async Task Set([ActivityTrigger] object input)
+        public async Task Set([ActivityTrigger] SetLearnerReferenceInput input)
         {
-            var learner = (SetLearnerReferenceInput)input;
-            await _commandHandler.Set(new SetLearnerReferenceCommand(learner.ApprenticeshipKey, learner.LearnerReference));
+            await _commandHandler.Set(new SetLearnerReferenceCommand(input.ApprenticeshipKey, input.LearnerReference));
         }
     }
 }

@@ -15,12 +15,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers
                 cts.CancelAfter(timeout.Value);
             }
 
-            await client.Wait(status => status.All(x => OrchestrationsComplete(name, x)), cts.Token);
+            await client.Wait(status => status.Count() > 0 && status.All(x => OrchestrationsComplete(name, x)), cts.Token);
         }
 
         private static bool OrchestrationsComplete(string orchestratorName, DurableOrchestrationStatus orchestrationStatus)
         {
-            return orchestrationStatus.Name != orchestratorName;
+            return orchestrationStatus.Name != orchestratorName || (orchestratorName == orchestrationStatus.Name && orchestrationStatus.RuntimeStatus == OrchestrationRuntimeStatus.Completed);
         }
     }
 }
