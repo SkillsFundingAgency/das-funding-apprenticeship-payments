@@ -1,60 +1,19 @@
-using SFA.DAS.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Requests;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Responses;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
 public class PaymentsFunctions
 {
-    private readonly IProcessUnfundedPaymentsCommandHandler _processUnfundedPaymentsCommandHandler;
-    private readonly IGetApprenticeshipsWithDuePaymentsQueryHandler _getApprenticeshipsWithDuePaymentsQueryHandler;
-	private readonly ISystemClockService _systemClock;
-    private readonly IApiClient _apiClient;
-
-    public PaymentsFunctions(IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler,
-        IGetApprenticeshipsWithDuePaymentsQueryHandler getApprenticeshipsWithDuePaymentsQueryHandler,
-        IApiClient apiClient, ISystemClockService systemClock)
-    {
-        _getApprenticeshipsWithDuePaymentsQueryHandler = getApprenticeshipsWithDuePaymentsQueryHandler;
-        _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
-        _systemClock = systemClock;
-        _apiClient = apiClient;
-    }
-
     [FunctionName(nameof(ReleasePaymentsEventServiceBusTrigger))]
     public async Task ReleasePaymentsEventServiceBusTrigger(
         [NServiceBusTrigger(Endpoint = QueueNames.ReleasePayments)] ReleasePaymentsCommand releasePaymentsCommand,
+        [DurableClient] IDurableOrchestrationClient starter,
         ILogger log)
     {
-		var previousAcademicYear = await GetPreviousAcademicYear();
-		
-        var result = await _getApprenticeshipsWithDuePaymentsQueryHandler.Get(new GetApprenticeshipsWithDuePaymentsQuery(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear));
+        string instanceId = await starter.StartNewAsync(nameof(ReleasePaymentsOrchestrator), null, new CollectionDetails(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear));
 
-        var releasePaymentsTasks = result.Apprenticeships.Select(x => _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(releasePaymentsCommand.CollectionPeriod, releasePaymentsCommand.CollectionYear, x.ApprenticeshipKey, short.Parse(previousAcademicYear.AcademicYear), previousAcademicYear.HardCloseDate)));
-        log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for apprenticeships. (Count: {result.Apprenticeships.Count()})");
-        await Task.WhenAll(releasePaymentsTasks);
-
-        var operationInput = new ReleasePaymentsDto
-        {
-            CollectionYear =  releasePaymentsCommand.CollectionYear,
-            CollectionPeriod = releasePaymentsCommand.CollectionPeriod,
-            PreviousAcademicYear = short.Parse(previousAcademicYear.AcademicYear),
-            HardCloseDate = previousAcademicYear.HardCloseDate 
-        };
-
-        log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} complete.");
-    }
-
-    private async Task<GetAcademicYearsResponse> GetPreviousAcademicYear()
-    {
-        var currentAcademicYearResponse = await _apiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(_systemClock.Now));
-        var lastDayOfPreviousYear = currentAcademicYearResponse.Body.StartDate.AddDays(-1);
-        var previousAcademicYearResponse = await _apiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(lastDayOfPreviousYear));
-        return previousAcademicYearResponse.Body;
+        log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
     }
 }

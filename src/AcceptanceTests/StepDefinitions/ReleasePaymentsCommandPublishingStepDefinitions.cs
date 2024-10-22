@@ -1,5 +1,6 @@
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
@@ -29,7 +30,6 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
             CollectionYear = ((short)_systemClockService.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
         };
         await ReleasePayments();
-        Task.Delay(3500).Wait();
     }
 
     [Given(@"payments are released every month until (.*)")]
@@ -48,7 +48,6 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
             };
             await ReleasePayments();
             releaseDate = releaseDate.AddMonths(1);
-            Task.Delay(3500).Wait();
         }
     }
 
@@ -67,6 +66,6 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     private async Task ReleasePayments()
     {
         await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
-        await Task.Delay(10000);
+        await _testContext.TestFunction.WaitUntilOrchestratorComplete(nameof(ReleasePaymentsOrchestrator));
     }
 }

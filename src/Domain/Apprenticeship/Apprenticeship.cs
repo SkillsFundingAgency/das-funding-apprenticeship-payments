@@ -46,7 +46,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
         public long ApprovalsApprenticeshipId { get; private set; }
         public bool PaymentsFrozen { get; private set; }
         public int AgeAtStartOfApprenticeship { get; private set; }
-        public string LearnerReference { get; private set; }
+        public string? LearnerReference { get; private set; }
 
         private List<Earning> _earnings = new List<Earning>();
         public IReadOnlyCollection<Earning> Earnings => _earnings.AsReadOnly();

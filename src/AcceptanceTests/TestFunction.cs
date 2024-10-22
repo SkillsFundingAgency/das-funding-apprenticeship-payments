@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
@@ -23,6 +22,7 @@ public class TestFunction : IDisposable
     private IJobHost Jobs => _host.Services.GetService<IJobHost>()!;
     public string HubName { get; }
     private readonly OrchestrationData _orchestrationData;
+    private static WaitConfiguration Config => WaitConfigurationHelper.WaitConfiguration;
 
     public TestFunction(TestContext testContext, string hubName)
     {
@@ -81,6 +81,10 @@ public class TestFunction : IDisposable
                     s.AddSingleton<IApiClient, TestApprenticeshipApi>();// override DI in Startup, must come after new Startup().Configure(builder);
                 })
             )
+            .ConfigureServices(s =>
+            {
+                s.AddHostedService<PurgeBackgroundJob>();
+            })
             .Build();
     }
 
@@ -89,12 +93,17 @@ public class TestFunction : IDisposable
         var timeout = new TimeSpan(0, 2, 10);
         var delayTask = Task.Delay(timeout);
 
-        await Task.WhenAny(Task.WhenAll(_host.StartAsync()), delayTask);
+        await Task.WhenAny(Task.WhenAll(_host.StartAsync(), Jobs.Terminate()), delayTask);
 
         if (delayTask.IsCompleted)
         {
             throw new Exception($"Failed to start test function host within {timeout.Seconds} seconds.  Check the AzureStorageEmulator is running. ");
         }
+    }
+
+    public async Task WaitUntilOrchestratorComplete(string orchestratorName)
+    {
+        await Jobs.WaitFor(orchestratorName, Config.TimeToWait).ThrowIfFailed();
     }
     
     public async Task DisposeAsync()
