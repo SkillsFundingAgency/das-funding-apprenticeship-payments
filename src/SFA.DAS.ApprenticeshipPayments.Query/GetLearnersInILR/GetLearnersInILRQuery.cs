@@ -3,10 +3,12 @@
     public class GetLearnersInILRQuery
     {
         public long Ukprn { get; }
+        public short AcademicYear { get; }
 
-        public GetLearnersInILRQuery(long ukprn)
+        public GetLearnersInILRQuery(long ukprn, short academicYear)
         {
             Ukprn = ukprn;
+            AcademicYear = academicYear;
         }
     }
 }

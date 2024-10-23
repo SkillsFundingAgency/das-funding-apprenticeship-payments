@@ -23,7 +23,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators
                 _logger.LogInformation("[ReleasePaymentsForProviderOrchestrator] Releasing payments for provider {ukprn} started", input.Ukprn);
 
             context.SetCustomStatus("GettingIlrSubmissions");
-            var learnersInIlr = await context.CallActivityAsync<IEnumerable<Learner>>(nameof(GetLearnersInIlrSubmission), input.Ukprn);
+            var learnersInIlr = await context.CallActivityAsync<IEnumerable<Learner>>(nameof(GetLearnersInIlrSubmission), new GetLearnersInIlrSubmissionInput(input.Ukprn, input.CollectionDetails.CollectionYear));
 
             context.SetCustomStatus("ReleasingPaymentsForLearners");
             var releasePaymentsTasks = new List<Task>();
