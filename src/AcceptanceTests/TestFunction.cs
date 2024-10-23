@@ -22,7 +22,7 @@ public class TestFunction : IDisposable
     private IJobHost Jobs => _host.Services.GetService<IJobHost>()!;
     public string HubName { get; }
     private readonly OrchestrationData _orchestrationData;
-    private static WaitConfiguration Config => WaitConfigurationHelper.WaitConfiguration;
+    private static WaitConfiguration Config => new WaitConfiguration();
 
     public TestFunction(TestContext testContext, string hubName)
     {
@@ -81,7 +81,7 @@ public class TestFunction : IDisposable
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
                     s.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup, must come after new Startup().Configure(builder);
                     s.AddSingleton<IApprenticeshipsApiClient, TestApprenticeshipsApi>();// override DI in Startup, must come after new Startup().Configure(builder);
-                    s.AddSingleton<IOuterApiClient, TestOuterApi>();// override DI in Startup, must come after new Startup().Configure(builder);
+                    s.AddSingleton<IOuterApiClient>(new TestOuterApi(testContext));// override DI in Startup, must come after new Startup().Configure(builder);
                 })
             )
             .ConfigureServices(s =>

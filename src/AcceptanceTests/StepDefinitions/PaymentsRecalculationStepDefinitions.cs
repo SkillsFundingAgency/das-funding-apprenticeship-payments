@@ -111,11 +111,13 @@ public class PaymentsRecalculationStepDefinitions
 	private async Task GenerateExistingPayments(List<DeliveryPeriod> periods)
 	{
 		_apprenticeshipKey = Guid.NewGuid();
+        var uln = _testContext.Fixture.Create<long>();
+		_testContext.Ulns.Add(uln);
 
 		_previousEarningsGeneratedEvent = _testContext.Fixture
 			.Build<EarningsGeneratedEvent>()
 			.With(x => x.DeliveryPeriods, periods)
-			.With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
+			.With(x => x.Uln, uln.ToString())
 			.With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
 			.With(x => x.ApprenticeshipKey, _apprenticeshipKey)
 			.Create();

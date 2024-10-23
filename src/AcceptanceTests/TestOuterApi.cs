@@ -1,4 +1,5 @@
-﻿using Azure;
+﻿using AutoFixture;
+using Azure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Requests;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Responses;
@@ -8,6 +9,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
 internal class TestOuterApi : IOuterApiClient
 {
+    private readonly TestContext _context;
+    
+    public TestOuterApi(TestContext context)
+    {
+        _context = context;
+    }
+
     public Task<ApiResponse<TResponse>> Get<TResponse>(IGetApiRequest request)
     {
         if (request is GetLearnersInILRRequest getLearnersInIlrRequest)
@@ -22,10 +30,7 @@ internal class TestOuterApi : IOuterApiClient
     {
         var json = new GetLearnersInILRResponse
         {
-            AcademicYear = GetAcademicYearString(yearFrom, yearTo),
-            StartDate = new DateTime(yearFrom, 8, 1),
-            EndDate = new DateTime(yearTo, 7, 31),
-            HardCloseDate = new DateTime(yearTo, 10, 15, 23, 59, 59)
+            Learners = _context.Ulns.Select(x => new Learner { Uln = x, LearnerRefNumber = _context.Fixture.Create<string>() }).ToList()
         };
 
         // Check if the TResponse is assignable from the GetLearnersInILRResponse type

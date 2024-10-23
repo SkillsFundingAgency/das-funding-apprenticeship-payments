@@ -101,10 +101,13 @@ public class EarningsGeneratedEventPublishingStepDefinitions
 
     private void SetEarningsGeneratedEvent(List<DeliveryPeriod> periods, int numberOfPayments, int paymentAmount)
     {
+        var uln = _testContext.Fixture.Create<long>();
+        _testContext.Ulns.Add(uln);
+
         _earningsGeneratedEvent = _testContext.Fixture
             .Build<EarningsGeneratedEvent>()
             .With(x => x.DeliveryPeriods, periods)
-            .With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
+            .With(x => x.Uln, uln.ToString())
             .With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
             .Create();
 

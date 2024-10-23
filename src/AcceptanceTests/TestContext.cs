@@ -18,6 +18,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
 
         public AutoFixture.Fixture Fixture = new();
 
+        public List<long> Ulns = new();
+
         public void Dispose()
         {
             FinalisedOnProgammeLearningPaymentEndpoint?.Stop();
