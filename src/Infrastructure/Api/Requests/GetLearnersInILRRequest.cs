@@ -13,5 +13,5 @@ public class GetLearnersInILRRequest : IGetApiRequest
         _academicYear = academicYear;
     }
 
-    public string GetUrl => $"TODO/{_ukprn}/{_academicYear}";
+    public string GetUrl => $"ILR/{_ukprn}/{_academicYear}";
 }

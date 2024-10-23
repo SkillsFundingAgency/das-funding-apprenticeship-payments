@@ -41,7 +41,9 @@ public class TestFunction : IDisposable
             { "ApplicationSettings:LogLevel", "DEBUG" },
             { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! },
             { "ApprenticeshipsOuterApi:Key","" },
-            { "ApprenticeshipsOuterApi:BaseUrl","https://localhost:7101/" }
+            { "ApprenticeshipsOuterApi:BaseUrl","https://localhost:7101/" },
+            { "PaymentsOuterApi:Key","" },
+            { "PaymentsOuterApi:BaseUrl","https://localhost:7102/" }
         };
 
         _host = new HostBuilder()
@@ -78,7 +80,8 @@ public class TestFunction : IDisposable
                     new Startup().Configure(builder);
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
                     s.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup, must come after new Startup().Configure(builder);
-                    s.AddSingleton<IApprenticeshipsApiClient, TestApprenticeshipApprenticeshipsApi>();// override DI in Startup, must come after new Startup().Configure(builder);
+                    s.AddSingleton<IApprenticeshipsApiClient, TestApprenticeshipsApi>();// override DI in Startup, must come after new Startup().Configure(builder);
+                    s.AddSingleton<IOuterApiClient, TestOuterApi>();// override DI in Startup, must come after new Startup().Configure(builder);
                 })
             )
             .ConfigureServices(s =>
