@@ -22,7 +22,7 @@ public class TestFunction : IDisposable
     private IJobHost Jobs => _host.Services.GetService<IJobHost>()!;
     public string HubName { get; }
     private readonly OrchestrationData _orchestrationData;
-    private static WaitConfiguration Config => new WaitConfiguration();
+    private static WaitConfiguration Config => new WaitConfiguration { TimeToWait = TimeSpan.FromSeconds(30) };
 
     public TestFunction(TestContext testContext, string hubName)
     {
@@ -84,10 +84,6 @@ public class TestFunction : IDisposable
                     s.AddSingleton<IOuterApiClient>(new TestOuterApi(testContext));// override DI in Startup, must come after new Startup().Configure(builder);
                 })
             )
-            .ConfigureServices(s =>
-            {
-                s.AddHostedService<PurgeBackgroundJob>();
-            })
             .Build();
     }
 
@@ -96,7 +92,7 @@ public class TestFunction : IDisposable
         var timeout = new TimeSpan(0, 2, 10);
         var delayTask = Task.Delay(timeout);
 
-        await Task.WhenAny(Task.WhenAll(_host.StartAsync(), Jobs.Terminate()), delayTask);
+        await Task.WhenAny(Task.WhenAll(_host.StartAsync(), Jobs.Terminate(), Jobs.Purge()), delayTask);
 
         if (delayTask.IsCompleted)
         {

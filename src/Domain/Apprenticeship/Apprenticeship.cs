@@ -166,11 +166,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
 
         public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod)
         {
-            if (PaymentsFrozen)
-            {
-                return new List<Payment>().AsReadOnly();
-            }
-            return _payments.Where(x => x.CollectionPeriod == collectionPeriod && x.CollectionYear == collectionYear && !x.SentForPayment).ToList().AsReadOnly();
+            return _payments.Where(x => x.CollectionPeriod == collectionPeriod && x.CollectionYear == collectionYear && !x.SentForPayment && !x.NotPaidDueToFreeze).ToList().AsReadOnly();
         }
 
         public void UnfreezeFrozenPayments(short collectionYear, byte collectionPeriod, short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate)

@@ -1,19 +1,16 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ReleasePayment;
 
 public class ReleasePaymentCommandHandler : IReleasePaymentCommandHandler
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
-    private readonly IDasServiceBusEndpoint _busEndpoint;
     private readonly IFinalisedOnProgammeLearningPaymentEventBuilder _eventBuilder;
-    private readonly ILogger<ProcessUnfundedPaymentsCommandHandler> _logger;
+    private readonly ILogger<ReleasePaymentCommandHandler> _logger;
 
-    public ReleasePaymentCommandHandler(IApprenticeshipRepository apprenticeshipRepository, IDasServiceBusEndpoint busEndpoint, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ProcessUnfundedPaymentsCommandHandler> logger)
+    public ReleasePaymentCommandHandler(IApprenticeshipRepository apprenticeshipRepository, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ReleasePaymentCommandHandler> logger)
     {
         _apprenticeshipRepository = apprenticeshipRepository;
-        _busEndpoint = busEndpoint;
         _eventBuilder = eventBuilder;
         _logger = logger;
     }
@@ -27,15 +24,5 @@ public class ReleasePaymentCommandHandler : IReleasePaymentCommandHandler
         
         apprenticeship.SendPayment(command.PaymentKey, _eventBuilder.Build);
         await _apprenticeshipRepository.Update(apprenticeship);
-
-        /*foreach (var payment in paymentsToSend)
-        {
-            var finalisedOnProgammeLearningPaymentEvent = _eventBuilder.Build(payment, apprenticeship);
-            await _busEndpoint.Publish(finalisedOnProgammeLearningPaymentEvent);
-
-            _logger.LogInformation("ApprenticeshipKey: {0} Publishing FinalisedOnProgammeLearningPaymentEvent: {1}",
-                finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey,
-                finalisedOnProgammeLearningPaymentEvent.SerialiseForLogging());
-        }*/
     }
 }

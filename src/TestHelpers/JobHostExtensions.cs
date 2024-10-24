@@ -25,6 +25,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers
                 ["name"] = orchestration
             });
 
+            await jobs.Purge();
+
             return jobs;
         }
 

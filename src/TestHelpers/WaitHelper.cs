@@ -86,9 +86,8 @@ public class WaitHelper
         }
     }
 }
-
 public class WaitConfiguration
 {
-    public TimeSpan TimeToWait { get; set; } = TimeSpan.FromSeconds(5);
+    public TimeSpan TimeToWait { get; set; } = TimeSpan.FromSeconds(1);
     public TimeSpan TimeToPause { get; set; } = TimeSpan.FromMilliseconds(50);
 }
