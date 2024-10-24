@@ -29,7 +29,6 @@ public interface IApprenticeship : IAggregateRoot
     public void MarkPaymentsAsFrozen(short collectionYear, byte collectionPeriod);
     public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod);
     public void UnfreezeFrozenPayments(short collectionYear, byte collectionPeriod, short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate);
-    public void MarkPaymentsAsSent(short collectionYear, byte collectionPeriod);
     public void FreezePayments();
     public void UnfreezePayments();
     public void SetLearnerReference(string learnerReference);
