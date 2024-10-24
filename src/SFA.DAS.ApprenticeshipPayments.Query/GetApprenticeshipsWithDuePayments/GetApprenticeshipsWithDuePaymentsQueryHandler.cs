@@ -1,21 +1,19 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
-using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments;
 
-namespace SFA.DAS.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipsWithDuePayments;
+
+public class GetApprenticeshipsWithDuePaymentsQueryHandler : IQueryHandler<GetApprenticeshipsWithDuePaymentsResponse, GetApprenticeshipsWithDuePaymentsQuery>
 {
-    public class GetApprenticeshipsWithDuePaymentsQueryHandler : IGetApprenticeshipsWithDuePaymentsQueryHandler
+    private IApprenticeshipQueryRepository _repository;
+
+    public GetApprenticeshipsWithDuePaymentsQueryHandler(IApprenticeshipQueryRepository repository)
     {
-        private IApprenticeshipQueryRepository _repository;
+        _repository = repository;
+    }
 
-        public GetApprenticeshipsWithDuePaymentsQueryHandler(IApprenticeshipQueryRepository repository)
-        {
-            _repository = repository;
-        }
-
-        public async Task<GetApprenticeshipsWithDuePaymentsResponse> Get(GetApprenticeshipsWithDuePaymentsQuery command)
-        {
-            var apprenticeships = await _repository.GetWithDuePayments(command.CollectionYear, command.CollectionPeriod);
-            return new GetApprenticeshipsWithDuePaymentsResponse(apprenticeships.Select(x => new Apprenticeship(x)));
-        }
+    public async Task<GetApprenticeshipsWithDuePaymentsResponse> Get(GetApprenticeshipsWithDuePaymentsQuery query)
+    {
+        var apprenticeships = await _repository.GetWithDuePayments(query.CollectionYear, query.CollectionPeriod);
+        return new GetApprenticeshipsWithDuePaymentsResponse(apprenticeships.Select(x => new Apprenticeship(x)));
     }
 }

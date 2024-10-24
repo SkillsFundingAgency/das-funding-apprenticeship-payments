@@ -1,6 +1,5 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+
+public interface IDomainEvent
 {
-    public interface IDomainEvent
-    {
-    }
 }

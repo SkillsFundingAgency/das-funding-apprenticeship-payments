@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ReleasePayment;
 
-public class ReleasePaymentCommandHandler : IReleasePaymentCommandHandler
+public class ReleasePaymentCommandHandler : ICommandHandler<ReleasePaymentCommand>
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IFinalisedOnProgammeLearningPaymentEventBuilder _eventBuilder;
@@ -15,7 +15,7 @@ public class ReleasePaymentCommandHandler : IReleasePaymentCommandHandler
         _logger = logger;
     }
 
-    public async Task Release(ReleasePaymentCommand command)
+    public async Task Handle(ReleasePaymentCommand command)
     {
         var apprenticeshipKey = command.ApprenticeshipKey;
         var apprenticeship = await _apprenticeshipRepository.Get(apprenticeshipKey);

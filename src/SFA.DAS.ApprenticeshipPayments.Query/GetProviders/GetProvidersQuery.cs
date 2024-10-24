@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetProviders
-{
-    public class GetProvidersQuery
-    {
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetProviders;
 
-    }
+public class GetProvidersQuery
+{
+
 }

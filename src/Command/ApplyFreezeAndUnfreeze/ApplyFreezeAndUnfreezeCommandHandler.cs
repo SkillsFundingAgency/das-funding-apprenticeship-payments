@@ -7,7 +7,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.ApplyFreezeAndUnfreeze;
 
-public class ApplyFreezeAndUnfreezeCommandHandler : IApplyFreezeAndUnfreezeCommandHandler
+public class ApplyFreezeAndUnfreezeCommandHandler : ICommandHandler<ApplyFreezeAndUnfreezeCommand>
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly ISystemClockService _systemClock;
@@ -22,7 +22,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler : IApplyFreezeAndUnfreezeComma
         _logger = logger;
     }
 
-    public async Task Apply(ApplyFreezeAndUnfreezeCommand command)
+    public async Task Handle(ApplyFreezeAndUnfreezeCommand command)
     {
         var apprenticeshipKey = command.ApprenticeshipKey;
         var apprenticeship = await _apprenticeshipRepository.Get(apprenticeshipKey);

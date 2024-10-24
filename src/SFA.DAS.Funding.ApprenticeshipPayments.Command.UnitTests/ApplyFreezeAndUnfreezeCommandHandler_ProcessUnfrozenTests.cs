@@ -59,7 +59,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler_ProcessUnfrozenTests
 
         _sut = new ApplyFreezeAndUnfreezeCommandHandler(_repository.Object, _systemClockService.Object, _apiClient.Object, Mock.Of<ILogger<ApplyFreezeAndUnfreezeCommandHandler>>());
 
-        await _sut.Apply(_command);
+        await _sut.Handle(_command);
     }
 
     [Test]

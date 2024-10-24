@@ -2,21 +2,20 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers
+namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
+
+public static class PurgeFunction
 {
-    public static class PurgeFunction
+    [FunctionName(nameof(PurgeFunction))]
+    public static async Task Run([DurableClient] IDurableOrchestrationClient client)
     {
-        [FunctionName(nameof(PurgeFunction))]
-        public static async Task Run([DurableClient] IDurableOrchestrationClient client)
-        {
-            await client.PurgeInstanceHistoryAsync(
-                DateTime.MinValue,
-                null,
-                new[] {
-                    OrchestrationStatus.Completed,
-                    OrchestrationStatus.Terminated,
-                    OrchestrationStatus.Failed,
-                });
-        }
+        await client.PurgeInstanceHistoryAsync(
+            DateTime.MinValue,
+            null,
+            new[] {
+                OrchestrationStatus.Completed,
+                OrchestrationStatus.Terminated,
+                OrchestrationStatus.Failed,
+            });
     }
 }

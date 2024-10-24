@@ -4,7 +4,7 @@ using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprentices
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 
-public class CalculateApprenticeshipPaymentsCommandHandler : ICalculateApprenticeshipPaymentsCommandHandler
+public class CalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<CalculateApprenticeshipPaymentsCommand>
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IDasServiceBusEndpoint _busEndpoint;
@@ -25,7 +25,7 @@ public class CalculateApprenticeshipPaymentsCommandHandler : ICalculateApprentic
         _logger = logger;
     }
 
-    public async Task Calculate(CalculateApprenticeshipPaymentsCommand command)
+    public async Task Handle(CalculateApprenticeshipPaymentsCommand command)
     {
         var apprenticeship = new Apprenticeship(command.EarningsGeneratedEvent);
         apprenticeship.CalculatePayments(_systemClockService.Now);

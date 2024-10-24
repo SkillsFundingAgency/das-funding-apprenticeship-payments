@@ -2,22 +2,21 @@
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Responses;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetLearnersInILR
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetLearnersInILR;
+
+public class GetLearnersInILRQueryHandler : IQueryHandler<GetLearnersInILRQueryResponse, GetLearnersInILRQuery>
 {
-    public class GetLearnersInILRQueryHandler : IGetLearnersInILRQueryHandler
+    private readonly IOuterApiClient _outerApiClient;
+
+    public GetLearnersInILRQueryHandler(IOuterApiClient outerApiClient)
     {
-        private readonly IOuterApiClient _outerApiClient;
+        _outerApiClient = outerApiClient;
+    }
 
-        public GetLearnersInILRQueryHandler(IOuterApiClient outerApiClient)
-        {
-            _outerApiClient = outerApiClient;
-        }
+    public async Task<GetLearnersInILRQueryResponse> Get(GetLearnersInILRQuery query)
+    {
+        var response = await _outerApiClient.Get<GetLearnersInILRResponse>(new GetLearnersInILRRequest(query.Ukprn, query.AcademicYear));
 
-        public async Task<GetLearnersInILRQueryResponse> Get(GetLearnersInILRQuery query)
-        {
-            var response = await _outerApiClient.Get<GetLearnersInILRResponse>(new GetLearnersInILRRequest(query.Ukprn, query.AcademicYear));
-
-            return new GetLearnersInILRQueryResponse(response.Body.Learners.Select(x => new Learner(x.Uln, x.LearnerRefNumber)));
-        }
+        return new GetLearnersInILRQueryResponse(response.Body.Learners.Select(x => new Learner(x.Uln, x.LearnerRefNumber)));
     }
 }

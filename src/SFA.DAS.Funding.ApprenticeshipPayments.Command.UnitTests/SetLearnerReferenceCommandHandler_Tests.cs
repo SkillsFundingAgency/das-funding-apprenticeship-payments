@@ -31,7 +31,7 @@ public class SetLearnerReferenceCommandHandler_Tests
         _sut = new SetLearnerReferenceCommandHandler(
             _apprenticeshipRepository.Object,
             Mock.Of<ILogger<CalculateApprenticeshipPaymentsCommandHandler>>());
-        await _sut.Set(_command);
+        await _sut.Handle(_command);
     }
 
     [Test]

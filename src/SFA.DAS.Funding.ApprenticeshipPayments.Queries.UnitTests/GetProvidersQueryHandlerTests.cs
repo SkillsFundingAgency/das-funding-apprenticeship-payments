@@ -6,31 +6,30 @@ using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetProviders;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Queries.UnitTests
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Queries.UnitTests;
+
+[TestFixture]
+public class GetProvidersQueryHandlerTests
 {
-    [TestFixture]
-    public class GetProvidersQueryHandlerTests
+    private Fixture _fixture;
+
+    [SetUp]
+    public void SetUp()
     {
-        private Fixture _fixture;
+        _fixture = new Fixture();
+    }
 
-        [SetUp]
-        public void SetUp()
-        {
-            _fixture = new Fixture();
-        }
+    [Test]
+    public async Task WhenGetThenProvidersAreReturned()
+    {
+        var repository = new Mock<IApprenticeshipQueryRepository>();
+        var sut = new GetProvidersQueryHandler(repository.Object);
 
-        [Test]
-        public async Task WhenGetThenProvidersAreReturned()
-        {
-            var repository = new Mock<IApprenticeshipQueryRepository>();
-            var sut = new GetProvidersQueryHandler(repository.Object);
+        var expectedProviders = _fixture.CreateMany<long>();
+        repository.Setup(x => x.GetAllProviders()).ReturnsAsync(expectedProviders);
 
-            var expectedProviders = _fixture.CreateMany<long>();
-            repository.Setup(x => x.GetAllProviders()).ReturnsAsync(expectedProviders);
+        var actualProviders = await sut.Get(new GetProvidersQuery());
 
-            var actualProviders = await sut.Get(new GetProvidersQuery());
-
-            actualProviders.Providers.Should().AllSatisfy(x => expectedProviders.Should().Contain(x.Ukprn));
-        }
+        actualProviders.Providers.Should().AllSatisfy(x => expectedProviders.Should().Contain(x.Ukprn));
     }
 }

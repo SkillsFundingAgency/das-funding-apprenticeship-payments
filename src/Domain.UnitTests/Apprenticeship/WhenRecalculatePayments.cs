@@ -45,7 +45,7 @@ public class WhenRecalculatePayments
         };
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
         _sut.CalculatePayments(DateTime.Now);
-        _sut.Payments.First().Send();
+        _sut.Payments.First().MarkAsSent();
         
         _originalPayments = new List<Payment>(_sut.Payments);
 

@@ -9,7 +9,6 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using SFA.DAS.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query;

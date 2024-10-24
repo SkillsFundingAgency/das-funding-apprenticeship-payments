@@ -3,7 +3,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.SetLearnerReference;
 
-public class SetLearnerReferenceCommandHandler : ISetLearnerReferenceCommandHandler
+public class SetLearnerReferenceCommandHandler : ICommandHandler<SetLearnerReferenceCommand>
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly ILogger<CalculateApprenticeshipPaymentsCommandHandler> _logger;
@@ -14,7 +14,7 @@ public class SetLearnerReferenceCommandHandler : ISetLearnerReferenceCommandHand
         _logger = logger;
     }
 
-    public async Task Set(SetLearnerReferenceCommand command)
+    public async Task Handle(SetLearnerReferenceCommand command)
     {
         var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
         if (apprenticeship == null)

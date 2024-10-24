@@ -39,7 +39,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
             Mock.Of<ILogger<CalculateRequiredLevyAmountCommandHandler>>());
 
         // Act
-        await _sut.Publish(command);
+        await _sut.Handle(command);
     }
 
     [Test]

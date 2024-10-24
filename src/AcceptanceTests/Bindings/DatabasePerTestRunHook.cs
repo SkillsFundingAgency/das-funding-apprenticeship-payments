@@ -1,13 +1,12 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Bindings;
+
+[Binding]
+public static class DatabasePerTestRunHook
 {
-    [Binding]
-    public static class DatabasePerTestRunHook
+    [BeforeTestRun(Order = 1)]
+    public static void RefreshDatabaseModel()
     {
-        [BeforeTestRun(Order = 1)]
-        public static void RefreshDatabaseModel()
-        {
-            Console.WriteLine($"[{nameof(DatabasePerTestRunHook)}] {nameof(RefreshDatabaseModel)}: Refreshing database model");
-            SqlDatabaseModel.Update();
-        }
+        Console.WriteLine($"[{nameof(DatabasePerTestRunHook)}] {nameof(RefreshDatabaseModel)}: Refreshing database model");
+        SqlDatabaseModel.Update();
     }
 }

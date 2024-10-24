@@ -13,26 +13,25 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Command
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Command;
+
+[ExcludeFromCodeCoverage]
+public static class ServiceCollectionExtensions
 {
-    [ExcludeFromCodeCoverage]
-    public static class ServiceCollectionExtensions
+    public static IServiceCollection AddCommandServices(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        public static IServiceCollection AddCommandServices(this IServiceCollection serviceCollection, IConfiguration configuration)
-        {
-            serviceCollection.AddSingleton<IPaymentsGeneratedEventBuilder, PaymentsGeneratedEventBuilder>();
-            serviceCollection.AddSingleton<IFinalisedOnProgammeLearningPaymentEventBuilder, FinalisedOnProgammeLearningPaymentEventBuilder>();
-            serviceCollection.AddScoped<ICalculateApprenticeshipPaymentsCommandHandler, CalculateApprenticeshipPaymentsCommandHandler>();
-            serviceCollection.AddScoped<ICalculateRequiredLevyAmountCommandHandler, CalculateRequiredLevyAmountCommandHandler>();
-            serviceCollection.AddScoped<IRecalculateApprenticeshipPaymentsCommandHandler, RecalculateApprenticeshipPaymentsCommandHandler>();
-            serviceCollection.AddScoped<IFreezePaymentsCommandHandler, FreezePaymentsCommandHandler>();
-            serviceCollection.AddScoped<IUnfreezePaymentsCommandHandler, UnfreezePaymentsCommandHandler>();
-            serviceCollection.AddScoped<IApplyFreezeAndUnfreezeCommandHandler, ApplyFreezeAndUnfreezeCommandHandler>();
-            serviceCollection.AddScoped<IReleasePaymentCommandHandler, ReleasePaymentCommandHandler>();
-            serviceCollection.AddScoped<ISetLearnerReferenceCommandHandler, SetLearnerReferenceCommandHandler>();
-            serviceCollection.AddSystemClock(configuration);
-            serviceCollection.AddHttpClient<IApprenticeshipsApiClient, ApprenticeshipsApiClient>();
-            return serviceCollection;
-        }
+        serviceCollection.AddSingleton<IPaymentsGeneratedEventBuilder, PaymentsGeneratedEventBuilder>();
+        serviceCollection.AddSingleton<IFinalisedOnProgammeLearningPaymentEventBuilder, FinalisedOnProgammeLearningPaymentEventBuilder>();
+        serviceCollection.AddScoped<ICommandHandler<CalculateApprenticeshipPaymentsCommand>, CalculateApprenticeshipPaymentsCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<CalculateRequiredLevyAmountCommand>, CalculateRequiredLevyAmountCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<RecalculateApprenticeshipPaymentsCommand>, RecalculateApprenticeshipPaymentsCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<FreezePaymentsCommand>, FreezePaymentsCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<UnfreezePaymentsCommand>, UnfreezePaymentsCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<ApplyFreezeAndUnfreezeCommand>, ApplyFreezeAndUnfreezeCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<ReleasePaymentCommand>, ReleasePaymentCommandHandler>();
+        serviceCollection.AddScoped<ICommandHandler<SetLearnerReferenceCommand>, SetLearnerReferenceCommandHandler>();
+        serviceCollection.AddSystemClock(configuration);
+        serviceCollection.AddHttpClient<IApprenticeshipsApiClient, ApprenticeshipsApiClient>();
+        return serviceCollection;
     }
 }

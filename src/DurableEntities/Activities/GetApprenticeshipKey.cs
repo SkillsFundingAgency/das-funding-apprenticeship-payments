@@ -1,22 +1,22 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Dtos;
+using SFA.DAS.Funding.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipKey;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities;
+
+public class GetApprenticeshipKey
 {
-    public class GetApprenticeshipKey
+    private readonly IQueryHandler<GetApprenticeshipKeyResponse, GetApprenticeshipKeyQuery> _queryHandler;
+
+    public GetApprenticeshipKey(IQueryHandler<GetApprenticeshipKeyResponse, GetApprenticeshipKeyQuery> queryHandler)
     {
-        private readonly IGetApprenticeshipKeyQueryHandler _queryHandler;
+        _queryHandler = queryHandler;
+    }
 
-        public GetApprenticeshipKey(IGetApprenticeshipKeyQueryHandler queryHandler)
-        {
-            _queryHandler = queryHandler;
-        }
-
-        [FunctionName(nameof(GetApprenticeshipKey))]
-        public async Task<Guid?> Get([ActivityTrigger] Learner input)
-        {
-            var response = await _queryHandler.Get(new GetApprenticeshipKeyQuery(input.Ukprn, input.Uln));
-            return response.ApprenticeshipKey;
-        }
+    [FunctionName(nameof(GetApprenticeshipKey))]
+    public async Task<Guid?> Get([ActivityTrigger] Learner input)
+    {
+        var response = await _queryHandler.Get(new GetApprenticeshipKeyQuery(input.Ukprn, input.Uln));
+        return response.ApprenticeshipKey;
     }
 }

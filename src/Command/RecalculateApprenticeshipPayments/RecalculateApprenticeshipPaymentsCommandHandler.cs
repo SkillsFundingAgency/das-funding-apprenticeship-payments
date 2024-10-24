@@ -4,7 +4,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
 
-public class RecalculateApprenticeshipPaymentsCommandHandler : IRecalculateApprenticeshipPaymentsCommandHandler
+public class RecalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<RecalculateApprenticeshipPaymentsCommand>
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IDasServiceBusEndpoint _busEndpoint;
@@ -25,7 +25,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler : IRecalculateAppre
         _logger = logger;
     }
 
-    public async Task Recalculate(RecalculateApprenticeshipPaymentsCommand command)
+    public async Task Handle(RecalculateApprenticeshipPaymentsCommand command)
     {
         var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
 

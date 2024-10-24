@@ -1,12 +1,11 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.FreezePayments
-{
-    public class FreezePaymentsCommand
-    {
-        public FreezePaymentsCommand(Guid apprenticeshipKey)
-        {
-            ApprenticeshipKey = apprenticeshipKey;
-        }
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.FreezePayments;
 
-        public Guid ApprenticeshipKey { get; }
+public class FreezePaymentsCommand
+{
+    public FreezePaymentsCommand(Guid apprenticeshipKey)
+    {
+        ApprenticeshipKey = apprenticeshipKey;
     }
+
+    public Guid ApprenticeshipKey { get; }
 }

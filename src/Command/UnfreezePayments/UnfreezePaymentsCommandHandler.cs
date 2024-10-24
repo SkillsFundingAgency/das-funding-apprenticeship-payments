@@ -1,21 +1,20 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnfreezePayments
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnfreezePayments;
+
+public class UnfreezePaymentsCommandHandler : ICommandHandler<UnfreezePaymentsCommand>
 {
-    public class UnfreezePaymentsCommandHandler : IUnfreezePaymentsCommandHandler
+    private readonly IApprenticeshipRepository _apprenticeshipRepository;
+
+    public UnfreezePaymentsCommandHandler(IApprenticeshipRepository apprenticeshipRepository)
     {
-        private readonly IApprenticeshipRepository _apprenticeshipRepository;
+        _apprenticeshipRepository = apprenticeshipRepository;
+    }
 
-        public UnfreezePaymentsCommandHandler(IApprenticeshipRepository apprenticeshipRepository)
-        {
-            _apprenticeshipRepository = apprenticeshipRepository;
-        }
-
-        public async Task Unfreeze(UnfreezePaymentsCommand command)
-        {
-            var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
-            apprenticeship.UnfreezePayments();
-            await _apprenticeshipRepository.Update(apprenticeship);
-        }
+    public async Task Handle(UnfreezePaymentsCommand command)
+    {
+        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
+        apprenticeship.UnfreezePayments();
+        await _apprenticeshipRepository.Update(apprenticeship);
     }
 }

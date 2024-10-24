@@ -1,20 +1,19 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipKey
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipKey;
+
+public class GetApprenticeshipKeyQueryHandler : IQueryHandler<GetApprenticeshipKeyResponse, GetApprenticeshipKeyQuery>
 {
-    public class GetApprenticeshipKeyQueryHandler : IGetApprenticeshipKeyQueryHandler
+    private IApprenticeshipQueryRepository _repository;
+
+    public GetApprenticeshipKeyQueryHandler(IApprenticeshipQueryRepository repository)
     {
-        private IApprenticeshipQueryRepository _repository;
+        _repository = repository;
+    }
 
-        public GetApprenticeshipKeyQueryHandler(IApprenticeshipQueryRepository repository)
-        {
-            _repository = repository;
-        }
-
-        public async Task<GetApprenticeshipKeyResponse> Get(GetApprenticeshipKeyQuery command)
-        {
-            var apprenticeshipKey = await _repository.GetApprenticeshipKey(command.Ukprn, command.Uln);
-            return new GetApprenticeshipKeyResponse(apprenticeshipKey);
-        }
+    public async Task<GetApprenticeshipKeyResponse> Get(GetApprenticeshipKeyQuery query)
+    {
+        var apprenticeshipKey = await _repository.GetApprenticeshipKey(query.Ukprn, query.Uln);
+        return new GetApprenticeshipKeyResponse(apprenticeshipKey);
     }
 }

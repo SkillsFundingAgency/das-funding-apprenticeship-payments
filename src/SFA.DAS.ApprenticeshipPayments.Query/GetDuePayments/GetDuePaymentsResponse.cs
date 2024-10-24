@@ -1,22 +1,21 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetDuePayments
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Query.GetDuePayments;
+
+public class Payment
 {
-    public class Payment
+    public Payment(Guid key)
     {
-        public Payment(Guid key)
-        {
-            Key = key;
-        }
-
-        public Guid Key { get; }
+        Key = key;
     }
 
-    public class GetDuePaymentsResponse
-    {
-        public GetDuePaymentsResponse(IEnumerable<Payment> payments)
-        {
-            Payments = payments;
-        }
+    public Guid Key { get; }
+}
 
-        public IEnumerable<Payment> Payments { get; }
+public class GetDuePaymentsResponse
+{
+    public GetDuePaymentsResponse(IEnumerable<Payment> payments)
+    {
+        Payments = payments;
     }
+
+    public IEnumerable<Payment> Payments { get; }
 }

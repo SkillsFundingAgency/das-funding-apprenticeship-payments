@@ -57,7 +57,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
             _paymentsGeneratedEventBuilder.Object,
             _mockSystemClockService.Object,
             Mock.Of<ILogger<CalculateApprenticeshipPaymentsCommandHandler>>());
-        await _sut.Recalculate(_command);
+        await _sut.Handle(_command);
     }
 
     [Test]

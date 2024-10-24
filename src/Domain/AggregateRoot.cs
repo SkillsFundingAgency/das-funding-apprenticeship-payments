@@ -1,30 +1,29 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+
+public interface IAggregateRoot
 {
-    public interface IAggregateRoot
+    public IEnumerable<IDomainEvent> FlushEvents();
+}
+
+public abstract class AggregateRoot
+{
+    private readonly List<IDomainEvent> _events = new List<IDomainEvent>();
+
+    protected void AddEvent(IDomainEvent @event)
     {
-        public IEnumerable<IDomainEvent> FlushEvents();
+        lock (_events)
+        {
+            _events.Add(@event);
+        }
     }
 
-    public abstract class AggregateRoot
+    public IEnumerable<IDomainEvent> FlushEvents()
     {
-        private readonly List<IDomainEvent> _events = new List<IDomainEvent>();
-
-        protected void AddEvent(IDomainEvent @event)
+        lock (_events)
         {
-            lock (_events)
-            {
-                _events.Add(@event);
-            }
-        }
-
-        public IEnumerable<IDomainEvent> FlushEvents()
-        {
-            lock (_events)
-            {
-                var events = _events.ToArray();
-                _events.Clear();
-                return events;
-            }
+            var events = _events.ToArray();
+            _events.Clear();
+            return events;
         }
     }
 }

@@ -1,13 +1,12 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers
-{
-    public static class AcademicYearHelper
-    {
-        private static readonly Random Random = new Random();
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 
-        public static short GetRandomValidAcademicYear()
-        {
-            var startYearCode = Random.Next(10, 98);
-            return short.Parse($"{startYearCode}{startYearCode+1}");
-        }
+public static class AcademicYearHelper
+{
+    private static readonly Random Random = new Random();
+
+    public static short GetRandomValidAcademicYear()
+    {
+        var startYearCode = Random.Next(10, 98);
+        return short.Parse($"{startYearCode}{startYearCode+1}");
     }
 }

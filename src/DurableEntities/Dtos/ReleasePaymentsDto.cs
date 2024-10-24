@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Dtos;
 
 public class ReleasePaymentsDto
 {

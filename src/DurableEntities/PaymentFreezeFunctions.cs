@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.FreezePayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.UnfreezePayments;
 
@@ -6,10 +7,10 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
 public class PaymentFreezeFunctions
 {
-    private IFreezePaymentsCommandHandler _freezePaymentsCommandHandler;
-    private readonly IUnfreezePaymentsCommandHandler _unfreezePaymentsCommandHandler;
+    private readonly ICommandHandler<FreezePaymentsCommand> _freezePaymentsCommandHandler;
+    private readonly ICommandHandler<UnfreezePaymentsCommand> _unfreezePaymentsCommandHandler;
 
-    public PaymentFreezeFunctions(IFreezePaymentsCommandHandler freezePaymentsCommandHandler, IUnfreezePaymentsCommandHandler unfreezePaymentsCommandHandler)
+    public PaymentFreezeFunctions(ICommandHandler<FreezePaymentsCommand> freezePaymentsCommandHandler, ICommandHandler<UnfreezePaymentsCommand> unfreezePaymentsCommandHandler)
     {
         _freezePaymentsCommandHandler = freezePaymentsCommandHandler;
         _unfreezePaymentsCommandHandler = unfreezePaymentsCommandHandler;
@@ -24,7 +25,7 @@ public class PaymentFreezeFunctions
         log.LogInformation("Received PaymentsFrozenEvent for apprenticeship {apprenticeshipKey}", paymentsFrozenEvent.ApprenticeshipKey);
 
         var command = new FreezePaymentsCommand(paymentsFrozenEvent.ApprenticeshipKey);
-        await _freezePaymentsCommandHandler.Freeze(command);
+        await _freezePaymentsCommandHandler.Handle(command);
     }
 
     [FunctionName(nameof(PaymentsUnfrozenEventServiceBusTrigger))]
@@ -36,6 +37,6 @@ public class PaymentFreezeFunctions
         log.LogInformation("Received {eventName} for apprenticeship {apprenticeshipKey}", nameof(PaymentsUnfrozenEvent), paymentsUnfrozenEvent.ApprenticeshipKey);
 
         var command = new UnfreezePaymentsCommand(paymentsUnfrozenEvent.ApprenticeshipKey);
-        await _unfreezePaymentsCommandHandler.Unfreeze(command);
+        await _unfreezePaymentsCommandHandler.Handle(command);
     }
 }
