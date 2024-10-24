@@ -184,14 +184,6 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
         }
     }
 
-    public void MarkPaymentsAsSent(short collectionYear, byte collectionPeriod)
-    {
-        foreach (var payment in DuePayments(collectionYear, collectionPeriod))
-        {
-            payment.MarkAsSent();
-        }
-    }
-
     public void FreezePayments()
     {
         PaymentsFrozen = true;

@@ -31,6 +31,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.ApprenticeshipEarning.StartDate = apprenticeship.StartDate;
         @event.ApprenticeshipEarning.Uln = apprenticeship.Uln;
         @event.ApprenticeshipEarning.FundingLineType = payment.FundingLineType;
+        @event.ApprenticeshipEarning.LearnerReference = apprenticeship.LearnerReference;
 
         @event.CollectionYear = payment.CollectionYear;
         @event.CollectionPeriod = payment.CollectionPeriod;

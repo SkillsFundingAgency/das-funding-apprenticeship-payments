@@ -40,7 +40,7 @@ internal static class CalculateRequiredLevyAmountCommandExtensions
         e.InstalmentAmount = command.Data.ApprenticeshipEarning.DeliveryPeriodAmount;
         e.JobId = -1;
         e.Learner = new();
-        e.Learner.ReferenceNumber = command.Data.ApprenticeshipEarning.Uln.ToString();
+        e.Learner.ReferenceNumber = command.Data.ApprenticeshipEarning.LearnerReference;
         e.Learner.Uln = command.Data.ApprenticeshipEarning.Uln;
         e.LearningAim = new();
         e.LearningAim.FrameworkCode = 0;

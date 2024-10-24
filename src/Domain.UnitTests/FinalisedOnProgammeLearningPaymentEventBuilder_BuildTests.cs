@@ -135,6 +135,12 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     }
 
     [Test]
+    public void ShouldPopulate_LearnerReference_Correctly()
+    {
+        _result.ApprenticeshipEarning.LearnerReference.Should().Be(_apprenticeship.LearnerReference);
+    }
+
+    [Test]
     public void ShouldPopulate_PlannedEndDate_Correctly()
     {
         _result.ApprenticeshipEarning.PlannedEndDate.Should().Be(_apprenticeship.PlannedEndDate);

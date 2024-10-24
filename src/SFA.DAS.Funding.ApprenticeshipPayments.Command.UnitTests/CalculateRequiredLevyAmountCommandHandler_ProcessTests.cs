@@ -213,7 +213,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearnerReferenceNumber_IsUln()
     {
         _bus.Verify(ms => ms.Publish(
-                It.Is<CalculatedRequiredLevyAmount>(e => e.Learner.ReferenceNumber == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString())),
+                It.Is<CalculatedRequiredLevyAmount>(e => e.Learner.ReferenceNumber == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.LearnerReference)),
             Times.Once());
     }
 
