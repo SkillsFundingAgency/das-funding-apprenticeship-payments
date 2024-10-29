@@ -69,7 +69,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         outboundEvent.LearningAim.FrameworkCode.Should().Be(0);
         outboundEvent.LearningAim.FundingLineType.Should().Be(inboundEvent.ApprenticeshipEarning.FundingLineType);
         outboundEvent.LearningAim.PathwayCode.Should().Be(0);
-        outboundEvent.LearningAim.ProgrammeType.Should().Be(0);
+        outboundEvent.LearningAim.ProgrammeType.Should().Be(25);
         outboundEvent.LearningAim.Reference.Should().Be("ZPROG001");
         outboundEvent.LearningAim.SequenceNumber.Should().Be(0);
         outboundEvent.LearningAim.StandardCode.Should().Be(Convert.ToInt32(inboundEvent.CourseCode));
