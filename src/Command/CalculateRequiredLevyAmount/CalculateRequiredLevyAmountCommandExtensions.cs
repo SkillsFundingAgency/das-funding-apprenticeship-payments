@@ -39,7 +39,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAm
             e.LearningAim.FrameworkCode = 0;
             e.LearningAim.FundingLineType = command.Data.ApprenticeshipEarning.FundingLineType;
             e.LearningAim.PathwayCode = 0;
-            e.LearningAim.ProgrammeType = 0;
+            e.LearningAim.ProgrammeType = 25;
             e.LearningAim.Reference = "ZPROG001";
             e.LearningAim.SequenceNumber = 0;
             e.LearningAim.StandardCode = Convert.ToInt32(command.Data.CourseCode);
