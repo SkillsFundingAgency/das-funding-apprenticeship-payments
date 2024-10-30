@@ -13,11 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.Apprentices
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers", "TestHelpers\SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.csproj", "{44B8941D-9B56-4024-A04B-E819AFCECA1F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Functions", "DurableEntities\SFA.DAS.Funding.ApprenticeshipPayments.Functions.csproj", "{DE9DC81B-42B9-4890-A3EF-8315CA9A6D43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Functions", "Functions\SFA.DAS.Funding.ApprenticeshipPayments.Functions.csproj", "{DE9DC81B-42B9-4890-A3EF-8315CA9A6D43}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure", "Infrastructure\SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.csproj", "{BC323D44-59D1-48C6-B8A3-EC87A5901204}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests", "DurableEntities.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests.csproj", "{C46F6030-5DFD-4688-98D8-428F3E035DAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Functions.UnitTests", "Functions.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.Functions.UnitTests.csproj", "{C46F6030-5DFD-4688-98D8-428F3E035DAD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Types", "Types\SFA.DAS.Funding.ApprenticeshipPayments.Types.csproj", "{BF0CD92B-6380-48F4-8C5A-CE307DEC143A}"
 EndProject

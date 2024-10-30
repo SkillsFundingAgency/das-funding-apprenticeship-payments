@@ -63,7 +63,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DurableEntities\SFA.DAS.Funding.ApprenticeshipPayments.Functions.csproj" />
+    <ProjectReference Include="..\Functions\SFA.DAS.Funding.ApprenticeshipPayments.Functions.csproj" />
     <ProjectReference Include="..\TestHelpers\SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Funding.ApprenticeshipPayments.Types.csproj" />
   </ItemGroup>

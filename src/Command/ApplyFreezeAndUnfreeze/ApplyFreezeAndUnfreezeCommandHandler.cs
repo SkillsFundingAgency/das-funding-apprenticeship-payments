@@ -36,6 +36,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler : ICommandHandler<ApplyFreezeA
         {
             var previousAcademicYear = await GetPreviousAcademicYear();
             apprenticeship.UnfreezeFrozenPayments(command.CollectionYear, command.CollectionPeriod, _systemClock.Now.ToAcademicYear(), short.Parse(previousAcademicYear.AcademicYear), previousAcademicYear.HardCloseDate, _systemClock.Now);
+            _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} - Any frozen frozen payments have been defrosted.", apprenticeshipKey);
         }
 
         await _apprenticeshipRepository.Update(apprenticeship);
@@ -44,8 +45,15 @@ public class ApplyFreezeAndUnfreezeCommandHandler : ICommandHandler<ApplyFreezeA
     private async Task<GetAcademicYearsResponse> GetPreviousAcademicYear()
     {
         var currentAcademicYearResponse = await _apprenticeshipsApiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(_systemClock.Now));
+        if (!currentAcademicYearResponse.IsSuccessStatusCode || currentAcademicYearResponse.Body == null)
+            throw new Exception("Error getting current academic year");
+
         var lastDayOfPreviousYear = currentAcademicYearResponse.Body.StartDate.AddDays(-1);
+
         var previousAcademicYearResponse = await _apprenticeshipsApiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(lastDayOfPreviousYear));
+        if (!previousAcademicYearResponse.IsSuccessStatusCode || previousAcademicYearResponse.Body == null)
+            throw new Exception("Error getting previous academic year");
+            
         return previousAcademicYearResponse.Body;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 
@@ -7,6 +6,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
 
 public class ApprenticeshipPaymentsDataContext : DbContext
 {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     public ApprenticeshipPaymentsDataContext(DbContextOptions<ApprenticeshipPaymentsDataContext> options) : base(options)
     {
     }
@@ -14,6 +14,7 @@ public class ApprenticeshipPaymentsDataContext : DbContext
     public virtual DbSet<Apprenticeship> Apprenticeships { get; set; }
     public virtual DbSet<Earning> Earnings { get; set; }
     public virtual DbSet<Payment> Payments { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
