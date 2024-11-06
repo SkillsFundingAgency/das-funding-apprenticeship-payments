@@ -194,7 +194,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     public void Process_Publishes_CalculatedRequiredLevyAmount_LearningAimProgrammeType_0()
     {
         _bus.Verify(ms => ms.Send(
-                It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.ProgrammeType == 0)),
+                It.Is<CalculateOnProgrammePayment>(e => e.LearningAim.ProgrammeType == 25)),
             Times.Once());
     }
 
