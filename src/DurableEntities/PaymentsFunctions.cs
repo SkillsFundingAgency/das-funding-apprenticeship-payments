@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Requests;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Responses;
@@ -32,7 +33,7 @@ public class PaymentsFunctions
     }
 
     [FunctionName(nameof(ReleasePaymentsHttpTrigger))]
-    public async Task<HttpResponseMessage> ReleasePaymentsHttpTrigger(
+    public async Task ReleasePaymentsHttpTrigger(
         [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ReleasePayments/{collectionYear}/{collectionPeriod}")] HttpRequestMessage req,
         [DurableClient] IDurableEntityClient client,
         short collectionYear,
@@ -40,7 +41,6 @@ public class PaymentsFunctions
         ILogger log)
     {
         await ReleasePayments(new ReleasePaymentsCommand { CollectionPeriod = collectionPeriod, CollectionYear = collectionYear}, client, log);
-        return req.CreateResponse(HttpStatusCode.OK);
     }
 
     private async Task ReleasePayments(ReleasePaymentsCommand releasePaymentsCommand, IDurableEntityClient client,
