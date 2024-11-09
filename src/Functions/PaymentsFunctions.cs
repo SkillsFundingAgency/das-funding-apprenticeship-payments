@@ -21,7 +21,7 @@ public class PaymentsFunctions
     }
 
     [FunctionName(nameof(ReleasePaymentsHttpTrigger))]
-    public static async Task<HttpResponseMessage> ReleasePaymentsHttpTrigger(
+    public static async Task ReleasePaymentsHttpTrigger(
         [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "releasePayments/{collectionYear}/{collectionPeriod}")] HttpRequestMessage req,
         [DurableClient] IDurableOrchestrationClient starter,
         short collectionYear,
@@ -31,7 +31,5 @@ public class PaymentsFunctions
         string instanceId = await starter.StartNewAsync(nameof(ReleasePaymentsOrchestrator), null, new CollectionDetails(collectionPeriod, collectionYear));
 
         log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
-
-        return req.CreateResponse(HttpStatusCode.Accepted);
     }
 }
