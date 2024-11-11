@@ -43,6 +43,17 @@ public class PaymentsFunctions
         await ReleasePayments(new ReleasePaymentsCommand { CollectionPeriod = collectionPeriod, CollectionYear = collectionYear}, client, log);
     }
 
+    [FunctionName(nameof(ResetSentForPaymentFlagForCollectionPeriodHttpTrigger))]
+    public async Task ResetSentForPaymentFlagForCollectionPeriodHttpTrigger(
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ResetSentForPaymentFlagForCollectionPeriod/{collectionYear}/{collectionPeriod}")] HttpRequestMessage req,
+        [DurableClient] IDurableEntityClient client,
+        short collectionYear,
+        byte collectionPeriod,
+        ILogger log)
+    {
+        await ResetSentForPaymentFlagForCollectionPeriod(collectionYear, collectionPeriod, client, log);
+    }
+
     private async Task ReleasePayments(ReleasePaymentsCommand releasePaymentsCommand, IDurableEntityClient client,
         ILogger log)
     {
@@ -83,6 +94,44 @@ public class PaymentsFunctions
 
         log.LogInformation(
             $"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} complete.");
+    }
+
+    private async Task ResetSentForPaymentFlagForCollectionPeriod(short collectionYear, byte collectionPeriod, IDurableEntityClient client,
+        ILogger log)
+    {
+        using CancellationTokenSource source = new CancellationTokenSource();
+        var token = source.Token;
+
+        var operationInput = new ResetSentForPaymentFlagForCollectionPeriodDto()
+        {
+            CollectionYear = collectionYear,
+            CollectionPeriod = collectionPeriod
+        };
+
+        var allApprenticeshipEntitiesQuery =
+            new EntityQuery
+            {
+                EntityName = nameof(ApprenticeshipEntity)
+            }; //default page size is 100
+        var pageCounter = 0;
+
+        do
+        {
+            pageCounter++;
+            await client.CleanEntityStorageAsync(true, true, token);
+            var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
+            var resetPaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId,
+                nameof(ApprenticeshipEntity.ResetSentForPaymentFlagForCollectionPeriod), operationInput));
+
+            allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
+
+            log.LogInformation(
+                $"Resetting SentForPayment flag for collection period {collectionPeriod} & year {collectionYear} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
+            await Task.WhenAll(resetPaymentsTasks);
+        } while (allApprenticeshipEntitiesQuery.ContinuationToken != null);
+
+        log.LogInformation(
+            $"Resetting SentForPayment flag for collection period {collectionPeriod} & year {collectionYear} complete.");
     }
 
     private async Task<GetAcademicYearsResponse> GetPreviousAcademicYear()

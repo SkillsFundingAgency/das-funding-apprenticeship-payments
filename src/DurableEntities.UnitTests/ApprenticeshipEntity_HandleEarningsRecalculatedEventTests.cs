@@ -11,6 +11,7 @@ using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ResetSentForPaymentFlagForCollectionPeriod;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 
@@ -59,7 +60,7 @@ public class ApprenticeshipEntity_HandleEarningsRecalculatedEventTests
         });
 
         _recalculateApprenticeshipPaymentsCommandHandler = new Mock<IRecalculateApprenticeshipPaymentsCommandHandler>();
-        _sut = new ApprenticeshipEntity(Mock.Of<ICalculateApprenticeshipPaymentsCommandHandler>(), Mock.Of<IProcessUnfundedPaymentsCommandHandler>(), _recalculateApprenticeshipPaymentsCommandHandler.Object, Mock.Of<ILogger<ApprenticeshipEntity>>());
+        _sut = new ApprenticeshipEntity(Mock.Of<ICalculateApprenticeshipPaymentsCommandHandler>(), Mock.Of<IProcessUnfundedPaymentsCommandHandler>(), _recalculateApprenticeshipPaymentsCommandHandler.Object, Mock.Of<ILogger<ApprenticeshipEntity>>(), Mock.Of<IResetSentForPaymentFlagForCollectionPeriodCommandHandler>());
         _sut.Model = new ApprenticeshipEntityModel();
 
         _recalculateApprenticeshipPaymentsCommandHandler.Setup(x => x.Recalculate(It.IsAny<RecalculateApprenticeshipPaymentsCommand>())).ReturnsAsync(_apprenticeship);
