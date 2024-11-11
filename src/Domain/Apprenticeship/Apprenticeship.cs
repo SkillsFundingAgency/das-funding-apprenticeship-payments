@@ -57,6 +57,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship
                         .Where(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear)
                         .Sum(p => p.Amount);
 
+                    if (earning.Amount - existingPaidForDeliveryPeriod == 0) continue;
+
                     var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
                     _payments.Add(payment);
                 }
