@@ -1,3 +1,7 @@
+using System.Net;
+using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Requests;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Api.Responses;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
@@ -25,6 +29,23 @@ public class PaymentsFunctions
         [DurableClient] IDurableEntityClient client,
         ILogger log)
     {
+        await ReleasePayments(releasePaymentsCommand, client, log);
+    }
+
+    [FunctionName(nameof(ReleasePaymentsHttpTrigger))]
+    public async Task ReleasePaymentsHttpTrigger(
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ReleasePayments/{collectionYear}/{collectionPeriod}")] HttpRequestMessage req,
+        [DurableClient] IDurableEntityClient client,
+        short collectionYear,
+        byte collectionPeriod,
+        ILogger log)
+    {
+        await ReleasePayments(new ReleasePaymentsCommand { CollectionPeriod = collectionPeriod, CollectionYear = collectionYear}, client, log);
+    }
+
+    private async Task ReleasePayments(ReleasePaymentsCommand releasePaymentsCommand, IDurableEntityClient client,
+        ILogger log)
+    {
         using CancellationTokenSource source = new CancellationTokenSource();
         var token = source.Token;
 
@@ -32,13 +53,17 @@ public class PaymentsFunctions
 
         var operationInput = new ReleasePaymentsDto
         {
-            CollectionYear =  releasePaymentsCommand.CollectionYear,
+            CollectionYear = releasePaymentsCommand.CollectionYear,
             CollectionPeriod = releasePaymentsCommand.CollectionPeriod,
             PreviousAcademicYear = short.Parse(previousAcademicYear.AcademicYear),
-            HardCloseDate = previousAcademicYear.HardCloseDate 
+            HardCloseDate = previousAcademicYear.HardCloseDate
         };
 
-        var allApprenticeshipEntitiesQuery = new EntityQuery { EntityName = nameof(ApprenticeshipEntity) }; //default page size is 100, we may wish to tweak this in future to improve performance
+        var allApprenticeshipEntitiesQuery =
+            new EntityQuery
+            {
+                EntityName = nameof(ApprenticeshipEntity)
+            }; //default page size is 100, we may wish to tweak this in future to improve performance
         var pageCounter = 0;
 
         do
@@ -46,16 +71,18 @@ public class PaymentsFunctions
             pageCounter++;
             await client.CleanEntityStorageAsync(true, true, token);
             var result = await client.ListEntitiesAsync(allApprenticeshipEntitiesQuery, token);
-            var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId, nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), operationInput));
+            var releasePaymentsTasks = result.Entities.Select(x => client.SignalEntityAsync(x.EntityId,
+                nameof(ApprenticeshipEntity.ReleasePaymentsForCollectionPeriod), operationInput));
 
             allApprenticeshipEntitiesQuery.ContinuationToken = result.ContinuationToken;
 
-            log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
+            log.LogInformation(
+                $"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} for page {pageCounter} of entities. (Count: {result.Entities.Count()})");
             await Task.WhenAll(releasePaymentsTasks);
-
         } while (allApprenticeshipEntitiesQuery.ContinuationToken != null);
 
-        log.LogInformation($"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} complete.");
+        log.LogInformation(
+            $"Releasing payments for collection period {releasePaymentsCommand.CollectionPeriod} & year {releasePaymentsCommand.CollectionYear} complete.");
     }
 
     private async Task<GetAcademicYearsResponse> GetPreviousAcademicYear()
