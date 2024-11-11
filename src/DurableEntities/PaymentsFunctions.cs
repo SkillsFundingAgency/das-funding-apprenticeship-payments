@@ -8,6 +8,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using SFA.DAS.Payments.Model.Core;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
 
@@ -41,6 +42,16 @@ public class PaymentsFunctions
         ILogger log)
     {
         await ReleasePayments(new ReleasePaymentsCommand { CollectionPeriod = collectionPeriod, CollectionYear = collectionYear}, client, log);
+    }
+
+    //In reality we will only ever use the Http trigger for this function, but it enables testing using the existing acceptance test framework
+    [FunctionName(nameof(ResetSentForPaymentFlagForCollectionPeriodEventServiceBusTrigger))]
+    public async Task ResetSentForPaymentFlagForCollectionPeriodEventServiceBusTrigger(
+        [NServiceBusTrigger(Endpoint = QueueNames.ResetSentForPaymentFlag)] ResetSentForPaymentFlagForCollectionPeriodDurableEntityCommand releasePaymentsCommand,
+        [DurableClient] IDurableEntityClient client,
+        ILogger log)
+    {
+        await ResetSentForPaymentFlagForCollectionPeriod(releasePaymentsCommand.CollectionYear, releasePaymentsCommand.CollectionPeriod, client, log);
     }
 
     [FunctionName(nameof(ResetSentForPaymentFlagForCollectionPeriodHttpTrigger))]

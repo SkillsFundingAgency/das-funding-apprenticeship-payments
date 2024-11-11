@@ -21,6 +21,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
 
     [Given("payments are released")]
     [When("payments are released")]
+    [When("payments are released again")]
     public async Task PublishReleasePaymentsCommand()
     {
         _releasePaymentsCommand = new ReleasePaymentsCommand

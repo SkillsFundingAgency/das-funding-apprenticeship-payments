@@ -14,6 +14,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
         public IEndpointInstance? EarningsRecalculatedEndpoint { get; set; }
         public IEndpointInstance? FreezePaymentsEndpoint { get; set; }
         public IEndpointInstance? UnfreezePaymentsEndpoint { get; set; }
+        public IEndpointInstance? ResetSentForPaymentFlagEndpoint { get; set; }
 
         public AutoFixture.Fixture Fixture = new();
 
@@ -28,6 +29,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
             EarningsRecalculatedEndpoint?.Stop();
             FreezePaymentsEndpoint?.Stop();
             UnfreezePaymentsEndpoint?.Stop();
+            ResetSentForPaymentFlagEndpoint?.Stop();
             TestFunction?.Dispose();
         }
     }
