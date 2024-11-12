@@ -4,6 +4,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using System.Diagnostics.CodeAnalysis;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ResetSentForPaymentFlagForCollectionPeriod;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command
 {
@@ -18,6 +19,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Command
             serviceCollection.AddScoped<IProcessUnfundedPaymentsCommandHandler, ProcessUnfundedPaymentsCommandHandler>();
             serviceCollection.AddScoped<ICalculateRequiredLevyAmountCommandHandler, CalculateRequiredLevyAmountCommandHandler>();
             serviceCollection.AddScoped<IRecalculateApprenticeshipPaymentsCommandHandler, RecalculateApprenticeshipPaymentsCommandHandler>();
+            serviceCollection.AddScoped<IResetSentForPaymentFlagForCollectionPeriodCommandHandler, ResetSentForPaymentFlagForCollectionPeriodCommandHandler>();
             return serviceCollection;
         }
     }

@@ -4,6 +4,7 @@ using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ProcessUnfundedPayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ResetSentForPaymentFlagForCollectionPeriod;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Dtos;
 using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
@@ -18,17 +19,19 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
         private readonly ICalculateApprenticeshipPaymentsCommandHandler _calculateApprenticeshipPaymentsCommandHandler;
         private readonly IProcessUnfundedPaymentsCommandHandler _processUnfundedPaymentsCommandHandler;
         private readonly IRecalculateApprenticeshipPaymentsCommandHandler _recalculateApprenticeshipPaymentsCommandHandler;
+        private readonly IResetSentForPaymentFlagForCollectionPeriodCommandHandler _resetSentForPaymentFlagCommandHandler;
         private readonly ILogger<ApprenticeshipEntity> _logger;
 
         public ApprenticeshipEntity(ICalculateApprenticeshipPaymentsCommandHandler calculateApprenticeshipPaymentsCommandHandler,
             IProcessUnfundedPaymentsCommandHandler processUnfundedPaymentsCommandHandler,
             IRecalculateApprenticeshipPaymentsCommandHandler recalculateApprenticeshipPaymentsCommandHandler,
-            ILogger<ApprenticeshipEntity> logger)
+            ILogger<ApprenticeshipEntity> logger, IResetSentForPaymentFlagForCollectionPeriodCommandHandler resetSentForPaymentFlagCommandHandler)
         {
             _calculateApprenticeshipPaymentsCommandHandler = calculateApprenticeshipPaymentsCommandHandler;
             _processUnfundedPaymentsCommandHandler = processUnfundedPaymentsCommandHandler;
             _recalculateApprenticeshipPaymentsCommandHandler = recalculateApprenticeshipPaymentsCommandHandler;
             _logger = logger;
+            _resetSentForPaymentFlagCommandHandler = resetSentForPaymentFlagCommandHandler;
         }
 
         public async Task HandleEarningsGeneratedEvent(EarningsGeneratedEvent earningsGeneratedEvent)
@@ -62,6 +65,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities
 
             await _processUnfundedPaymentsCommandHandler.Process(new ProcessUnfundedPaymentsCommand(dto.CollectionPeriod, dto.CollectionYear, dto.PreviousAcademicYear, dto.HardCloseDate, Model));
 
+        }
+
+        public async Task ResetSentForPaymentFlagForCollectionPeriod(ResetSentForPaymentFlagForCollectionPeriodDto dto)
+        {
+            if (IsModelNull(nameof(ResetSentForPaymentFlagForCollectionPeriod))) return;
+
+            _resetSentForPaymentFlagCommandHandler.Process(new ResetSentForPaymentFlagForCollectionPeriodCommand(dto.CollectionPeriod, dto.CollectionYear, Model));
         }
 
         public void HandlePaymentFrozenEvent(PaymentsFrozenEvent paymentsFrozenEvent)
