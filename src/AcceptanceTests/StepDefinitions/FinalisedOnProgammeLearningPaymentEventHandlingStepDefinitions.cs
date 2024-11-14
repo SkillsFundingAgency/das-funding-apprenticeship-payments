@@ -17,10 +17,27 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
         _scenarioContext = scenarioContext;
     }
 
+    [When("the correct payments are released")]
     [Then("the correct payments are released")]
     public async Task AssertCorrectPaymentsAreReleased()
     {
         await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesExpectation), $"Failed to find expected published FinalisedOnProgammeLearningPaymentEvent when asserting correct payments are released");
+    }
+
+    [Then("the correct payments are re-released")]
+    public async Task AssertCorrectPaymentsAreReReleased()
+    {
+        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Count(ReleasedPaymentMatchesExpectation) == 2, $"Failed to find expected published FinalisedOnProgammeLearningPaymentEvent(s) when asserting correct payments are re-released following a reset of the SentForPaymentsFlag");
+    }
+
+    [Then("multiple copies of the same payment are not released")]
+    public async Task AssertDuplicatedPaymentsNotReleased()
+    {
+        await WaitHelper.WaitForUnexpected(() =>
+        {
+            return FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Count(x =>
+                x.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] && x.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod()) > 1;
+        }, $"Found unexpected event for apprenticeship");
     }
 
     [Then("the correct unfrozen payments are released")]

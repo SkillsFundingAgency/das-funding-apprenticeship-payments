@@ -9,4 +9,5 @@ public static class QueueNames
     public const string CalculatedRequiredLevyAmount = "sfa-das-payments-fundingsource-levy-transaction";
     public const string PaymentsFrozen = "das-funding-payments-paymentsfrozen";
     public const string PaymentsUnfrozen = "das-funding-payments-paymentsunfrozen";
+    public const string ResetSentForPaymentFlag = "das-funding-payments-resetsentforpaymentflag";
 }

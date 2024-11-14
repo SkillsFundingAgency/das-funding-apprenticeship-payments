@@ -52,9 +52,10 @@ public class WhenRecalculatePayments
         _sut.ClearEarnings();
 
         //Expectation:
-        //Delivery Period 1 - diff payment calculated
-        //Delivery Period 2 - unpaid payment removed and new one calculated for new learning amount
-        //Delivery Period 3 - no existing payments, new one calculated for new learning amount
+        //Delivery Period 1 - existing payment matches earning, no payment to be generated (e.g. if there was a price change after this period)
+        //Delivery Period 2 - diff payment calculated
+        //Delivery Period 3 - unpaid payment removed and new one calculated for new learning amount
+        //Delivery Period 4 - no existing payments, new one calculated for new learning amount
         _newEarnings = new List<Earning>
         {
             new Earning(_sut.ApprenticeshipKey, 2223, 1, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
@@ -85,18 +86,24 @@ public class WhenRecalculatePayments
     [Test]
     public void NewPaymentsToMakeUpExistingPaidPaymentsAmountsShouldBeAdded()
     {
-        _sut.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 1 && p.Amount == _newMonthlyLearningAmount - _currentMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
+        _sut.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 2 && p.Amount == _newMonthlyLearningAmount - _currentMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
     }
 
     [Test]
     public void NewPaymentsForPreviouslyRemovedUnpaidPaymentPeriodsShouldBeAdded()
     {
-        _sut.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 2 && p.Amount == _newMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
+        _sut.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 3 && p.Amount == _newMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
     }
 
     [Test]
     public void NewPaymentsForPreviouslyUncalculatedPaymentPeriodsShouldBeAdded()
     {
-        _sut.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 3 && p.Amount == _newMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
+        _sut.Payments.Should().Contain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 4 && p.Amount == _newMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId);
+    }
+
+    [Test]
+    public void PaymentsForPreviouslyPaidPaymentPeriodsWithNoChangeShouldNotBeAdded()
+    {
+        _sut.Payments.Should().NotContain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 1 && p.Amount == 0);
     }
 }

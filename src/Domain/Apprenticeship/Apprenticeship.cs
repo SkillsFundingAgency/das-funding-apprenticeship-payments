@@ -144,8 +144,24 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
         {
             if (!earningsToProcess.Any(e=> e.DeliveryPeriod == payment.DeliveryPeriod && e.AcademicYear == payment.AcademicYear))
             {
-                var earning = new Earning(ApprenticeshipKey, payment.AcademicYear, payment.DeliveryPeriod, 0, (short)now.Year, (byte)now.Month, payment.FundingLineType, payment.EarningsProfileId);
-                earningsToProcess.Add(earning);
+                var collectionPeriod = DetermineCollectionPeriod(earning, now);
+
+                if (!_payments.Any(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear))
+                {
+                    var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
+                    _payments.Add(payment);
+                }
+                else
+                {
+                    var existingPaidForDeliveryPeriod = _payments
+                        .Where(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear)
+                        .Sum(p => p.Amount);
+
+                    if (earning.Amount - existingPaidForDeliveryPeriod == 0) continue;
+
+                    var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
+                    _payments.Add(payment);
+                }
             }
         }
 

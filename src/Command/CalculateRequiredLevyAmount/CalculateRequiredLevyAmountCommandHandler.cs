@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Payments.RequiredPayments.Messages.Events;
+﻿using SFA.DAS.Payments.FundingSource.Messages.Commands;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 
@@ -15,12 +15,12 @@ public class CalculateRequiredLevyAmountCommandHandler : ICommandHandler<Calcula
 
     public async Task Handle(CalculateRequiredLevyAmountCommand command)
     {
-        var @event = command.MapToCalculatedRequiredLevyAmountEvent();
+        var @event = command.MapToCalculateOnProgrammePaymentEvent();
 
         _logger.LogInformation(
             "Apprenticeship Key: {ApprenticeshipKey} - Publishing {event} for CollectionPeriod: {Period}/{AcademicYear}",
             command.Data.ApprenticeshipKey,
-            nameof(CalculatedRequiredLevyAmount),
+            nameof(CalculateOnProgrammePayment),
             @event.CollectionPeriod.Period,
         @event.CollectionPeriod.AcademicYear);
 
@@ -29,6 +29,6 @@ public class CalculateRequiredLevyAmountCommandHandler : ICommandHandler<Calcula
             command.Data.ApprenticeshipKey,
             @event.SerialiseForLogging());
 
-        await _busEndpoint.Publish(@event);
+        await _busEndpoint.Send(@event);
     }
 }
