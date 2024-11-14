@@ -42,11 +42,15 @@ public class WhenRecalculatePayments
             _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
                 .With(x => x.Period, 2).With(x => x.CalendarMonth, 11)
                 .With(x => x.LearningAmount, _currentMonthlyLearningAmount).Create(),
+            _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
+                .With(x => x.Period, 3).With(x => x.CalendarMonth, 12)
+                .With(x => x.LearningAmount, _currentMonthlyLearningAmount).Create(),
         };
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
         _sut.CalculatePayments(DateTime.Now);
         _sut.Payments.First().MarkAsSent();
-        
+        _sut.Payments.ElementAt(1).MarkAsSent();
+
         _originalPayments = new List<Payment>(_sut.Payments);
 
         _sut.ClearEarnings();
@@ -60,7 +64,8 @@ public class WhenRecalculatePayments
         {
             new Earning(_sut.ApprenticeshipKey, 2223, 1, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
             new Earning(_sut.ApprenticeshipKey, 2223, 2, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
-            new Earning(_sut.ApprenticeshipKey, 2223, 3, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId)
+            new Earning(_sut.ApprenticeshipKey, 2223, 3, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
+            new Earning(_sut.ApprenticeshipKey, 2223, 4, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId)
         };
 
         foreach (var newEarning in _newEarnings)

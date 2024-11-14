@@ -85,6 +85,8 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
                     .Where(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear)
                     .Sum(p => p.Amount);
 
+                if (earning.Amount - existingPaidForDeliveryPeriod == 0) continue;
+
                 var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
                 _payments.Add(payment);
             }
@@ -134,34 +136,18 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
 
     // When new earnings are generated they may not cover a period that has already been paid for
     // For these periods earnings of zero for that month need to be generated for calculation purposes
-    private  List<Earning> GetEarningsToProcess(DateTime now)
+    private List<Earning> GetEarningsToProcess(DateTime now)
     {
         // Put earnings into a new list, this is for processing only as we will be adding zero earnings
         var earningsToProcess = Earnings.ToList();
 
         // Cycle through payments and add zero earnings for any periods that have had payments made before recalc
-        foreach(Payment payment in _payments)
+        foreach (Payment payment in _payments)
         {
-            if (!earningsToProcess.Any(e=> e.DeliveryPeriod == payment.DeliveryPeriod && e.AcademicYear == payment.AcademicYear))
+            if (!earningsToProcess.Any(e => e.DeliveryPeriod == payment.DeliveryPeriod && e.AcademicYear == payment.AcademicYear))
             {
-                var collectionPeriod = DetermineCollectionPeriod(earning, now);
-
-                if (!_payments.Any(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear))
-                {
-                    var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
-                    _payments.Add(payment);
-                }
-                else
-                {
-                    var existingPaidForDeliveryPeriod = _payments
-                        .Where(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear)
-                        .Sum(p => p.Amount);
-
-                    if (earning.Amount - existingPaidForDeliveryPeriod == 0) continue;
-
-                    var payment = new Payment(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
-                    _payments.Add(payment);
-                }
+                var earning = new Earning(ApprenticeshipKey, payment.AcademicYear, payment.DeliveryPeriod, 0, (short)now.Year, (byte)now.Month, payment.FundingLineType, payment.EarningsProfileId);
+                earningsToProcess.Add(earning);
             }
         }
 
