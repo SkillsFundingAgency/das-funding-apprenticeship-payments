@@ -35,10 +35,44 @@ Most of the application configuration is taken from the [das-employer-config rep
   "ApplicationSettings":{
     "NServiceBusConnectionString":"UseLearningEndpoint=true",
     "DCServiceBusConnectionString":"UseLearningEndpoint=true",
-    "NServiceBusLicense":"<LicenseKey>"
+    "NServiceBusLicense":"<LicenseKey>",
+	"DbConnectionString": "Server=(localdb)\\MSSQLLocalDB;Database=SFA.DAS.Funding.ApprenticeshipPayments.Database;Integrated Security=true;Trusted_Connection=True;Pooling=False;Connect Timeout=30;MultipleActiveResultSets=True"
+  },
+  "ApprenticeshipsOuterApi": {
+    "Key": "",
+    "BaseUrl": "https://localhost:7101/"
+  },
+  "IntegrationSystemClockSettings":{
+    "UseIntegrationSystemClock":false,
+     "Url":""
   }
 }
 ```
+
+### Local Running
+
+#### Functions
+
+* Ensure you have the following local.settings.json in the Functions project root:
+
+```
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "EnvironmentName": "LOCAL",
+	"ApplicationSettings:LearningTransportStorageDirectory": "C:\\GitHub\\LocalMessageBus\\.learningtransport",
+    "ConfigNames": "SFA.DAS.Funding.ApprenticeshipPayments"
+  }
+}
+```
+
+* Make sure Azure Storage Emulator is running
+* Make sure the config above is in Azure Storage
+* Deploy the database project in the solution to your local db instance (make sure the connection string in Azure Storage matches your database server)
+* Ensure the ApplicationSettings:LearningTransportStorageDirectory matches across any applications you wish to share messages with
+* Start the SFA.DAS.Funding.ApprenticeshipPayments.Functions project
 
 ## 🔗 External Dependencies
 
