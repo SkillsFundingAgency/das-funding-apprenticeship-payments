@@ -78,6 +78,9 @@
             "type": "string",
             "defaultValue": "[utcNow()]"
         },
+        "sharedSQLServerName": {
+            "type": "string"
+        },
         "databaseSkuName": {
             "type": "string",
             "defaultValue": "S0"
