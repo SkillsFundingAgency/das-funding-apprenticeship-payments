@@ -81,6 +81,10 @@
         "sharedSQLServerName": {
             "type": "string"
         },
+        "elasticPoolName": {
+            "defaultValue": "",
+            "type": "string"
+        },
         "databaseSkuName": {
             "type": "string",
             "defaultValue": "S0"
