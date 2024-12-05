@@ -15,8 +15,8 @@ public class GetLearnersInILRQueryHandler : IQueryHandler<GetLearnersInILRQueryR
 
     public async Task<GetLearnersInILRQueryResponse> Get(GetLearnersInILRQuery query)
     {
-        var response = await _outerApiClient.Get<GetLearnersInILRResponse>(new GetLearnersInILRRequest(query.Ukprn, query.AcademicYear));
+        var response = await _outerApiClient.Get<List<LearnerReferenceResponse>>(new GetLearnersInILRRequest(query.Ukprn, query.AcademicYear));
 
-        return new GetLearnersInILRQueryResponse(response.Body.Learners.Select(x => new Learner(x.Uln, x.LearnerRefNumber)));
+        return new GetLearnersInILRQueryResponse(response.Body.Select(x => new Learner(x.Uln, x.LearnerRefNumber)));
     }
 }
