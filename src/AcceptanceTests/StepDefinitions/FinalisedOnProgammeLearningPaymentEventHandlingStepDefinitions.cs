@@ -58,8 +58,8 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
             finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == earningsGeneratedEvent.ApprenticeshipKey
             && finalisedOnProgammeLearningPaymentEvent.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod()
             && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString() == earningsGeneratedEvent.Uln
-            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate == earningsGeneratedEvent.StartDate
-            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate == earningsGeneratedEvent.PlannedEndDate
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate.Date == earningsGeneratedEvent.StartDate.Date
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate?.Date == earningsGeneratedEvent.PlannedEndDate.Date
             && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier == earningsGeneratedEvent.ProviderId
             && finalisedOnProgammeLearningPaymentEvent.Amount == expectedAmount;
     }
@@ -76,8 +76,8 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
             finalisedOnProgammeLearningPaymentEvent.ApprenticeshipKey == earningsGeneratedEvent.ApprenticeshipKey
             && finalisedOnProgammeLearningPaymentEvent.CollectionPeriod == ((byte)DateTime.Now.AddMonths(1).Month).ToDeliveryPeriod()
             && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString() == earningsGeneratedEvent.Uln
-            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate == earningsGeneratedEvent.StartDate
-            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate == earningsGeneratedEvent.PlannedEndDate
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.StartDate.Date == earningsGeneratedEvent.StartDate.Date
+            && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.PlannedEndDate?.Date == earningsGeneratedEvent.PlannedEndDate.Date
             && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.ProviderIdentifier == earningsGeneratedEvent.ProviderId
             && finalisedOnProgammeLearningPaymentEvent.Amount == expectedAmount
             && finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.DeliveryPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod();
