@@ -1,14 +1,13 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
+﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
+
+public class CalculateApprenticeshipPaymentsCommand
 {
-    public class CalculateApprenticeshipPaymentsCommand
+    public CalculateApprenticeshipPaymentsCommand(EarningsGeneratedEvent earningsGeneratedEvent)
     {
-        public CalculateApprenticeshipPaymentsCommand(ApprenticeshipEntityModel apprenticeshipEntity)
-        {
-            ApprenticeshipEntity = apprenticeshipEntity;
-        }
-
-        public ApprenticeshipEntityModel ApprenticeshipEntity { get; }
+        EarningsGeneratedEvent = earningsGeneratedEvent;
     }
+
+    public EarningsGeneratedEvent EarningsGeneratedEvent { get; }
 }
