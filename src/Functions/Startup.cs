@@ -33,9 +33,6 @@ public class Startup : FunctionsStartup
         EnsureConfig(applicationSettings);
         Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
 
-        builder.Services.Configure<ApprenticeshipsOuterApi>(Configuration.GetSection(nameof(ApprenticeshipsOuterApi)));
-        builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsOuterApi>>()!.Value);
-
         builder.Services.Configure<PaymentsOuterApi>(Configuration.GetSection(nameof(PaymentsOuterApi)));
         builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<PaymentsOuterApi>>()!.Value);
 
