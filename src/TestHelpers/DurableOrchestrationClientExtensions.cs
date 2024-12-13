@@ -11,7 +11,7 @@ internal static class DurableOrchestrationClientExtensions
         {
             var instances = await client.ListInstancesAsync(new OrchestrationStatusQueryCondition
             {
-                RuntimeStatus = new[] { OrchestrationRuntimeStatus.Pending, OrchestrationRuntimeStatus.Running, OrchestrationRuntimeStatus.ContinuedAsNew },
+                RuntimeStatus = new[] { OrchestrationRuntimeStatus.Pending, OrchestrationRuntimeStatus.Running, OrchestrationRuntimeStatus.ContinuedAsNew, OrchestrationRuntimeStatus.Completed, OrchestrationRuntimeStatus.Failed },
                 TaskHubNames = new[] { client.TaskHubName }
             }, token);
 

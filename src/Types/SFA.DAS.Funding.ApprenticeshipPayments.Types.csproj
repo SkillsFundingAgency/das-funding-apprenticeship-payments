@@ -32,4 +32,8 @@
     <PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\SFA.DAS.Funding.ApprenticeshipPayments.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

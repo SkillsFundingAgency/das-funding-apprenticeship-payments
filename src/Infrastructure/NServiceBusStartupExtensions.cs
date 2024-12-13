@@ -39,7 +39,7 @@ public static class NServiceBusStartupExtensions
 
         if (UsingLearningTransport(applicationSettings))
         {
-            SetupLearningTransportEndpoint(endpointConfiguration);
+            SetupLearningTransportEndpoint(endpointConfiguration, GetLearningTransportFolder(applicationSettings));
         }
         else
         {
@@ -69,7 +69,7 @@ public static class NServiceBusStartupExtensions
 
         if (UsingLearningTransport(applicationSettings))
         {
-            SetupLearningTransportEndpoint(endpointConfiguration);
+            SetupLearningTransportEndpoint(endpointConfiguration, GetLearningTransportFolder(applicationSettings));
         }
         else
         {
@@ -90,16 +90,27 @@ public static class NServiceBusStartupExtensions
         return applicationSettings.NServiceBusConnectionString.Contains("UseLearningEndpoint=true", StringComparison.CurrentCultureIgnoreCase);
     }
 
-    private static void SetupLearningTransportEndpoint(EndpointConfiguration endpointConfiguration)
+    private static void SetupLearningTransportEndpoint(EndpointConfiguration endpointConfiguration, string learningTransportFolder)
     {
-        var learningTransportFolder =
-            Path.Combine(
-                Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)],
-                @"src\.learningtransport");
         endpointConfiguration
             .UseTransport<LearningTransport>()
             .StorageDirectory(learningTransportFolder);
         endpointConfiguration.UseLearningTransport(r => r.AddRouting().DoNotEnforceBestPractices());
         Environment.SetEnvironmentVariable("LearningTransportStorageDirectory", learningTransportFolder, EnvironmentVariableTarget.Process);
+    }
+
+    private static string GetLearningTransportFolder(ApplicationSettings applicationSettings)
+    {
+        if (string.IsNullOrEmpty(applicationSettings.LearningTransportStorageDirectory))
+        {
+            // Default to the .learningtransport folder in the src directory
+            return Path.Combine(
+                Directory.GetCurrentDirectory()[..Directory.GetCurrentDirectory().IndexOf("src", StringComparison.Ordinal)],
+                @"src\.learningtransport");
+        }
+        else
+        {
+            return applicationSettings.LearningTransportStorageDirectory;
+        }
     }
 }

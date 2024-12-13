@@ -11,6 +11,7 @@ public class ApprenticeshipEarning
     public decimal GovernmentContributionPercentage { get; set; }
     public long ProviderIdentifier { get; set; }
     public long Uln { get; set; }
+    public string LearnerReference { get; set; }
     public string? FundingLineType { get; set; }
     public DateTime StartDate { get; set; }
 }
