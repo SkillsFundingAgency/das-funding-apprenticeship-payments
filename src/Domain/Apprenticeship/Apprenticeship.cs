@@ -36,7 +36,6 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
 
     public long FundingEmployerAccountId { get; private set; }
     public EmployerType EmployerType { get; private set; }
-    public long FundingCommitmentId { get; private set; }
     public long? TransferSenderAccountId { get; private set; }
     public long Uln { get; private set; }
     public long Ukprn { get; private set; }

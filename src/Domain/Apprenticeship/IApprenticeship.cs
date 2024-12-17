@@ -8,7 +8,6 @@ public interface IApprenticeship : IAggregateRoot
     public Guid ApprenticeshipKey { get; }
     public long FundingEmployerAccountId { get; }
     public EmployerType EmployerType { get; }
-    public long FundingCommitmentId { get; }
     public long? TransferSenderAccountId { get; }
     public long Uln { get; }
     public long Ukprn { get; }
