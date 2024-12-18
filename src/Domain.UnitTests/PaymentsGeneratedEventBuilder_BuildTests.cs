@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
-using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests;
@@ -22,18 +20,9 @@ public class PaymentsGeneratedEventBuilder_BuildTests
     {
         _sut = new PaymentsGeneratedEventBuilder();
         _fixture = new Fixture();
+        _fixture.Customize(new EarningsGeneratedEventCustomization());
 
-        _apprenticeship = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid());
-        var earnings = new List<Earning>()
-        {
-            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month,_fixture.Create<string>(), Guid.NewGuid()),
-            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month,_fixture.Create<string>(), Guid.NewGuid()),
-            new (AcademicYearHelper.GetRandomValidAcademicYear(), _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month,_fixture.Create<string>(), Guid.NewGuid())
-        };
-        foreach (var earning in earnings)
-        {
-            _apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, _fixture.Create<string>(), earning.EarningsProfileId);
-        }
+        _apprenticeship = _fixture.Create<Domain.Apprenticeship.Apprenticeship>();
         _apprenticeship.CalculatePayments(DateTime.Now);
 
         _result = _sut.Build(_apprenticeship);

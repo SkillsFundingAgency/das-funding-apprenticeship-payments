@@ -64,7 +64,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
         outboundEvent.CompletionStatus.Should().Be(1); // ongoing
         outboundEvent.DeliveryPeriod.Should().Be(inboundEvent.ApprenticeshipEarning.DeliveryPeriod);
         outboundEvent.InstalmentAmount.Should().Be(inboundEvent.ApprenticeshipEarning.DeliveryPeriodAmount);
-        outboundEvent.Learner.ReferenceNumber.Should().HaveLength(8).And.NotBeNullOrEmpty();
+        outboundEvent.Learner.ReferenceNumber.Should().Be(inboundEvent.ApprenticeshipEarning.LearnerReference);
         outboundEvent.Learner.Uln.Should().Be(inboundEvent.ApprenticeshipEarning.Uln);
         outboundEvent.LearningAim.FrameworkCode.Should().Be(0);
         outboundEvent.LearningAim.FundingLineType.Should().Be(inboundEvent.ApprenticeshipEarning.FundingLineType);

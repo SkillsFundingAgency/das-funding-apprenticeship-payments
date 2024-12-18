@@ -3,6 +3,7 @@ using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
@@ -110,11 +111,13 @@ public class PaymentsRecalculationStepDefinitions
 	private async Task GenerateExistingPayments(List<DeliveryPeriod> periods)
 	{
 		_apprenticeshipKey = Guid.NewGuid();
+        var uln = _testContext.Fixture.Create<long>();
+		_testContext.Ulns.Add(uln);
 
 		_previousEarningsGeneratedEvent = _testContext.Fixture
 			.Build<EarningsGeneratedEvent>()
 			.With(x => x.DeliveryPeriods, periods)
-			.With(x => x.Uln, _testContext.Fixture.Create<int>().ToString())
+			.With(x => x.Uln, uln.ToString())
 			.With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
 			.With(x => x.ApprenticeshipKey, _apprenticeshipKey)
 			.Create();
@@ -137,13 +140,7 @@ public class PaymentsRecalculationStepDefinitions
 		};
 		await _testContext.ReleasePaymentsEndpoint.Publish(releasePaymentsCommand);
 
-		//wait for finalised on programme learning payment event to be published
-		await WaitHelper.WaitForIt(() =>
-		{
-			return FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(e =>
-				e.CollectionPeriod == releasePaymentsCommand.CollectionPeriod
-				&& e.ApprenticeshipKey == _apprenticeshipKey);
-		}, "Failed to find published FinalisedOnProgammeLearningPaymentEvent for previously generated payment");
+        await _testContext.TestFunction.WaitUntilOrchestratorComplete(nameof(ReleasePaymentsOrchestrator));
 
 		_expectedNumberOfEventsPublished++;
 	}
