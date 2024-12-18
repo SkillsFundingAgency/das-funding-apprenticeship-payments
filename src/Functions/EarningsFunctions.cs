@@ -43,6 +43,6 @@ public class EarningsFunctions
         await _recalculateApprenticeshipPaymentsCommandHandler.Handle(
             new RecalculateApprenticeshipPaymentsCommand(earningsRecalculatedEvent.ApprenticeshipKey,
                 earningsRecalculatedEvent.DeliveryPeriods.ToEarnings(earningsRecalculatedEvent.ApprenticeshipKey,
-                    earningsRecalculatedEvent.EarningsProfileId)));
+                    earningsRecalculatedEvent.EarningsProfileId), earningsRecalculatedEvent.StartDate, earningsRecalculatedEvent.PlannedEndDate, earningsRecalculatedEvent.AgeAtStartOfApprenticeship));
     }
 }

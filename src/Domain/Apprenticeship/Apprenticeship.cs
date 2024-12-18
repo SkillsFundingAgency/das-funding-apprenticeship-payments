@@ -206,4 +206,11 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
         payment.MarkAsSent();
         AddEvent(eventBuilder(payment, this));
     }
+
+    public void Update(DateTime startDate, DateTime plannedEndDate, int ageAtStartOfApprenticeship)
+    {
+        StartDate = startDate;
+        PlannedEndDate = plannedEndDate;
+        AgeAtStartOfApprenticeship = ageAtStartOfApprenticeship;
+    }
 }
