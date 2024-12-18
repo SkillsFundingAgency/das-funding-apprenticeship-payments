@@ -105,12 +105,6 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
     }
 
     [Test]
-    public void ShouldPopulate_FundingCommitmentId_Correctly()
-    {
-        _result.EmployerDetails.FundingCommitmentId.Should().Be(_apprenticeship.ApprovalsApprenticeshipId);
-    }
-
-    [Test]
     public void ShouldPopulate_ApprenticeshipEmployerType_Correctly()
     {
         _result.ApprenticeshipEmployerType.Should().Be(_apprenticeship.EmployerType);
