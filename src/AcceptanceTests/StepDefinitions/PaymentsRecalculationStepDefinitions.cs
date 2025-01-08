@@ -133,19 +133,32 @@ public class PaymentsRecalculationStepDefinitions
 			&& e.Payments.Count == periods.Count), "Failed to find published PaymentsGenerated event for previously generated payments");
 
 		//release payments for this month
-		var releasePaymentsCommand = new ReleasePaymentsCommand
-		{
-			CollectionPeriod = ((byte)DateTime.Now.Month).ToDeliveryPeriod(),
-			CollectionYear = ((short)DateTime.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
-		};
-		await _testContext.ReleasePaymentsEndpoint.Publish(releasePaymentsCommand);
+        var currentYear = ((short)DateTime.Now.Year).ToAcademicYear((byte)DateTime.Now.Month);
+        await ReleasePayments(((byte)DateTime.Now.Month).ToDeliveryPeriod(), currentYear);
 
-        await _testContext.TestFunction.WaitUntilOrchestratorComplete(nameof(ReleasePaymentsOrchestrator));
+		//release payments for any previous years
+        var previousYears = periods.Where(x => x.AcademicYear < currentYear).Select(x => x.AcademicYear).Distinct();
+        foreach (var previousYear in previousYears)
+        {
+            await ReleasePayments(14, previousYear);
+        }
 
-		_expectedNumberOfEventsPublished++;
+        _expectedNumberOfEventsPublished++;
 	}
 
-	private async Task GenerateRecalculatedEarnings(List<DeliveryPeriod> periods)
+    private async Task ReleasePayments(byte collectionPeriod, short collectionYear)
+    {
+        var releasePaymentsCommand = new ReleasePaymentsCommand
+        {
+            CollectionPeriod = collectionPeriod,
+            CollectionYear = collectionYear
+        };
+        await _testContext.ReleasePaymentsEndpoint.Publish(releasePaymentsCommand);
+
+        await _testContext.TestFunction.WaitUntilOrchestratorComplete(nameof(ReleasePaymentsOrchestrator));
+    }
+
+    private async Task GenerateRecalculatedEarnings(List<DeliveryPeriod> periods)
 	{
 		//build event for recalculated earnings
 		_earningsRecalculatedEvent = _testContext.Fixture
