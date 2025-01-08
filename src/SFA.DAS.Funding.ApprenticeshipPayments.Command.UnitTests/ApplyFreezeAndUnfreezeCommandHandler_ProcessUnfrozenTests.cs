@@ -65,6 +65,6 @@ public class ApplyFreezeAndUnfreezeCommandHandler_ProcessUnfrozenTests
     [Test]
     public void ThenPreviouslyFrozenPaymentAreUnfrozen()
     {
-        _apprenticeship.Verify(x => x.UnfreezeFrozenPayments(_collectionYear, _collectionPeriod, _collectionYear, _previousAcademicYear, _hardCloseDate, _expectedCurrentDate), Times.Once);
+        _apprenticeship.Verify(x => x.UnfreezeFrozenPayments(_collectionYear, _previousAcademicYear, _hardCloseDate, _expectedCurrentDate), Times.Once);
     }
 }

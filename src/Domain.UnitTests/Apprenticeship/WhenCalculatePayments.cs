@@ -51,7 +51,7 @@ public class WhenCalculatePayments
     }
 
     [Test]
-    public void CollectionPeriodShouldBeDeliveryPeriodIfInTheFuture()
+    public void CollectionPeriodShouldBeDeliveryPeriod()
     {
         _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month,_fixture.Create<string>(), Guid.NewGuid());
 
@@ -60,18 +60,5 @@ public class WhenCalculatePayments
         _sut.Payments.Count.Should().Be(1);
         _sut.Payments.Single().CollectionYear.Should().Be(2324);
         _sut.Payments.Single().CollectionPeriod.Should().Be(1);
-    }
-
-    [Test]
-    public void CollectionPeriodShouldBeCurrentPeriodIfInThePast()
-    {
-        var now = new DateTime(2023, 6, 25);
-        _sut.AddEarning(2223, 11, _fixture.Create<decimal>(), (short)now.AddMonths(-1).Year, (byte)now.AddMonths(-1).Month, _fixture.Create<string>(), Guid.NewGuid());
-
-        _sut.CalculatePayments(now);
-
-        _sut.Payments.Count.Should().Be(1);
-        _sut.Payments.Single().CollectionYear.Should().Be(2223);
-        _sut.Payments.Single().CollectionPeriod.Should().Be(11);
     }
 }
