@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 
@@ -25,6 +26,7 @@ public class Payment
     public Guid Key { get; private set; }
     public Guid ApprenticeshipKey { get; private set; }
     public short AcademicYear { get; private set; }
+    [Precision(15, 5)]
     public decimal Amount { get; private set; }
     public byte CollectionPeriod { get; private set; }
     public short CollectionYear { get; private set; }
