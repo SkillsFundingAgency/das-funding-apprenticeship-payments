@@ -23,12 +23,24 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     [Given("payments are released")]
     [When("payments are released")]
     [When("payments are released again")]
+    [When("payments are released for the current academic year")]
     public async Task PublishReleasePaymentsCommand()
     {
         _releasePaymentsCommand = new ReleasePaymentsCommand
         {
             CollectionPeriod = ((byte)_systemClockService.Now.Month).ToDeliveryPeriod(),
-            CollectionYear = ((short)_systemClockService.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
+            CollectionYear = ((short)_systemClockService.Now.Year).ToAcademicYear((byte)_systemClockService.Now.Month)
+        };
+        await ReleasePayments();
+    }
+
+    [When("payments are released for the previous academic year")]
+    public async Task PublishReleasePaymentsCommandForPreviousYear()
+    {
+        _releasePaymentsCommand = new ReleasePaymentsCommand
+        {
+            CollectionPeriod = 13,
+            CollectionYear = ((short)(_systemClockService.Now.Year - 1)).ToAcademicYear((byte)_systemClockService.Now.Month)
         };
         await ReleasePayments();
     }

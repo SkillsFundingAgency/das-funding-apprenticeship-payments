@@ -41,15 +41,15 @@ public class Payment
         NotPaidDueToFreeze = true;
     }
 
-    public void Unfreeze(short collectionYear, byte collectionPeriod)
+    public void Unfreeze()
     {
         NotPaidDueToFreeze = false;
-        CollectionYear = collectionYear;
-        CollectionPeriod = collectionPeriod;
     }
 
-    public void MarkAsSent()
+    public void MarkAsSent(short collectionYear, byte collectionPeriod)
     {
+        CollectionYear = collectionYear;
+        CollectionPeriod = collectionPeriod;
         SentForPayment = true;
     }
 }

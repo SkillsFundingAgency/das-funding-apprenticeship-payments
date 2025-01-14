@@ -57,7 +57,7 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
         _payments.Clear();
         foreach (var earning in Earnings)
         {
-            var collectionPeriod = DetermineCollectionPeriod(earning, now);
+            var collectionPeriod = DetermineCollectionPeriod(earning);
             var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId);
             _payments.Add(payment);
         }
@@ -71,7 +71,7 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
 
         foreach (var earning in earningsToProcess)
         {
-            var collectionPeriod = DetermineCollectionPeriod(earning, now);
+            var collectionPeriod = DetermineCollectionPeriod(earning);
 
             if (!_payments.Any(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear))
             {
@@ -102,35 +102,9 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
         _earnings.Clear();
     }
 
-    private static (short AcademicYear, byte Period) DetermineCollectionPeriod(Earning earning, DateTime now)
+    private static (short AcademicYear, byte Period) DetermineCollectionPeriod(Earning earning)
     {
-        var censusDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Local).AddMonths(1).AddDays(-1);
-        var collectionDate = new DateTime(earning.CollectionYear, earning.CollectionMonth, 1, 0, 0, 0, DateTimeKind.Local);
-        if (collectionDate >= censusDate)
-        {
-            return (earning.AcademicYear, earning.DeliveryPeriod);
-        }
-
-        collectionDate = censusDate;
-        return CollectionDateToPeriod(collectionDate);
-    }
-
-    private static (short AcademicYear, byte Period) CollectionDateToPeriod(DateTime collectionDate)
-    {
-        var period = collectionDate.Month - 7;
-        if (period <= 0)
-        {
-            period = 12 + period;
-        }
-
-        short academicYear;
-        var year = short.Parse($"{collectionDate.Year}".Substring(2, 2));
-        if (collectionDate.Month < 8)
-            academicYear = short.Parse($"{year - 1}{year}");
-        else
-            academicYear = short.Parse($"{year}{year + 1}");
-
-        return (academicYear, (byte)period);
+        return (earning.AcademicYear, earning.DeliveryPeriod);
     }
 
     // When new earnings are generated they may not cover a period that has already been paid for
@@ -167,10 +141,10 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
 
     public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod)
     {
-        return _payments.Where(x => x.CollectionPeriod == collectionPeriod && x.CollectionYear == collectionYear && !x.SentForPayment && !x.NotPaidDueToFreeze).ToList().AsReadOnly();
+        return _payments.Where(x => x.CollectionPeriod <= collectionPeriod && x.CollectionYear == collectionYear && !x.SentForPayment && !x.NotPaidDueToFreeze).ToList().AsReadOnly();
     }
 
-    public void UnfreezeFrozenPayments(short collectionYear, byte collectionPeriod, short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate)
+    public void UnfreezeFrozenPayments(short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate)
     {
         var validAcademicYears = new List<short> { currentAcademicYear };
 
@@ -181,7 +155,7 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
 
         foreach (var payment in _payments.Where(x => x.NotPaidDueToFreeze && validAcademicYears.Contains(x.CollectionYear)))
         {
-            payment.Unfreeze(collectionYear, collectionPeriod);
+            payment.Unfreeze();
         }
     }
 
@@ -200,10 +174,10 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
         LearnerReference = learnerReference;
     }
 
-    public void SendPayment(Guid paymentKey, Func<Payment, IApprenticeship, IDomainEvent> eventBuilder)
+    public void SendPayment(Guid paymentKey, short collectionYear, byte collectionPeriod, Func<Payment, IApprenticeship, IDomainEvent> eventBuilder)
     {
         var payment = Payments.Single(x => x.Key == paymentKey);
-        payment.MarkAsSent();
+        payment.MarkAsSent(collectionYear, collectionPeriod);
         AddEvent(eventBuilder(payment, this));
     }
 

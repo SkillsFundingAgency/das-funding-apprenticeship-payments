@@ -35,7 +35,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler : ICommandHandler<ApplyFreezeA
         else
         {
             var previousAcademicYear = await GetPreviousAcademicYear();
-            apprenticeship.UnfreezeFrozenPayments(command.CollectionYear, command.CollectionPeriod, _systemClock.Now.ToAcademicYear(), short.Parse(previousAcademicYear.AcademicYear), previousAcademicYear.HardCloseDate, _systemClock.Now);
+            apprenticeship.UnfreezeFrozenPayments(_systemClock.Now.ToAcademicYear(), short.Parse(previousAcademicYear.AcademicYear), previousAcademicYear.HardCloseDate, _systemClock.Now);
             _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} - Any frozen frozen payments have been defrosted.", apprenticeshipKey);
         }
 
