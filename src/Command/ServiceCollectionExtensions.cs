@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<ICommandHandler<ReleasePaymentCommand>, ReleasePaymentCommandHandler>();
         serviceCollection.AddScoped<ICommandHandler<SetLearnerReferenceCommand>, SetLearnerReferenceCommandHandler>();
         serviceCollection.AddSystemClock(configuration);
-        serviceCollection.AddHttpClient<IApprenticeshipsApiClient, ApprenticeshipsApiClient>();
+        serviceCollection.AddHttpClient<IOuterApiClient, OuterApiClient>();
         return serviceCollection;
     }
 }

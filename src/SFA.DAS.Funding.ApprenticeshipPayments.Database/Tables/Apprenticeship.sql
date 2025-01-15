@@ -3,7 +3,6 @@
 	[ApprenticeshipKey] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
 	[FundingEmployerAccountId] BIGINT NOT NULL,
 	[EmployerType] NVARCHAR(50) NOT NULL,
-	[FundingCommitmentId] BIGINT NOT NULL,
 	[TransferSenderAccountId] BIGINT NULL,
 	[Uln] BIGINT NOT NULL,
 	[Ukprn] BIGINT NOT NULL,

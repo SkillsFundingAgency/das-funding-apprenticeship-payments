@@ -16,6 +16,6 @@ public class ReleasePayment
     [FunctionName(nameof(ReleasePayment))]
     public async Task Set([ActivityTrigger] ReleasePaymentInput input)
     {
-        await _commandHandler.Handle(new ReleasePaymentCommand(input.ApprenticeshipKey, input.PaymentKey));
+        await _commandHandler.Handle(new ReleasePaymentCommand(input.ApprenticeshipKey, input.PaymentKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod));
     }
 }

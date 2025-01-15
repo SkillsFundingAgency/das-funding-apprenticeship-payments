@@ -23,6 +23,11 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
 
     public async Task<Guid?> GetApprenticeshipKey(long ukprn, long uln)
     {
-        return await DbContext.Apprenticeships.Where(x => x.Ukprn == ukprn && x.Uln == uln).Select(x => x.ApprenticeshipKey).SingleOrDefaultAsync();
+        var apprenticeshipKey = await DbContext.Apprenticeships.Where(x => x.Ukprn == ukprn && x.Uln == uln).Select(x => x.ApprenticeshipKey).SingleOrDefaultAsync();
+        if (apprenticeshipKey == Guid.Empty)
+        {
+            return null;
+        }
+        return apprenticeshipKey;
     }
 }

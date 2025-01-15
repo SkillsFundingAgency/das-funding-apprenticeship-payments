@@ -52,8 +52,6 @@ public class OuterApiClient : IOuterApiClient
             responseBody = JsonSerializer.Deserialize<TResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
-        responseBody = JsonSerializer.Deserialize<TResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
         var apiResponse = new ApiResponse<TResponse>(responseBody, response.StatusCode, errorContent);
 
         return apiResponse;

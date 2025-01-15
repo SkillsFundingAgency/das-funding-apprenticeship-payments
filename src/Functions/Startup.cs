@@ -33,9 +33,6 @@ public class Startup : FunctionsStartup
         EnsureConfig(applicationSettings);
         Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
 
-        builder.Services.Configure<ApprenticeshipsOuterApi>(Configuration.GetSection(nameof(ApprenticeshipsOuterApi)));
-        builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<ApprenticeshipsOuterApi>>()!.Value);
-
         builder.Services.Configure<PaymentsOuterApi>(Configuration.GetSection(nameof(PaymentsOuterApi)));
         builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<PaymentsOuterApi>>()!.Value);
 
@@ -43,7 +40,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddSingleton(x => applicationSettings);
 
         builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotAcceptanceTests(Configuration));
+        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocalOrAcceptanceTests(Configuration));
         builder.Services.AddCommandServices(Configuration).AddDomainServices().AddQueryServices();
     }
 
@@ -80,5 +77,10 @@ public class Startup : FunctionsStartup
     private static bool NotAcceptanceTests(IConfiguration configuration)
     {
         return !configuration!["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    private static bool NotLocalOrAcceptanceTests(IConfiguration configuration)
+    {
+        return !configuration!["EnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) && NotAcceptanceTests(configuration); 
     }
 }

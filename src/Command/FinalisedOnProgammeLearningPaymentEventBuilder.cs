@@ -40,7 +40,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.EmployerDetails = new EmployerDetails();
         @event.EmployerDetails.EmployingAccountId = apprenticeship.FundingEmployerAccountId;
         @event.EmployerDetails.FundingAccountId = apprenticeship.TransferSenderAccountId ?? apprenticeship.FundingEmployerAccountId;
-        @event.EmployerDetails.FundingCommitmentId = apprenticeship.FundingCommitmentId;
+        //@event.EmployerDetails.FundingCommitmentId = apprenticeship.ApprovalsApprenticeshipId;
 
         @event.FundingLineType = payment.FundingLineType;
 

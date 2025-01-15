@@ -48,7 +48,7 @@ public class ReleasePaymentsForLearnerOrchestrator
         var releasePaymentsTasks = new List<Task>();
         foreach (var payment in duePayments)
         {
-            var releasePaymentsTask = context.CallActivityAsync(nameof(ReleasePayment), new ReleasePaymentInput(apprenticeshipKey.Value, payment));
+            var releasePaymentsTask = context.CallActivityAsync(nameof(ReleasePayment), new ReleasePaymentInput(apprenticeshipKey.Value, payment, input.CollectionDetails));
             releasePaymentsTasks.Add(releasePaymentsTask);
         }
 

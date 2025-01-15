@@ -2,6 +2,7 @@ parameters:
   ServiceConnection:
   SolutionBaseName:
   Environment:
+  OverrideBlockOnPossibleDataLoss:
 
 jobs:
 - deployment: DeployFunctionApp
@@ -31,15 +32,15 @@ jobs:
               LoggingRedisConnectionString: $(LoggingRedisConnectionString)
               ConfigurationStorageConnectionString: $(ConfigurationStorageConnectionString)
               SharedStorageAccountConnectionString: $(SharedStorageAccountConnectionString)
-
+        
         - template: azure-pipelines-templates/deploy/step/get-apim-subscription-key.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             ApimResourceGroup: $(SharedApimResourceGroup)
             ApimName: $(SharedApimName)
             SubscriptionId: $(FunctionAppName)
-            PipelineVariableName: ApprenticeshipsApimSubscriptionKey
-            IsMultiRepoCheckout: true       
+            PipelineVariableName: PaymentsApimSubscriptionKey
+            IsMultiRepoCheckout: true            
 
         - template: azure-pipelines-templates/deploy/step/generate-config.yml@das-platform-building-blocks
           parameters:
@@ -52,10 +53,22 @@ jobs:
             TableName: Configuration
             ConfigurationSecrets:
               NServiceBusLicense: $(NServiceBusLicense)
-              ApprenticeshipsApimSubscriptionKey: $(ApprenticeshipsApimSubscriptionKey)
+              PaymentsApimSubscriptionKey: $(PaymentsApimSubscriptionKey)
+
+        - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
+          parameters:
+            AzureSubscription: ${{ parameters.ServiceConnection }}
+            ServerName: $(SharedSQLServerFQDN)
+            SqlUsername: $(SharedSQLServerUsername)
+            SqlPassword: $(SharedSQLServerPassword)
+            DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/SFA.DAS.Funding.ApprenticeshipPayments.Database/bin/Output/${{ parameters.SolutionBaseName }}.Database.dacpac
+            DatabaseName: $(DatabaseName)
+            OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+            Environment: ${{ parameters.Environment }}
 
         - template: azure-pipelines-templates/deploy/step/function-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
             FunctionAppName: $(FunctionAppName)
-            DeploymentPackagePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/DurableEntities.zip
+            DeploymentPackagePath: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/Functions.zip
+
