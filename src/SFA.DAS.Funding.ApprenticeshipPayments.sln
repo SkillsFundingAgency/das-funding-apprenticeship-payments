@@ -7,29 +7,31 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.Apprentices
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Domain", "Domain\SFA.DAS.Funding.ApprenticeshipPayments.Domain.csproj", "{12004995-D0F4-4F99-8435-CE42C579EB7F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Queries", "Queries\SFA.DAS.Funding.ApprenticeshipPayments.Queries.csproj", "{07844F7C-BE1C-424D-BC6E-CDEDEF8C5380}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests", "Domain.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.csproj", "{0E5FBB69-B1BA-4DDD-8CE2-228CA203C36E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests", "AcceptanceTests\SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.csproj", "{A22E55BF-9071-42BE-9F66-80D21815AADD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers", "TestHelpers\SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.csproj", "{44B8941D-9B56-4024-A04B-E819AFCECA1F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities", "DurableEntities\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.csproj", "{DE9DC81B-42B9-4890-A3EF-8315CA9A6D43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Functions", "Functions\SFA.DAS.Funding.ApprenticeshipPayments.Functions.csproj", "{DE9DC81B-42B9-4890-A3EF-8315CA9A6D43}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure", "Infrastructure\SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.csproj", "{BC323D44-59D1-48C6-B8A3-EC87A5901204}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests", "DurableEntities.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.UnitTests.csproj", "{C46F6030-5DFD-4688-98D8-428F3E035DAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Functions.UnitTests", "Functions.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.Functions.UnitTests.csproj", "{C46F6030-5DFD-4688-98D8-428F3E035DAD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Types", "Types\SFA.DAS.Funding.ApprenticeshipPayments.Types.csproj", "{BF0CD92B-6380-48F4-8C5A-CE307DEC143A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models", "DurableEntities.Models\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models.csproj", "{35B906E7-90BD-406B-80D6-5B8F9684B5E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{694AAE59-8442-4592-8FA1-C7A8E7FD9A32}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Queries.UnitTests", "SFA.DAS.Funding.ApprenticeshipPayments.Queries.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.Queries.UnitTests.csproj", "{DF4CC130-1AC4-4991-A89E-8D8EB4444B80}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests", "SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests\SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests.csproj", "{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SFA.DAS.Funding.ApprenticeshipPayments.Database", "SFA.DAS.Funding.ApprenticeshipPayments.Database\SFA.DAS.Funding.ApprenticeshipPayments.Database.sqlproj", "{6C1EB731-6B25-49D0-A03C-4FC76577D42B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.DataAccess", "DataAccess\SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.csproj", "{45972EAB-D567-47F5-8D22-87A94770F8E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.Funding.ApprenticeshipPayments.Query", "SFA.DAS.ApprenticeshipPayments.Query\SFA.DAS.Funding.ApprenticeshipPayments.Query.csproj", "{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +47,6 @@ Global
 		{12004995-D0F4-4F99-8435-CE42C579EB7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12004995-D0F4-4F99-8435-CE42C579EB7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12004995-D0F4-4F99-8435-CE42C579EB7F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{07844F7C-BE1C-424D-BC6E-CDEDEF8C5380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{07844F7C-BE1C-424D-BC6E-CDEDEF8C5380}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{07844F7C-BE1C-424D-BC6E-CDEDEF8C5380}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{07844F7C-BE1C-424D-BC6E-CDEDEF8C5380}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0E5FBB69-B1BA-4DDD-8CE2-228CA203C36E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0E5FBB69-B1BA-4DDD-8CE2-228CA203C36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E5FBB69-B1BA-4DDD-8CE2-228CA203C36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -77,10 +75,6 @@ Global
 		{BF0CD92B-6380-48F4-8C5A-CE307DEC143A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF0CD92B-6380-48F4-8C5A-CE307DEC143A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF0CD92B-6380-48F4-8C5A-CE307DEC143A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35B906E7-90BD-406B-80D6-5B8F9684B5E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35B906E7-90BD-406B-80D6-5B8F9684B5E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35B906E7-90BD-406B-80D6-5B8F9684B5E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35B906E7-90BD-406B-80D6-5B8F9684B5E2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF4CC130-1AC4-4991-A89E-8D8EB4444B80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DF4CC130-1AC4-4991-A89E-8D8EB4444B80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF4CC130-1AC4-4991-A89E-8D8EB4444B80}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,6 +83,20 @@ Global
 		{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EE196A8-BD5C-4141-BF88-1993E6EF37FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C1EB731-6B25-49D0-A03C-4FC76577D42B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C1EB731-6B25-49D0-A03C-4FC76577D42B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C1EB731-6B25-49D0-A03C-4FC76577D42B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6C1EB731-6B25-49D0-A03C-4FC76577D42B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C1EB731-6B25-49D0-A03C-4FC76577D42B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C1EB731-6B25-49D0-A03C-4FC76577D42B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{45972EAB-D567-47F5-8D22-87A94770F8E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45972EAB-D567-47F5-8D22-87A94770F8E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45972EAB-D567-47F5-8D22-87A94770F8E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45972EAB-D567-47F5-8D22-87A94770F8E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE946C6D-4C1C-4F47-B5AE-E987F3ECFC25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

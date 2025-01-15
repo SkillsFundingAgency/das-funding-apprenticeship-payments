@@ -1,0 +1,27 @@
+{
+  "version": "2.0",
+  "logging": {
+    "logLevel": {
+      "default": "Information"
+    },
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      }
+    }
+  },
+  "functionTimeout": "01:00:00",
+  "extensions": {
+    "durableTask": {
+      "extendedSessionsEnabled": true,
+      "extendedSessionIdleTimeoutInSeconds": 10,
+      "maxOrchestrationActions": "10000000",
+      "hubName": "FundingPaymentsProcessingHub",
+      "storageProvider": {
+        "controlQueueBufferThreshold": 1000,
+        "partitionCount": 16
+      }
+    }
+  }
+}

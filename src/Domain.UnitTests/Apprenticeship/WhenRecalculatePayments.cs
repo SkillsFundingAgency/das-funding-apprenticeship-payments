@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship;
 
@@ -12,21 +15,42 @@ public class WhenRecalculatePayments
 {
     private Fixture _fixture;
     private List<Earning> _newEarnings;
-    private List<Payment> _existingPayments;
     private decimal _currentMonthlyLearningAmount;
     private decimal _newMonthlyLearningAmount;
-    private Guid _previousEarningsProfileId;
     private Guid _newEarningsProfileId;
     private Domain.Apprenticeship.Apprenticeship _sut;
+    private List<Payment> _originalPayments;
 
     [SetUp]
     public void SetUp()
     {
         _fixture = new Fixture();
+        _fixture.Customize(new EarningsGeneratedEventCustomization());
         _currentMonthlyLearningAmount = _fixture.Create<decimal>();
         _newMonthlyLearningAmount = _fixture.Create<decimal>();
-        _previousEarningsProfileId = Guid.NewGuid();
         _newEarningsProfileId = Guid.NewGuid();
+
+        var earningGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
+        earningGeneratedEvent.DeliveryPeriods = new List<DeliveryPeriod>
+        {
+            _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
+                .With(x => x.Period, 1).With(x => x.CalendarMonth, 10)
+                .With(x => x.LearningAmount, _currentMonthlyLearningAmount).Create(),
+            _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
+                .With(x => x.Period, 2).With(x => x.CalendarMonth, 11)
+                .With(x => x.LearningAmount, _currentMonthlyLearningAmount).Create(),
+            _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
+                .With(x => x.Period, 3).With(x => x.CalendarMonth, 12)
+                .With(x => x.LearningAmount, _currentMonthlyLearningAmount).Create(),
+        };
+        _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
+        _sut.CalculatePayments(DateTime.Now);
+        _sut.Payments.First().MarkAsSent(2223, 2);
+        _sut.Payments.ElementAt(1).MarkAsSent(2223, 3);
+
+        _originalPayments = new List<Payment>(_sut.Payments);
+
+        _sut.ClearEarnings();
 
         //Expectation:
         //Delivery Period 1 - existing payment matches earning, no payment to be generated (e.g. if there was a price change after this period)
@@ -35,20 +59,11 @@ public class WhenRecalculatePayments
         //Delivery Period 4 - no existing payments, new one calculated for new learning amount
         _newEarnings = new List<Earning>
         {
-            new Earning(2223, 1, _currentMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId),
-            new Earning(2223, 2, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId),
-            new Earning(2223, 3, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId),
-            new Earning(2223, 4, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId)
+            new Earning(_sut.ApprenticeshipKey, 2223, 1, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
+            new Earning(_sut.ApprenticeshipKey, 2223, 2, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
+            new Earning(_sut.ApprenticeshipKey, 2223, 3, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId),
+            new Earning(_sut.ApprenticeshipKey, 2223, 4, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId)
         };
-
-        _existingPayments = new List<Payment>()
-        {
-            new Payment(2223, 1, _currentMonthlyLearningAmount, 2022, 9, "payment 1 paid", _previousEarningsProfileId){ SentForPayment = true },
-            new Payment(2223, 2, _currentMonthlyLearningAmount, 2022, 9, "payment 2 paid", _previousEarningsProfileId){ SentForPayment = true },
-            new Payment(2223, 3, _currentMonthlyLearningAmount, 2022, 9, "payment 3 unpaid", _previousEarningsProfileId)
-        };
-
-        _sut = new Domain.Apprenticeship.Apprenticeship(Guid.NewGuid(), new List<Earning>(), _existingPayments);
 
         foreach (var newEarning in _newEarnings)
         {
@@ -61,14 +76,13 @@ public class WhenRecalculatePayments
     [Test]
     public void ExistingUnpaidPaymentsShouldBeRemoved()
     {
-        _sut.Payments.Should().NotContain(p => p.FundingLineType == "payment 3 unpaid");
+        _sut.Payments.Should().NotContain(_originalPayments.Where(x => !x.SentForPayment));
     }
 
     [Test]
     public void ExistingPaidPaymentsShouldBeNotBeRemoved()
     {
-        _sut.Payments.Should().Contain(p => p.FundingLineType == "payment 1 paid" && p.EarningsProfileId == _previousEarningsProfileId);
-        _sut.Payments.Should().Contain(p => p.FundingLineType == "payment 2 paid" && p.EarningsProfileId == _previousEarningsProfileId);
+        _sut.Payments.Should().Contain(_originalPayments.Where(x => x.SentForPayment));
     }
 
     [Test]

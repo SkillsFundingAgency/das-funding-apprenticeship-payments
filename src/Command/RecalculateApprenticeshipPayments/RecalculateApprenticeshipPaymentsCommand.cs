@@ -1,17 +1,21 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
+
+public class RecalculateApprenticeshipPaymentsCommand
 {
-    public class RecalculateApprenticeshipPaymentsCommand
+    public RecalculateApprenticeshipPaymentsCommand(Guid apprenticeshipKey, List<Earning> newEarnings, DateTime startDate, DateTime plannedEndDate, int ageAtStartOfApprenticeship)
     {
-        public RecalculateApprenticeshipPaymentsCommand(ApprenticeshipEntityModel apprenticeshipEntity, List<Earning> newEarnings)
-        {
-            ApprenticeshipEntity = apprenticeshipEntity;
-            NewEarnings = newEarnings;
-        }
-
-        public ApprenticeshipEntityModel ApprenticeshipEntity { get; }
-        public List<Earning> NewEarnings { get; set; }
+        ApprenticeshipKey = apprenticeshipKey;
+        NewEarnings = newEarnings;
+        StartDate = startDate;
+        PlannedEndDate = plannedEndDate;
+        AgeAtStartOfApprenticeship = ageAtStartOfApprenticeship;
     }
+
+    public Guid ApprenticeshipKey { get; }
+    public List<Earning> NewEarnings { get; set; }
+    public DateTime StartDate { get; }
+    public DateTime PlannedEndDate { get; }
+    public int AgeAtStartOfApprenticeship { get; }
 }

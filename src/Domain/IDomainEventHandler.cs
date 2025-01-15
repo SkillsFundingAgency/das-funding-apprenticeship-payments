@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+
+public interface IDomainEventHandler<in T> where T: IDomainEvent
 {
-    public interface IDomainEventHandler<in T> where T: IDomainEvent
-    {
-        Task Handle(T @event, CancellationToken cancellationToken = default(CancellationToken));
-    }
+    Task Handle(T @event, CancellationToken cancellationToken = default(CancellationToken));
 }

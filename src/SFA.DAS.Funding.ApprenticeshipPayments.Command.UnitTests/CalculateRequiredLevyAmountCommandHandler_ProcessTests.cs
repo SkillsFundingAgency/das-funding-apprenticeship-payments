@@ -39,7 +39,7 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
             Mock.Of<ILogger<CalculateRequiredLevyAmountCommandHandler>>());
 
         // Act
-        await _sut.Publish(command);
+        await _sut.Handle(command);
     }
 
     [Test]
@@ -151,10 +151,10 @@ public class CalculateRequiredLevyAmountCommandHandler_ProcessTests
     }
 
     [Test]
-    public void Process_Publishes_CalculatedRequiredLevyAmount_LearnerReferenceNumber_IsUln()
+    public void Process_Publishes_CalculatedRequiredLevyAmount_LearnerReferenceNumber_IsLearnerReference()
     {
         _bus.Verify(ms => ms.Send(
-                It.Is<CalculateOnProgrammePayment>(e => e.Learner.ReferenceNumber == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.Uln.ToString())),
+                It.Is<CalculateOnProgrammePayment>(e => e.Learner.ReferenceNumber == _finalisedOnProgammeLearningPaymentEvent.ApprenticeshipEarning.LearnerReference)),
             Times.Once());
     }
 

@@ -1,17 +1,16 @@
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command;
 
 public interface IFinalisedOnProgammeLearningPaymentEventBuilder
 {
-    public FinalisedOnProgammeLearningPaymentEvent Build(PaymentEntityModel payment, ApprenticeshipEntityModel apprenticeship);
+    public FinalisedOnProgammeLearningPaymentEvent Build(Domain.Apprenticeship.Payment payment, Domain.Apprenticeship.IApprenticeship apprenticeship);
 }
 
 public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgammeLearningPaymentEventBuilder
 {
-    public FinalisedOnProgammeLearningPaymentEvent Build(PaymentEntityModel payment, ApprenticeshipEntityModel apprenticeship)
+    public FinalisedOnProgammeLearningPaymentEvent Build(Domain.Apprenticeship.Payment payment, Domain.Apprenticeship.IApprenticeship apprenticeship)
     {
         var @event = new FinalisedOnProgammeLearningPaymentEvent();
         @event.Amount = payment.Amount;
@@ -32,6 +31,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.ApprenticeshipEarning.StartDate = apprenticeship.StartDate;
         @event.ApprenticeshipEarning.Uln = apprenticeship.Uln;
         @event.ApprenticeshipEarning.FundingLineType = payment.FundingLineType;
+        @event.ApprenticeshipEarning.LearnerReference = apprenticeship.LearnerReference;
 
         @event.CollectionYear = payment.CollectionYear;
         @event.CollectionPeriod = payment.CollectionPeriod;
@@ -40,7 +40,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         @event.EmployerDetails = new EmployerDetails();
         @event.EmployerDetails.EmployingAccountId = apprenticeship.FundingEmployerAccountId;
         @event.EmployerDetails.FundingAccountId = apprenticeship.TransferSenderAccountId ?? apprenticeship.FundingEmployerAccountId;
-        @event.EmployerDetails.FundingCommitmentId = apprenticeship.FundingCommitmentId;
+        //@event.EmployerDetails.FundingCommitmentId = apprenticeship.ApprovalsApprenticeshipId;
 
         @event.FundingLineType = payment.FundingLineType;
 
@@ -49,7 +49,7 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder : IFinalisedOnProgam
         return @event;
     }
 
-    private decimal CalculateGovernmentContributionPercentage(ApprenticeshipEntityModel apprenticeship)
+    private decimal CalculateGovernmentContributionPercentage(Domain.Apprenticeship.IApprenticeship apprenticeship)
     {
         if (apprenticeship.EmployerType == EmployerType.NonLevy && apprenticeship.AgeAtStartOfApprenticeship < 22)
             return 1;

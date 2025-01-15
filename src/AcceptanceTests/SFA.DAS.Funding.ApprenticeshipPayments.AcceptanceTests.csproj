@@ -15,11 +15,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Extensions\**" />
+    <Compile Remove="Functions\**" />
+    <EmbeddedResource Remove="Extensions\**" />
+    <EmbeddedResource Remove="Functions\**" />
+    <None Remove="Extensions\**" />
+    <None Remove="Functions\**" />
+    <SpecFlowFeatureFiles Remove="Extensions\**" />
+    <SpecFlowFeatureFiles Remove="Functions\**" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Extensions\**" />
+    <SpecFlowObsoleteCodeBehindFiles Remove="Functions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.18.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.33" />
+	<PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.33" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.10.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
@@ -50,13 +63,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DurableEntities\SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities.csproj" />
+    <ProjectReference Include="..\Functions\SFA.DAS.Funding.ApprenticeshipPayments.Functions.csproj" />
     <ProjectReference Include="..\TestHelpers\SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.csproj" />
     <ProjectReference Include="..\Types\SFA.DAS.Funding.ApprenticeshipPayments.Types.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Extensions\" />
   </ItemGroup>
 	
   <ItemGroup>

@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateRequiredLevyAmount;
 
-public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyAmountCommandHandler
+public class CalculateRequiredLevyAmountCommandHandler : ICommandHandler<CalculateRequiredLevyAmountCommand>
 {
     private readonly IPaymentsV2ServiceBusEndpoint _busEndpoint;
     private readonly ILogger<CalculateRequiredLevyAmountCommandHandler> _logger;
@@ -13,7 +13,7 @@ public class CalculateRequiredLevyAmountCommandHandler : ICalculateRequiredLevyA
         _logger = logger;
     }
 
-    public async Task Publish(CalculateRequiredLevyAmountCommand command)
+    public async Task Handle(CalculateRequiredLevyAmountCommand command)
     {
         var @event = command.MapToCalculateOnProgrammePaymentEvent();
 

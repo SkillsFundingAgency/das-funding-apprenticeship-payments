@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
 using System.Text;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 

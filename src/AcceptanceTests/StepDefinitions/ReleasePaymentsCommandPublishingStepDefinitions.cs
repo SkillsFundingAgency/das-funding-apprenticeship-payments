@@ -1,6 +1,7 @@
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
@@ -22,15 +23,26 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     [Given("payments are released")]
     [When("payments are released")]
     [When("payments are released again")]
+    [When("payments are released for the current academic year")]
     public async Task PublishReleasePaymentsCommand()
     {
         _releasePaymentsCommand = new ReleasePaymentsCommand
         {
             CollectionPeriod = ((byte)_systemClockService.Now.Month).ToDeliveryPeriod(),
-            CollectionYear = ((short)_systemClockService.Now.Year).ToAcademicYear((byte)DateTime.Now.Month)
+            CollectionYear = ((short)_systemClockService.Now.Year).ToAcademicYear((byte)_systemClockService.Now.Month)
         };
         await ReleasePayments();
-        Task.Delay(3500).Wait();
+    }
+
+    [When("payments are released for the previous academic year")]
+    public async Task PublishReleasePaymentsCommandForPreviousYear()
+    {
+        _releasePaymentsCommand = new ReleasePaymentsCommand
+        {
+            CollectionPeriod = 13,
+            CollectionYear = ((short)(_systemClockService.Now.Year - 1)).ToAcademicYear((byte)_systemClockService.Now.Month)
+        };
+        await ReleasePayments();
     }
 
     [Given(@"payments are released every month until (.*)")]
@@ -49,7 +61,6 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
             };
             await ReleasePayments();
             releaseDate = releaseDate.AddMonths(1);
-            Task.Delay(3500).Wait();
         }
     }
 
@@ -68,6 +79,6 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
     private async Task ReleasePayments()
     {
         await _testContext.ReleasePaymentsEndpoint.Publish(_releasePaymentsCommand);
-        await Task.Delay(10000);
+        await _testContext.TestFunction.WaitUntilOrchestratorComplete(nameof(ReleasePaymentsOrchestrator));
     }
 }

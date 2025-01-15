@@ -5,9 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Interfaces;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
-using SFA.DAS.Funding.ApprenticeshipPayments.DurableEntities;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Testing.AzureStorageEmulator;
 
@@ -21,6 +22,7 @@ public class TestFunction : IDisposable
     private IJobHost Jobs => _host.Services.GetService<IJobHost>()!;
     public string HubName { get; }
     private readonly OrchestrationData _orchestrationData;
+    private static WaitConfiguration Config => new WaitConfiguration { TimeToWait = TimeSpan.FromSeconds(30) };
 
     public TestFunction(TestContext testContext, string hubName)
     {
@@ -37,8 +39,11 @@ public class TestFunction : IDisposable
             { "ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true;NServiceBusConnectionString" },
             { "ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true;DCServiceBusConnectionString" },
             { "ApplicationSettings:LogLevel", "DEBUG" },
+            { "ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString! },
             { "ApprenticeshipsOuterApi:Key","" },
-            { "ApprenticeshipsOuterApi:BaseUrl","https://localhost:7101/" }
+            { "ApprenticeshipsOuterApi:BaseUrl","https://localhost:7101/" },
+            { "PaymentsOuterApi:Key","" },
+            { "PaymentsOuterApi:BaseUrl","https://localhost:7102/" }
         };
 
         _host = new HostBuilder()
@@ -65,10 +70,17 @@ public class TestFunction : IDisposable
                         options.SetMinimumLevel(LogLevel.Trace);
                         options.AddConsole();
                     });
+                    s.Configure<ApplicationSettings>(a =>
+                    {
+                        a.AzureWebJobsStorage = appConfig["AzureWebJobsStorage"];
+                        a.NServiceBusConnectionString = appConfig["NServiceBusConnectionString"];
+                        a.DCServiceBusConnectionString = appConfig["DCServiceBusConnectionString"];
+                        a.DbConnectionString = appConfig["DbConnectionString"];
+                    });
                     new Startup().Configure(builder);
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
                     s.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup, must come after new Startup().Configure(builder);
-                    s.AddSingleton<IApiClient, TestApprenticeshipApi>();// override DI in Startup, must come after new Startup().Configure(builder);
+                    s.AddSingleton<IOuterApiClient>(new TestOuterApi(testContext));// override DI in Startup, must come after new Startup().Configure(builder);
                 })
             )
             .Build();
@@ -79,17 +91,21 @@ public class TestFunction : IDisposable
         var timeout = new TimeSpan(0, 2, 10);
         var delayTask = Task.Delay(timeout);
 
-        await Task.WhenAny(Task.WhenAll(_host.StartAsync(), Jobs.Terminate()), delayTask);
+        await Task.WhenAny(Task.WhenAll(_host.StartAsync(), Jobs.Terminate(), Jobs.Purge()), delayTask);
 
         if (delayTask.IsCompleted)
         {
             throw new Exception($"Failed to start test function host within {timeout.Seconds} seconds.  Check the AzureStorageEmulator is running. ");
         }
     }
+
+    public async Task WaitUntilOrchestratorComplete(string orchestratorName)
+    {
+        await Jobs.WaitFor(orchestratorName, Config.TimeToWait).ThrowIfFailed();
+    }
     
     public async Task DisposeAsync()
     {
-        await Jobs.Purge();
         await Jobs.StopAsync();
         Dispose();
     }

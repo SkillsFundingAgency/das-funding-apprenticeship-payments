@@ -1,35 +1,35 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Factories;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain.SystemTime;
+using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPayments;
 
-public class RecalculateApprenticeshipPaymentsCommandHandler : IRecalculateApprenticeshipPaymentsCommandHandler
+public class RecalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<RecalculateApprenticeshipPaymentsCommand>
 {
-    private readonly IApprenticeshipFactory _apprenticeshipFactory;
+    private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IDasServiceBusEndpoint _busEndpoint;
     private readonly IPaymentsGeneratedEventBuilder _paymentsGeneratedEventBuilder;
     private readonly ILogger<CalculateApprenticeshipPaymentsCommandHandler> _logger;
     private readonly ISystemClockService _systemClockService;
 
-    public RecalculateApprenticeshipPaymentsCommandHandler(IApprenticeshipFactory apprenticeshipFactory,
+    public RecalculateApprenticeshipPaymentsCommandHandler(IApprenticeshipRepository apprenticeshipRepository,
         IDasServiceBusEndpoint busEndpoint,
         IPaymentsGeneratedEventBuilder paymentsGeneratedEventBuilder,
         ISystemClockService systemClockService,
         ILogger<CalculateApprenticeshipPaymentsCommandHandler> logger)
     {
-        _apprenticeshipFactory = apprenticeshipFactory;
+        _apprenticeshipRepository = apprenticeshipRepository;
         _busEndpoint = busEndpoint;
         _paymentsGeneratedEventBuilder = paymentsGeneratedEventBuilder;
         _systemClockService = systemClockService;
         _logger = logger;
     }
 
-    public async Task<Apprenticeship> Recalculate(RecalculateApprenticeshipPaymentsCommand command)
+    public async Task Handle(RecalculateApprenticeshipPaymentsCommand command)
     {
-        var apprenticeship = _apprenticeshipFactory.LoadExisting(command.ApprenticeshipEntity);
+        var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
 
+        apprenticeship.Update(command.StartDate, command.PlannedEndDate, command.AgeAtStartOfApprenticeship);
         apprenticeship.ClearEarnings();
         
         foreach (var earning in command.NewEarnings)
@@ -42,7 +42,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler : IRecalculateAppre
         var @event = _paymentsGeneratedEventBuilder.Build(apprenticeship);
         _logger.LogInformation("ApprenticeshipKey: {0} Publishing PaymentsGeneratedEvent: {1}", @event.ApprenticeshipKey, @event.SerialiseForLogging());
 
+        await _apprenticeshipRepository.Update(apprenticeship);
         await _busEndpoint.Publish(@event);
-        return apprenticeship;
     }
 }
