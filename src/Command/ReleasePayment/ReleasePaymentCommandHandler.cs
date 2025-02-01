@@ -22,7 +22,7 @@ public class ReleasePaymentCommandHandler : ICommandHandler<ReleasePaymentComman
         
         _logger.LogInformation("Apprenticeship Key: {apprenticeshipKey} -  Publishing payment {paymentKey}", apprenticeshipKey, command.PaymentKey);
         
-        apprenticeship.SendPayment(command.PaymentKey, _eventBuilder.Build);
+        apprenticeship.SendPayment(command.PaymentKey, command.CollectionYear, command.CollectionPeriod, _eventBuilder.Build);
         await _apprenticeshipRepository.Update(apprenticeship);
     }
 }

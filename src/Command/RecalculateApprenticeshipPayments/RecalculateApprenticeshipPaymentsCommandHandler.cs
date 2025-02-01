@@ -29,6 +29,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<R
     {
         var apprenticeship = await _apprenticeshipRepository.Get(command.ApprenticeshipKey);
 
+        apprenticeship.Update(command.StartDate, command.PlannedEndDate, command.AgeAtStartOfApprenticeship);
         apprenticeship.ClearEarnings();
         
         foreach (var earning in command.NewEarnings)

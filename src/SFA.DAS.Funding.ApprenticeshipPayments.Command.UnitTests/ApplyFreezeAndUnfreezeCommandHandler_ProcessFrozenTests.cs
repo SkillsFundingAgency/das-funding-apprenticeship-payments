@@ -18,7 +18,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler_ProcessFrozenTests
     private short _collectionYear;
     private Mock<IApprenticeshipRepository> _repository = null!;
     private Mock<ISystemClockService> _systemClockService = null!;
-    private Mock<IApprenticeshipsApiClient> _apiClient = null!;
+    private Mock<IOuterApiClient> _apiClient = null!;
     private ApplyFreezeAndUnfreezeCommandHandler _sut = null!;
 
     [SetUp]
@@ -35,7 +35,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler_ProcessFrozenTests
         _repository.Setup(x => x.Get(_command.ApprenticeshipKey)).ReturnsAsync(_apprenticeship.Object);
         _systemClockService = new Mock<ISystemClockService>();
 
-        _apiClient = new Mock<IApprenticeshipsApiClient>();
+        _apiClient = new Mock<IOuterApiClient>();
         _sut = new ApplyFreezeAndUnfreezeCommandHandler(_repository.Object, _systemClockService.Object, _apiClient.Object, Mock.Of<ILogger<ApplyFreezeAndUnfreezeCommandHandler>>());
 
         await _sut.Handle(_command);

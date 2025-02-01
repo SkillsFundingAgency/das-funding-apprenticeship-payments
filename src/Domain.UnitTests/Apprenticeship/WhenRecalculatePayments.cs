@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using AutoFixture;
 using FluentAssertions;
@@ -18,7 +17,6 @@ public class WhenRecalculatePayments
     private List<Earning> _newEarnings;
     private decimal _currentMonthlyLearningAmount;
     private decimal _newMonthlyLearningAmount;
-    private Guid _previousEarningsProfileId;
     private Guid _newEarningsProfileId;
     private Domain.Apprenticeship.Apprenticeship _sut;
     private List<Payment> _originalPayments;
@@ -30,7 +28,6 @@ public class WhenRecalculatePayments
         _fixture.Customize(new EarningsGeneratedEventCustomization());
         _currentMonthlyLearningAmount = _fixture.Create<decimal>();
         _newMonthlyLearningAmount = _fixture.Create<decimal>();
-        _previousEarningsProfileId = Guid.NewGuid();
         _newEarningsProfileId = Guid.NewGuid();
 
         var earningGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
@@ -48,8 +45,8 @@ public class WhenRecalculatePayments
         };
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
         _sut.CalculatePayments(DateTime.Now);
-        _sut.Payments.First().MarkAsSent();
-        _sut.Payments.ElementAt(1).MarkAsSent();
+        _sut.Payments.First().MarkAsSent(2223, 2);
+        _sut.Payments.ElementAt(1).MarkAsSent(2223, 3);
 
         _originalPayments = new List<Payment>(_sut.Payments);
 

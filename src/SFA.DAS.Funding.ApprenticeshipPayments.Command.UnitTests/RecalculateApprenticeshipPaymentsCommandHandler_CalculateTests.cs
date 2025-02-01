@@ -33,7 +33,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
         _apprenticeship = new Mock<IApprenticeship>();
         _newEarnings = _fixture.CreateMany<Earning>().ToList();
         _apprenticeshipKey = Guid.NewGuid();
-        _command = new RecalculateApprenticeshipPaymentsCommand(_apprenticeshipKey, _newEarnings);
+        _command = new RecalculateApprenticeshipPaymentsCommand(_apprenticeshipKey, _newEarnings, _fixture.Create<DateTime>(), _fixture.Create<DateTime>(), _fixture.Create<int>());
         _mockSystemClockService = new Mock<ISystemClockService>();
 
         _apprenticeshipRepository = new Mock<IApprenticeshipRepository>();
@@ -75,6 +75,12 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
                     expectedEarning.CollectionYear, expectedEarning.CollectionMonth, expectedEarning.FundingLineType,
                     It.IsAny<Guid>()), Times.Once);
         }
+    }
+
+    [Test]
+    public void TheApprenticeshipDetailsAreUpdated()
+    {
+        _apprenticeship.Verify(x => x.Update(_command.StartDate, _command.PlannedEndDate, _command.AgeAtStartOfApprenticeship), Times.Once);
     }
 
     [Test]

@@ -80,7 +80,6 @@ public class TestFunction : IDisposable
                     new Startup().Configure(builder);
                     s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
                     s.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup, must come after new Startup().Configure(builder);
-                    s.AddSingleton<IApprenticeshipsApiClient, TestApprenticeshipsApi>();// override DI in Startup, must come after new Startup().Configure(builder);
                     s.AddSingleton<IOuterApiClient>(new TestOuterApi(testContext));// override DI in Startup, must come after new Startup().Configure(builder);
                 })
             )

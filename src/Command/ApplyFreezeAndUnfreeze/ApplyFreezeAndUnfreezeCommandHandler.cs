@@ -11,14 +11,14 @@ public class ApplyFreezeAndUnfreezeCommandHandler : ICommandHandler<ApplyFreezeA
 {
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly ISystemClockService _systemClock;
-    private readonly IApprenticeshipsApiClient _apprenticeshipsApiClient;
+    private readonly IOuterApiClient _outerApiClient;
     private readonly ILogger<ApplyFreezeAndUnfreezeCommandHandler> _logger;
 
-    public ApplyFreezeAndUnfreezeCommandHandler(IApprenticeshipRepository apprenticeshipRepository, ISystemClockService systemClock, IApprenticeshipsApiClient apprenticeshipsApiClient, ILogger<ApplyFreezeAndUnfreezeCommandHandler> logger)
+    public ApplyFreezeAndUnfreezeCommandHandler(IApprenticeshipRepository apprenticeshipRepository, ISystemClockService systemClock, IOuterApiClient outerApiClient, ILogger<ApplyFreezeAndUnfreezeCommandHandler> logger)
     {
         _apprenticeshipRepository = apprenticeshipRepository;
         _systemClock = systemClock;
-        _apprenticeshipsApiClient = apprenticeshipsApiClient;
+        _outerApiClient = outerApiClient;
         _logger = logger;
     }
 
@@ -35,7 +35,7 @@ public class ApplyFreezeAndUnfreezeCommandHandler : ICommandHandler<ApplyFreezeA
         else
         {
             var previousAcademicYear = await GetPreviousAcademicYear();
-            apprenticeship.UnfreezeFrozenPayments(command.CollectionYear, command.CollectionPeriod, _systemClock.Now.ToAcademicYear(), short.Parse(previousAcademicYear.AcademicYear), previousAcademicYear.HardCloseDate, _systemClock.Now);
+            apprenticeship.UnfreezeFrozenPayments(_systemClock.Now.ToAcademicYear(), short.Parse(previousAcademicYear.AcademicYear), previousAcademicYear.HardCloseDate, _systemClock.Now);
             _logger.LogInformation("ApprenticeshipKey: {apprenticeshipKey} - Any frozen frozen payments have been defrosted.", apprenticeshipKey);
         }
 
@@ -44,13 +44,13 @@ public class ApplyFreezeAndUnfreezeCommandHandler : ICommandHandler<ApplyFreezeA
 
     private async Task<GetAcademicYearsResponse> GetPreviousAcademicYear()
     {
-        var currentAcademicYearResponse = await _apprenticeshipsApiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(_systemClock.Now));
+        var currentAcademicYearResponse = await _outerApiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(_systemClock.Now));
         if (!currentAcademicYearResponse.IsSuccessStatusCode || currentAcademicYearResponse.Body == null)
             throw new Exception("Error getting current academic year");
 
         var lastDayOfPreviousYear = currentAcademicYearResponse.Body.StartDate.AddDays(-1);
 
-        var previousAcademicYearResponse = await _apprenticeshipsApiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(lastDayOfPreviousYear));
+        var previousAcademicYearResponse = await _outerApiClient.Get<GetAcademicYearsResponse>(new GetAcademicYearsRequest(lastDayOfPreviousYear));
         if (!previousAcademicYearResponse.IsSuccessStatusCode || previousAcademicYearResponse.Body == null)
             throw new Exception("Error getting previous academic year");
             
