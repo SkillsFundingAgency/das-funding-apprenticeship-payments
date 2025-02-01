@@ -8,6 +8,8 @@ using SFA.DAS.NServiceBus.Configuration.AzureServiceBus;
 using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 using SFA.DAS.Payments.FundingSource.Messages.Commands;
 using System.Diagnostics.CodeAnalysis;
+using Azure.Core;
+using Azure.Identity;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 
@@ -43,9 +45,10 @@ public static class NServiceBusStartupExtensions
         }
         else
         {
-            endpointConfiguration
-                .UseAzureServiceBusTransport(applicationSettings.DCServiceBusConnectionString,
-                    r => r.AddRouting().DoNotEnforceBestPractices());
+            var transport = endpointConfiguration.UseTransport<AzureServiceBusTransport>();
+            transport.ConnectionString(applicationSettings.DCServiceBusConnectionString);
+            transport.Routing().DoNotEnforceBestPractices();
+            transport.CustomTokenCredential((TokenCredential)new DefaultAzureCredential());
         }
 
         if (!string.IsNullOrEmpty(applicationSettings.NServiceBusLicense))
@@ -73,7 +76,9 @@ public static class NServiceBusStartupExtensions
         }
         else
         {
-            endpointConfiguration.UseAzureServiceBusTransport(applicationSettings.NServiceBusConnectionString);
+            var transport = endpointConfiguration.UseTransport<AzureServiceBusTransport>();
+            transport.ConnectionString(applicationSettings.NServiceBusConnectionString);
+            transport.CustomTokenCredential((TokenCredential)new DefaultAzureCredential());
         }
 
         if (!string.IsNullOrEmpty(applicationSettings.NServiceBusLicense))
