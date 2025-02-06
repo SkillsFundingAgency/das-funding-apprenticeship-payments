@@ -12,6 +12,11 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.SetLearnerReference;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
+using Azure.Identity;
+using System.Security.Cryptography.X509Certificates;
+using Azure.Security.KeyVault.Secrets;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command;
 
@@ -31,7 +36,22 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<ICommandHandler<ReleasePaymentCommand>, ReleasePaymentCommandHandler>();
         serviceCollection.AddScoped<ICommandHandler<SetLearnerReferenceCommand>, SetLearnerReferenceCommandHandler>();
         serviceCollection.AddSystemClock(configuration);
-        serviceCollection.AddHttpClient<IOuterApiClient, OuterApiClient>();
+        serviceCollection.AddHttpClient<IOuterApiClient, OuterApiClient>()
+            .ConfigurePrimaryHttpMessageHandler(provider =>
+            {
+                var settings = provider.GetRequiredService<IOptions<PaymentsOuterApi>>().Value;
+                
+                var credential = new DefaultAzureCredential();
+                var secretClient = new SecretClient(new Uri(settings.CertificateKeyVault), credential);
+
+                KeyVaultSecret secret = secretClient.GetSecret(settings.ApimCertificateName);
+                var pfxBytes = Convert.FromBase64String(secret.Value);
+
+                var certificate2 = new X509Certificate2(pfxBytes);
+                var handler = new HttpClientHandler();
+                handler.ClientCertificates.Add(certificate2);
+                return handler;
+            });
         return serviceCollection;
     }
 }
