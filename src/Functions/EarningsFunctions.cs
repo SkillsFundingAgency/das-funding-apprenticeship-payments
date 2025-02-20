@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
@@ -11,34 +11,36 @@ public class EarningsFunctions
 {
     private readonly ICommandHandler<CalculateApprenticeshipPaymentsCommand> _calculateApprenticeshipPaymentsCommandHandler;
     private readonly ICommandHandler<RecalculateApprenticeshipPaymentsCommand> _recalculateApprenticeshipPaymentsCommandHandler;
+    private readonly ILogger<EarningsFunctions> _logger;
 
-    public EarningsFunctions(ICommandHandler<CalculateApprenticeshipPaymentsCommand> calculateApprenticeshipPaymentsCommandHandler, ICommandHandler<RecalculateApprenticeshipPaymentsCommand> recalculateApprenticeshipPaymentsCommandHandler)
+    public EarningsFunctions(
+        ICommandHandler<CalculateApprenticeshipPaymentsCommand> calculateApprenticeshipPaymentsCommandHandler,
+        ICommandHandler<RecalculateApprenticeshipPaymentsCommand> recalculateApprenticeshipPaymentsCommandHandler,
+        ILogger<EarningsFunctions> logger)
     {
         _calculateApprenticeshipPaymentsCommandHandler = calculateApprenticeshipPaymentsCommandHandler;
         _recalculateApprenticeshipPaymentsCommandHandler = recalculateApprenticeshipPaymentsCommandHandler;
+        _logger = logger;
     }
 
-    [FunctionName(nameof(EarningsGeneratedEventServiceBusTrigger))]
+    [Function(nameof(EarningsGeneratedEventServiceBusTrigger))]
     public async Task EarningsGeneratedEventServiceBusTrigger(
-        [NServiceBusTrigger(Endpoint = QueueNames.EarningsGenerated)] EarningsGeneratedEvent earningsGeneratedEvent,
-        ILogger log)
+        [ServiceBusTrigger(QueueNames.EarningsGenerated)] EarningsGeneratedEvent earningsGeneratedEvent)
     {
         await _calculateApprenticeshipPaymentsCommandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(earningsGeneratedEvent));
     }
 
-    [FunctionName(nameof(EarningsGeneratedEventHttpTrigger))]
+    [Function(nameof(EarningsGeneratedEventHttpTrigger))]
     public async Task EarningsGeneratedEventHttpTrigger(
-        [HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
     {
         var earningsGeneratedEvent = new EarningsGeneratedEvent { ApprenticeshipKey = Guid.NewGuid() };
         await _calculateApprenticeshipPaymentsCommandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(earningsGeneratedEvent));
     }
 
-    [FunctionName(nameof(EarningsRecalculatedEventServiceBusTrigger))]
+    [Function(nameof(EarningsRecalculatedEventServiceBusTrigger))]
     public async Task EarningsRecalculatedEventServiceBusTrigger(
-        [NServiceBusTrigger(Endpoint = QueueNames.EarningsRecalculated)] ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent,
-        ILogger log)
+        [ServiceBusTrigger(QueueNames.EarningsRecalculated)] ApprenticeshipEarningsRecalculatedEvent earningsRecalculatedEvent)
     {
         await _recalculateApprenticeshipPaymentsCommandHandler.Handle(
             new RecalculateApprenticeshipPaymentsCommand(earningsRecalculatedEvent.ApprenticeshipKey,

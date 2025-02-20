@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Dtos;
+﻿using Microsoft.Azure.Functions.Worker;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Dtos;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetApprenticeshipKey;
 
@@ -13,7 +14,7 @@ public class GetApprenticeshipKey
         _queryHandler = queryHandler;
     }
 
-    [FunctionName(nameof(GetApprenticeshipKey))]
+    [Function(nameof(GetApprenticeshipKey))]
     public async Task<Guid?> Get([ActivityTrigger] Learner input)
     {
         var response = await _queryHandler.Get(new GetApprenticeshipKeyQuery(input.Ukprn, input.Uln));

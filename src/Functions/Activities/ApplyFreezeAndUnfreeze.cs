@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Command;
+﻿using Microsoft.Azure.Functions.Worker;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ApplyFreezeAndUnfreeze;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 
@@ -13,7 +14,7 @@ public class ApplyFreezeAndUnfreeze
         _commandHandler = commandHandler;
     }
 
-    [FunctionName(nameof(ApplyFreezeAndUnfreeze))]
+    [Function(nameof(ApplyFreezeAndUnfreeze))]
     public async Task Set([ActivityTrigger] ApplyFreezeAndUnfreezeInput input)
     {
         await _commandHandler.Handle(new ApplyFreezeAndUnfreezeCommand(input.ApprenticeshipKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod));

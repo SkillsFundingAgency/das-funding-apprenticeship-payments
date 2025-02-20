@@ -17,7 +17,7 @@ public class CalculateRequiredLevyAmountFunction_RunTests
 
     public CalculateRequiredLevyAmountFunction_RunTests()
     {
-        _sut = new CalculateRequiredLevyAmountFunction(_commandHandlerMock.Object);
+        _sut = new CalculateRequiredLevyAmountFunction(_commandHandlerMock.Object, Mock.Of<ILogger<CalculateRequiredLevyAmountFunction>>());
     }
 
     [Test]
@@ -27,7 +27,7 @@ public class CalculateRequiredLevyAmountFunction_RunTests
         var @event = _fixture.Create<FinalisedOnProgammeLearningPaymentEvent>();
 
         // Act
-        await _sut.Run(@event, Mock.Of<ILogger>());
+        await _sut.Run(@event);
 
         // Assert
         _commandHandlerMock.Verify(_ => _.Handle(It.Is<CalculateRequiredLevyAmountCommand>(c => c.Data == @event)), Times.Once());
