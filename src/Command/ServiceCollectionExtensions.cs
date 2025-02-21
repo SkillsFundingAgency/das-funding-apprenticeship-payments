@@ -42,9 +42,9 @@ public static class ServiceCollectionExtensions
                 var settings = provider.GetRequiredService<IOptions<PaymentsOuterApi>>().Value;
                 
                 var credential = new DefaultAzureCredential();
-                var secretClient = new SecretClient(new Uri(settings.CertificateKeyVault), credential);
+                var secretClient = new SecretClient(new Uri(settings.SecretClientUrl), credential);
 
-                KeyVaultSecret secret = secretClient.GetSecret(settings.ApimCertificateName);
+                KeyVaultSecret secret = secretClient.GetSecret(settings.SecretName);
                 var pfxBytes = Convert.FromBase64String(secret.Value);
 
                 var certificate2 = new X509Certificate2(pfxBytes);
