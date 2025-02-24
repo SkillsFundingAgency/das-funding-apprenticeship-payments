@@ -3,23 +3,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-//using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.AppStart;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query;
-//using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-//using Microsoft.Azure.Functions.Worker;
-//using Microsoft.DurableTask.Worker;
-//using Microsoft.Extensions.DependencyInjection;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
-using SFA.DAS.Funding.ApprenticeshipPayments.Functions.AppStart;
-using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
-using NServiceBus.Routing;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
@@ -97,19 +92,9 @@ public class Startup
         services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
         services.AddSingleton(x => ApplicationSettings);
 
-        services.AddEntityFrameworkForApprenticeships(ApplicationSettings, NotLocalOrAcceptanceTests(Configuration));
+        services.AddEntityFrameworkForApprenticeships(ApplicationSettings, Configuration.NotLocalOrAcceptanceTests());
         services.AddCommandServices(Configuration).AddDomainServices().AddQueryServices();
 
-    }
-
-    private static bool NotAcceptanceTests(IConfiguration configuration)
-    {
-        return !configuration!["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
-    }
-
-    private static bool NotLocalOrAcceptanceTests(IConfiguration configuration)
-    {
-        return !configuration!["EnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) && NotAcceptanceTests(configuration); 
     }
 
     /// <summary>
@@ -118,6 +103,6 @@ public class Startup
     /// </summary>
     private static void ForceAssemblyLoad()
     {
-        //var apprenticeshipEarningsTypes = new FinalisedOnProgammeLearningPaymentEvent();
+        var apprenticeshipEarningsTypes = new FinalisedOnProgammeLearningPaymentEvent();
     }
 }

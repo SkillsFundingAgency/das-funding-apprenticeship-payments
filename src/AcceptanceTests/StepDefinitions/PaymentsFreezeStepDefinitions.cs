@@ -1,9 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.Types;
-using NServiceBus;
+﻿using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
-using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
-using NUnit.Framework;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
@@ -27,10 +24,10 @@ public class PaymentsFreezeStepDefinitions
         var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];
 
         await WaitHelper.WaitForIt(() =>
-            PaymentsGeneratedEventHandler.ReceivedEvents.Any(x => x.ApprenticeshipKey == apprenticeshipKey),
+            _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Any(x => x.ApprenticeshipKey == apprenticeshipKey),
             "Payments need to have been generated at least once for a freeze to take place");
 
-        await _testContext.FreezePaymentsEndpoint.Publish(new PaymentsFrozenEvent
+        await _testContext.TestFunction!.PublishEvent(new PaymentsFrozenEvent
         {
             ApprenticeshipKey = apprenticeshipKey
         });
@@ -45,7 +42,7 @@ public class PaymentsFreezeStepDefinitions
         var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];
 
         await WaitHelper.WaitForUnexpected(() =>
-            FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(x => x.ApprenticeshipKey == apprenticeshipKey),
+            _testContext.ReceivedEvents<FinalisedOnProgammeLearningPaymentEvent>().Any(x => x.ApprenticeshipKey == apprenticeshipKey),
             "No payments should have been published");
 
     }
@@ -55,7 +52,7 @@ public class PaymentsFreezeStepDefinitions
     {
         var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];
 
-        await _testContext.UnfreezePaymentsEndpoint.Publish(new PaymentsUnfrozenEvent
+        await _testContext.TestFunction!.PublishEvent(new PaymentsUnfrozenEvent
         {
             ApprenticeshipKey = apprenticeshipKey
         });

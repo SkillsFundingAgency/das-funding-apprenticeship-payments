@@ -1,8 +1,5 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
-using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
+﻿using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
-using System.Linq;
-using TechTalk.SpecFlow;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
@@ -11,10 +8,12 @@ public class ExpectationStepDefinitions
 {
     private static List<ExpectedPayments> _expectedPayments = new List<ExpectedPayments>();
     private readonly ScenarioContext _scenarioContext;
+    private readonly TestContext _testContext;
 
-    public ExpectationStepDefinitions(ScenarioContext scenarioContext)
+    public ExpectationStepDefinitions(ScenarioContext scenarioContext, TestContext testContext)
     {
         _scenarioContext = scenarioContext;
+        _testContext = testContext;
     }
 
     public static void AddExpectedPayment(ExpectedPayments expectedPayments)
@@ -64,13 +63,13 @@ public class ExpectationStepDefinitions
         });
     }
 
-    private static async Task ValidateCalculatedPayments(List<ExpectedPayments> expected)
+    private async Task ValidateCalculatedPayments(List<ExpectedPayments> expected)
     {
         if (expected == null || !expected.Any()) return;
 
         var processedEvents = new List<PaymentsGeneratedEvent>();
 
-        await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Except(processedEvents).Any(e =>
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Except(processedEvents).Any(e =>
         {
             var outcome = true;
 
@@ -100,13 +99,13 @@ public class ExpectationStepDefinitions
         });
     }
 
-    private static async Task ValidateReleasedPayments(List<ExpectedPayments> expected)
+    private async Task ValidateReleasedPayments(List<ExpectedPayments> expected)
     {
         if (expected == null || !expected.Any()) return;
 
         var processedEvents = new List<FinalisedOnProgammeLearningPaymentEvent>();
 
-        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Except(processedEvents).Any(e =>
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<FinalisedOnProgammeLearningPaymentEvent>().Except(processedEvents).Any(e =>
         {
             processedEvents.Add(e);
 
