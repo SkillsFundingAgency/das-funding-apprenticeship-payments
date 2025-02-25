@@ -5,5 +5,7 @@ public class PaymentsOuterApi
 {
     public string Key { get; set; }
     public string BaseUrl { get; set; }
+    public string SecretClientUrl { get; set; }
+    public string SecretName { get; set; }
 }
 #pragma warning restore CS8618
