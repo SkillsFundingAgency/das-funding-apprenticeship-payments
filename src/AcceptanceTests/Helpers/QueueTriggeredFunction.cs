@@ -39,7 +39,7 @@ internal static class QueueTriggeredFunctionExtensions
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Failed to invoke method {method.Name} on class {function.ClassType.Name}", ex);// Some of the tests verify the behaviour on handler errors, for this reason the exception is swallowed
+            Console.WriteLine($"Failed to invoke method {method.Name} on class {function.ClassType.Name} error:{ex.Message}");// Some of the tests verify the behaviour on handler errors, for this reason the exception is swallowed
         }
     }
 

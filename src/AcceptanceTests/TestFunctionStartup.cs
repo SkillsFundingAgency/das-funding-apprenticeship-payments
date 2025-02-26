@@ -8,6 +8,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
@@ -47,19 +48,18 @@ internal class TestFunctionStartup
             collection.AddTransient(queueTriggeredFunction.ClassType);
         }
 
-        //            s.AddSingleton(typeof(IOrchestrationData), _orchestrationData);
+        var orchestrationFunctions = OrchestrationFunctionResolver.GetOrchestrationTriggeredFunctions();
+        foreach (var orchestrationTriggeredFunction in orchestrationFunctions)
+        {
+            collection.AddTransient(orchestrationTriggeredFunction.ClassType);
+        }
+
         collection.AddSingleton<ISystemClockService, TestSystemClock>();// override DI in Startup, must come after new Startup().Configure(builder);
         collection.AddSingleton<IOuterApiClient>(_testOuterApi);// override DI in Startup, must come after new Startup().Configure(builder);
 
-        collection.AddDurableTaskWorker(builder =>
-        {
-            builder.UseGrpc();
-        });
-
-        collection.AddDurableTaskClient(builder =>
-        {
-            builder.UseGrpc();
-        });
+        collection.AddSingleton<DurableTaskClient>(sp => 
+            new InMemoryDurableTaskClient("TestHub", new FunctionInvoker(sp, orchestrationFunctions))
+        );
     }
 
     private static IConfigurationRoot GenerateConfiguration(TestContext testContext)

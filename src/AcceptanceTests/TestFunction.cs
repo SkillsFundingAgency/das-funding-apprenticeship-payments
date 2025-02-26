@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
@@ -22,7 +24,8 @@ public class TestFunction : IDisposable
 
         _testServer = new TestServer(new WebHostBuilder()
             .UseEnvironment(Environments.Development)
-            .UseStartup<TestFunctionStartup>((_) => new TestFunctionStartup(testContext, _queueTriggeredFunctions, testContext.EndpointInstanceHandler)));
+            .UseStartup<TestFunctionStartup>((_)=> new TestFunctionStartup(testContext, _queueTriggeredFunctions, testContext.EndpointInstanceHandler)));
+
     }
 
     public async Task PublishEvent<T>(T eventObject)
@@ -33,7 +36,11 @@ public class TestFunction : IDisposable
 
     public async Task WaitUntilOrchestratorComplete(string orchestratorName)
     {
-        //await Jobs.WaitFor(orchestratorName, Config.TimeToWait).ThrowIfFailed();
+        var orcherstrator = (DurableTaskClient)_testServer.Services.GetService(typeof(DurableTaskClient))!;
+        var orchestrations = orcherstrator!.GetAllInstancesAsync().ToList<OrchestrationMetadata>();
+        var instanceId = orchestrations.First(x => x.Name == orchestratorName).InstanceId;
+        await orcherstrator.WaitForInstanceCompletionAsync(instanceId);
+        await orcherstrator.PurgeInstanceAsync(instanceId);
     }
     
     public async Task DisposeAsync()

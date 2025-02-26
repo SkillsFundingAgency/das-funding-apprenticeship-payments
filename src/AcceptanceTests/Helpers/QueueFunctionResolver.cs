@@ -1,5 +1,5 @@
 ﻿using Microsoft.Azure.Functions.Worker;
-using System.Reflection;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Extensions;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 
@@ -10,13 +10,8 @@ internal static class QueueFunctionResolver
         var allAssemblies = AppDomain.CurrentDomain.GetAssemblies()
             .Where(x => x.GetName().FullName.Contains("SFA.DAS"));
 
-        var matchingClasses = allAssemblies
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => type
-                .GetMethods()
-                .Any(method => method.GetParameters()
-                .Any(parameter => parameter.GetCustomAttributes(typeof(ServiceBusTriggerAttribute), false)
-                .Any())));
+        var matchingClasses = allAssemblies.GetClassesWithMethodParameterAttribute<ServiceBusTriggerAttribute>();
+
 
         var queueTriggeredFunctions = new List<QueueTriggeredFunction>();
         foreach (var matchingClass in matchingClasses)
