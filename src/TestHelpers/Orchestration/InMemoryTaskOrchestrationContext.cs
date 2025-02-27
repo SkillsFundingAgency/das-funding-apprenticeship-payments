@@ -88,10 +88,14 @@ public class InMemoryTaskOrchestrationContext : TaskOrchestrationContext
         return default;
     }
 
-    public override async Task<TResult> CallSubOrchestratorAsync<TResult>(TaskName orchestratorName, object? input = null, TaskOptions? options = null)
+#pragma warning disable CS4014, CS8603 // Intentionally not awaited and return type can be null
+    public override Task<TResult> CallSubOrchestratorAsync<TResult>(TaskName orchestratorName, object? input = null, TaskOptions? options = null)
     {
         var context = new InMemoryTaskOrchestrationContext(orchestratorName, Guid.NewGuid().ToString(), _functionInvoker);
-        context.AddInput(input);
+        
+        if(input != null)
+            context.AddInput(input);
+
         _orchestrations[context.InstanceId] = context;
         try
         {
@@ -103,6 +107,7 @@ public class InMemoryTaskOrchestrationContext : TaskOrchestrationContext
         }
         return default;
     }
+#pragma warning restore CS4014, CS8603
 
     public override void ContinueAsNew(object? newInput = null, bool preserveUnprocessedEvents = true)
     {

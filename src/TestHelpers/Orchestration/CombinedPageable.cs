@@ -2,7 +2,11 @@
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
 
-public class CombinedPageable<T> : AsyncPageable<T>
+/// <summary>
+/// This implementation is not intended to mimic the real behaviour of an AsyncPageable, 
+/// it is just a simple implementation that will allow all results to be returned in one page.
+/// </summary>
+public class CombinedPageable<T> : AsyncPageable<T> where T : notnull
 {
     private readonly IReadOnlyList<T> _items;
 
@@ -19,14 +23,14 @@ public class CombinedPageable<T> : AsyncPageable<T>
 
 public static class AsyncPageableExtensions
 {
-    public static IEnumerable<T> ToList<T>(this AsyncPageable<T> pageable)
+    public static IEnumerable<T> ToList<T>(this AsyncPageable<T> pageable) where T : notnull
     {
         var page = pageable.AsPages().GetAsyncEnumerator().Current; // There will only be one page with this fake implementation
         return page.Values;
     }
 }
 
-public class FakeAsyncEnumerable<T> : IAsyncEnumerable<Page<T>>
+public class FakeAsyncEnumerable<T> : IAsyncEnumerable<Page<T>> where T : notnull
 {
     private readonly Page<T> _page;
 
@@ -41,7 +45,7 @@ public class FakeAsyncEnumerable<T> : IAsyncEnumerable<Page<T>>
     }
 }
 
-public class FakeAsyncEnumerator<T> : IAsyncEnumerator<Page<T>>
+public class FakeAsyncEnumerator<T> : IAsyncEnumerator<Page<T>> where T : notnull
 {
     public Page<T> Current => _page;
 
