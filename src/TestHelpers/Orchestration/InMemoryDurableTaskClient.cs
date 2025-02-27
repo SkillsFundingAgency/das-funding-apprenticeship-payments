@@ -53,6 +53,7 @@ public class InMemoryDurableTaskClient : DurableTaskClient
     public override Task<Microsoft.DurableTask.Client.PurgeResult> PurgeInstanceAsync(string instanceId, CancellationToken cancellation = default)
     {
         _orchestrations.Remove(instanceId);
+        _functionInvoker.ClearOrchestrationScopes(instanceId);
         return Task.FromResult(new Microsoft.DurableTask.Client.PurgeResult(1));
     }
 

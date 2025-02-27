@@ -48,7 +48,7 @@ internal class TestFunctionStartup
             collection.AddTransient(queueTriggeredFunction.ClassType);
         }
 
-        var orchestrationFunctions = OrchestrationFunctionResolver.GetOrchestrationTriggeredFunctions();
+        var orchestrationFunctions = OrchestrationFunctionResolver.GetTriggeredFunctions();
         foreach (var orchestrationTriggeredFunction in orchestrationFunctions)
         {
             collection.AddTransient(orchestrationTriggeredFunction.ClassType);

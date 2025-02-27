@@ -1,7 +1,5 @@
 ﻿using Microsoft.DurableTask;
 using Microsoft.Extensions.Logging;
-using Polly;
-using System.Collections.Concurrent;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
 
@@ -36,7 +34,7 @@ public class InMemoryTaskOrchestrationContext : TaskOrchestrationContext
     {
         try
         {
-            await (Task)_functionInvoker.Invoke(functionName, new object[] { this });
+            await _functionInvoker.InvokeAsync<Task>(_instanceId, functionName, new object[] { this });
         }
         catch (Exception e)
         {
@@ -76,7 +74,7 @@ public class InMemoryTaskOrchestrationContext : TaskOrchestrationContext
 
         try
         {
-            return await _functionInvoker.InvokeAsync<TResult>(name, new object[] { input });
+            return await _functionInvoker.InvokeAsync<TResult>(_instanceId, name, new object[] { input });
         }
         catch (Exception e)
         {
