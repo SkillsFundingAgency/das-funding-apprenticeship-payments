@@ -31,6 +31,9 @@ internal static class OrchestrationFunctionResolver
 
             var functionAttribute = method.GetCustomAttribute<FunctionAttribute>();
 
+            if (functionAttribute == null)
+                throw new InvalidOperationException($"Method {method.Name} in class {matchingClass.Name} is missing a FunctionAttribute");
+
             orchestrationTriggeredFunctions.Add(new OrchestrationTriggeredFunction
             {
                 FunctionName = functionAttribute.Name,

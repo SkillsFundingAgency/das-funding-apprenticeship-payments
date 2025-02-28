@@ -6,11 +6,11 @@ public static class IConfigurationExtensions
 {
     public static bool NotAcceptanceTests(this IConfiguration configuration)
     {
-        return !configuration!["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
+        return !configuration!["EnvironmentName"]!.Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
     }
 
     public static bool NotLocalOrAcceptanceTests(this IConfiguration configuration)
     {
-        return !configuration!["EnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) && configuration.NotAcceptanceTests();
+        return !configuration!["EnvironmentName"]!.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) && configuration.NotAcceptanceTests();
     }
 }

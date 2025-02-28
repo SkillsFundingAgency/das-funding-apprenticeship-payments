@@ -17,6 +17,7 @@ internal class QueueTriggerEndpoint
 
 internal static class QueueTriggeredFunctionExtensions
 {
+
     internal static async Task PublishEvent<T>(
         this IEnumerable<QueueTriggeredFunction> queueTriggeredFunctions,
         IServiceProvider serviceProvider, 
@@ -35,7 +36,7 @@ internal static class QueueTriggeredFunctionExtensions
 
         try
         {
-            await (Task)method.Invoke(handler, parameters.ToArray());
+            await (Task)method!.Invoke(handler, parameters.ToArray())!;
         }
         catch (Exception ex)
         {

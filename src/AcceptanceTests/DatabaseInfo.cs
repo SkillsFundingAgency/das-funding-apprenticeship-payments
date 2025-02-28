@@ -5,7 +5,7 @@ public class DatabaseInfo
     public string ConnectionString { get; private set; }
     public string DatabaseName { get; private set; }
 
-    public DatabaseInfo(string connectionString = null)
+    public DatabaseInfo(string? connectionString = null)
     {
         if (string.IsNullOrEmpty(connectionString))
         {
