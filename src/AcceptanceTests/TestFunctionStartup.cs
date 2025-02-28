@@ -74,11 +74,8 @@ internal class TestFunctionStartup
                 new KeyValuePair<string, string?>("ApplicationSettings:NServiceBusConnectionString", "UseLearningEndpoint=true"),
                 new KeyValuePair<string, string?>("ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true"),
                 new KeyValuePair<string, string?>("ApplicationSettings:LogLevel", "DEBUG"),
-                new KeyValuePair<string, string?>("ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString!),
-                new KeyValuePair<string, string?>("ApprenticeshipsOuterApi:Key","" ),
-                new KeyValuePair<string, string?>("ApprenticeshipsOuterApi:BaseUrl","https://localhost:7101/" ),
-                new KeyValuePair<string, string?>("PaymentsOuterApi:Key","" ),
-                new KeyValuePair<string, string?>("PaymentsOuterApi:BaseUrl","https://localhost:7102/" )
+                new KeyValuePair<string, string?>("ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString!)
+
             }
         };
 
