@@ -74,7 +74,7 @@ internal static class QueueTriggeredFunctionExtensions
 
     internal static QueueTriggeredFunction GetFunctionForEvent<T>(this IEnumerable<QueueTriggeredFunction> queueTriggeredFunctions)
     {
-        var function = queueTriggeredFunctions.FirstOrDefault(x => x.Endpoints.Where(e => e.EventType == typeof(T)).Any());
+        var function = queueTriggeredFunctions.FirstOrDefault(x => x.Endpoints.Any(e => e.EventType == typeof(T)));
 
         if (function == null)
         {

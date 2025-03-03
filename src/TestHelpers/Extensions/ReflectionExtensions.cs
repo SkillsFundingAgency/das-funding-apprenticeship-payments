@@ -5,7 +5,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Extensions;
 public static class ReflectionExtensions
 {
     /// <summary>
-    /// Get all classes in the assemblies that have a method with with a parameter with the specified attribute
+    /// Get all classes in the assemblies that have a method with a parameter with the specified attribute
     /// </summary>
     public static IEnumerable<Type> GetClassesWithMethodParameterAttribute<TAttribute>(this IEnumerable<Assembly> assemblies)
     {
