@@ -42,10 +42,11 @@ public class TestFunction : IDisposable
         await orcherstrator.WaitForInstanceCompletionAsync(instanceId);
         await orcherstrator.PurgeInstanceAsync(instanceId);
     }
-    
-    public async Task DisposeAsync()
+
+    public Task DisposeAsync()
     {
         Dispose();
+        return Task.CompletedTask;
     }
 
     public void Dispose()

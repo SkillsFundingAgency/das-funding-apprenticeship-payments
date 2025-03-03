@@ -85,7 +85,9 @@ public class InMemoryTaskOrchestrationContext : TaskOrchestrationContext
             _runningActivitiesCompleted[activityId] = true;
         }
 
+#pragma warning disable CS8603 // return type can be null
         return default;
+#pragma warning restore CS8603
     }
 
 #pragma warning disable CS4014, CS8603 // Intentionally not awaited and return type can be null
