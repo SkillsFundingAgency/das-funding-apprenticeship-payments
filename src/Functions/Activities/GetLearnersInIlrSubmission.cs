@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Azure.Functions.Worker;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetLearnersInILR;
@@ -15,7 +16,7 @@ public class GetLearnersInIlrSubmission
         _queryHandler = queryHandler;
     }
 
-    [FunctionName(nameof(GetLearnersInIlrSubmission))]
+    [Function(nameof(GetLearnersInIlrSubmission))]
     public async Task<IEnumerable<Learner>> Get([ActivityTrigger] GetLearnersInIlrSubmissionInput input)
     {
         var learners = await _queryHandler.Get(new GetLearnersInILRQuery(input.Ukprn, input.AcademicYear));

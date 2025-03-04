@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 
@@ -13,8 +15,8 @@ public class ReleasePaymentsOrchestrator
         _logger = logger;
     }
 
-    [FunctionName(nameof(ReleasePaymentsOrchestrator))]
-    public async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
+    [Function(nameof(ReleasePaymentsOrchestrator))]
+    public async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context)
     {
         var input = context.GetInput<CollectionDetails>();
 

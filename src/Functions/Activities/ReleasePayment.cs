@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Command;
+﻿using Microsoft.Azure.Functions.Worker;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ReleasePayment;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 
@@ -13,7 +14,7 @@ public class ReleasePayment
         _commandHandler = commandHandler;
     }
 
-    [FunctionName(nameof(ReleasePayment))]
+    [Function(nameof(ReleasePayment))]
     public async Task Set([ActivityTrigger] ReleasePaymentInput input)
     {
         await _commandHandler.Handle(new ReleasePaymentCommand(input.ApprenticeshipKey, input.PaymentKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod));

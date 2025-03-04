@@ -1,9 +1,8 @@
 using AutoFixture;
-using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
@@ -86,13 +85,13 @@ public class EarningsGeneratedEventPublishingStepDefinitions
         _scenarioContext["apprenticeshipKey"] = _earningsGeneratedEvent.ApprenticeshipKey;
         _scenarioContext[ContextKeys.EarningsGeneratedEvent] = _earningsGeneratedEvent;
 
-        var existingPaymentsGenerated = PaymentsGeneratedEventHandler.ReceivedEvents.Where(x => x.ApprenticeshipKey == _earningsGeneratedEvent.ApprenticeshipKey).ToList();
+        var existingPaymentsGenerated = _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Where(x => x.ApprenticeshipKey == _earningsGeneratedEvent.ApprenticeshipKey).ToList();
 
-        await _testContext.EarningsGeneratedEndpoint.Publish(_earningsGeneratedEvent);
+        await _testContext.TestFunction!.PublishEvent(_earningsGeneratedEvent);
 
         await WaitHelper.WaitForIt(() =>
         {
-            var newReceivedEvents = PaymentsGeneratedEventHandler.ReceivedEvents.Except(existingPaymentsGenerated).ToList();
+            var newReceivedEvents = _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Except(existingPaymentsGenerated).ToList();
             return newReceivedEvents.Any(x => x.ApprenticeshipKey == _earningsGeneratedEvent.ApprenticeshipKey);
         },
             "Failed to find expected published PaymentsGeneratedEvent when calculating payments"

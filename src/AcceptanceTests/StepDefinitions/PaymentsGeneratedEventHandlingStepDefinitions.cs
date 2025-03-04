@@ -1,4 +1,3 @@
-using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
@@ -10,10 +9,12 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 public class PaymentsGeneratedEventHandlingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
+    private readonly TestContext _testContext;
 
-    public PaymentsGeneratedEventHandlingStepDefinitions(ScenarioContext scenarioContext)
+    public PaymentsGeneratedEventHandlingStepDefinitions(ScenarioContext scenarioContext, TestContext testContext)
     {
         _scenarioContext = scenarioContext;
+        _testContext = testContext;
     }
 
     [Given(@"payments are generated with the correct learning amounts")]
@@ -21,13 +22,13 @@ public class PaymentsGeneratedEventHandlingStepDefinitions
     [When(@"payments are generated with the correct learning amounts")]
     public async Task AssertFutureEarningsGeneratedEvent()
     {
-        await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(FuturePaymentsMatchExpectation), "Failed to find published PaymentsGenerated event");
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Any(FuturePaymentsMatchExpectation), "Failed to find published PaymentsGenerated event");
     }
 
     [Then(@"the past earnings are allocated to the current month")]
     public async Task AssertPastEarningsGeneratedEvent()
     {
-        await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(PastPaymentsMatchExpectation), "Failed to find published PaymentsGenerated event");
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Any(PastPaymentsMatchExpectation), "Failed to find published PaymentsGenerated event");
     }
 
     private bool FuturePaymentsMatchExpectation(PaymentsGeneratedEvent paymentsGeneratedEvent)

@@ -1,7 +1,5 @@
 using AutoFixture;
-using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
@@ -30,7 +28,7 @@ public class PaymentsRecalculationStepDefinitions
 	public void BeforeEachScenario()
 	{
 		_expectedNumberOfEventsPublished = 0;
-		PaymentsGeneratedEventHandler.ReceivedEvents.Clear();
+        _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Clear();
 	}
 
 	[Given(@"some previous earnings have been paid")]
@@ -89,16 +87,16 @@ public class PaymentsRecalculationStepDefinitions
 	}
 
 	[When("payments are recalculated")]
-    public static async Task PaymentsAreRecalculated()
+    public async Task PaymentsAreRecalculated()
     {
-		await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Count == _expectedNumberOfEventsPublished, 
-			$"Failed to receive expected number of events Received: {PaymentsGeneratedEventHandler.ReceivedEvents.Count} Expected: {_expectedNumberOfEventsPublished}");
+		await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Count == _expectedNumberOfEventsPublished, 
+			$"Failed to receive expected number of events Received: {_testContext.ReceivedEvents<PaymentsGeneratedEvent>().Count} Expected: {_expectedNumberOfEventsPublished}");
 	}
 
     [Then("new payments are generated with the correct learning amounts")]
-    public static async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmounts()
+    public async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmounts()
     {
-        await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(e =>
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Any(e =>
             {
                 return e.ApprenticeshipKey == _apprenticeshipKey
                        && e.Payments.Count == 3
@@ -124,11 +122,11 @@ public class PaymentsRecalculationStepDefinitions
 
 		_scenarioContext[ContextKeys.EarningsGeneratedEvent] = _previousEarningsGeneratedEvent;
 
-		//publish event for previous earnings
-		await _testContext.EarningsGeneratedEndpoint.Publish(_previousEarningsGeneratedEvent);
+        //publish event for previous earnings
+        await _testContext.TestFunction!.PublishEvent(_previousEarningsGeneratedEvent);
 
 		//wait for payments to be generated
-		await WaitHelper.WaitForIt(() => PaymentsGeneratedEventHandler.ReceivedEvents.Any(e =>
+		await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Any(e =>
 			e.ApprenticeshipKey == _apprenticeshipKey
 			&& e.Payments.Count == periods.Count), "Failed to find published PaymentsGenerated event for previously generated payments");
 
@@ -153,7 +151,7 @@ public class PaymentsRecalculationStepDefinitions
             CollectionPeriod = collectionPeriod,
             CollectionYear = collectionYear
         };
-        await _testContext.ReleasePaymentsEndpoint.Publish(releasePaymentsCommand);
+        await _testContext.TestFunction!.PublishEvent(releasePaymentsCommand);
 
         await _testContext.TestFunction.WaitUntilOrchestratorComplete(nameof(ReleasePaymentsOrchestrator));
     }
@@ -171,7 +169,7 @@ public class PaymentsRecalculationStepDefinitions
         _scenarioContext["apprenticeshipKey"] = _earningsRecalculatedEvent.ApprenticeshipKey;
 
         //publish event for recalculated earnings
-        await _testContext.EarningsRecalculatedEndpoint.Publish(_earningsRecalculatedEvent);
+        await _testContext.TestFunction.PublishEvent(_earningsRecalculatedEvent);
 		_expectedNumberOfEventsPublished++;
 	}
 

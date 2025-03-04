@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Apprenticeships.Types;
+﻿using Microsoft.Azure.Functions.Worker;
+using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.FreezePayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.UnfreezePayments;
@@ -9,32 +10,34 @@ public class PaymentFreezeFunctions
 {
     private readonly ICommandHandler<FreezePaymentsCommand> _freezePaymentsCommandHandler;
     private readonly ICommandHandler<UnfreezePaymentsCommand> _unfreezePaymentsCommandHandler;
+    private readonly ILogger<PaymentFreezeFunctions> _logger;
 
-    public PaymentFreezeFunctions(ICommandHandler<FreezePaymentsCommand> freezePaymentsCommandHandler, ICommandHandler<UnfreezePaymentsCommand> unfreezePaymentsCommandHandler)
+    public PaymentFreezeFunctions(
+        ICommandHandler<FreezePaymentsCommand> freezePaymentsCommandHandler,
+        ICommandHandler<UnfreezePaymentsCommand> unfreezePaymentsCommandHandler,
+        ILogger<PaymentFreezeFunctions> logger)
     {
         _freezePaymentsCommandHandler = freezePaymentsCommandHandler;
         _unfreezePaymentsCommandHandler = unfreezePaymentsCommandHandler;
+        _logger = logger;
     }
 
 
-    [FunctionName(nameof(PaymentsFrozenEventServiceBusTrigger))]
+    [Function(nameof(PaymentsFrozenEventServiceBusTrigger))]
     public async Task PaymentsFrozenEventServiceBusTrigger(
-        [NServiceBusTrigger(Endpoint = QueueNames.PaymentsFrozen)] PaymentsFrozenEvent paymentsFrozenEvent,
-        ILogger log)
+        [ServiceBusTrigger(QueueNames.PaymentsFrozen)] PaymentsFrozenEvent paymentsFrozenEvent)
     {
-        log.LogInformation("Received PaymentsFrozenEvent for apprenticeship {apprenticeshipKey}", paymentsFrozenEvent.ApprenticeshipKey);
+        _logger.LogInformation("Received PaymentsFrozenEvent for apprenticeship {apprenticeshipKey}", paymentsFrozenEvent.ApprenticeshipKey);
 
         var command = new FreezePaymentsCommand(paymentsFrozenEvent.ApprenticeshipKey);
         await _freezePaymentsCommandHandler.Handle(command);
     }
 
-    [FunctionName(nameof(PaymentsUnfrozenEventServiceBusTrigger))]
+    [Function(nameof(PaymentsUnfrozenEventServiceBusTrigger))]
     public async Task PaymentsUnfrozenEventServiceBusTrigger(
-        [NServiceBusTrigger(Endpoint = QueueNames.PaymentsUnfrozen)] PaymentsUnfrozenEvent paymentsUnfrozenEvent,
-        [DurableClient] IDurableEntityClient client,
-        ILogger log)
+        [ServiceBusTrigger(QueueNames.PaymentsUnfrozen)] PaymentsUnfrozenEvent paymentsUnfrozenEvent)
     {
-        log.LogInformation("Received {eventName} for apprenticeship {apprenticeshipKey}", nameof(PaymentsUnfrozenEvent), paymentsUnfrozenEvent.ApprenticeshipKey);
+        _logger.LogInformation("Received {eventName} for apprenticeship {apprenticeshipKey}", nameof(PaymentsUnfrozenEvent), paymentsUnfrozenEvent.ApprenticeshipKey);
 
         var command = new UnfreezePaymentsCommand(paymentsUnfrozenEvent.ApprenticeshipKey);
         await _unfreezePaymentsCommandHandler.Handle(command);

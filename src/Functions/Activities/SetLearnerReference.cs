@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Funding.ApprenticeshipPayments.Command;
+﻿using Microsoft.Azure.Functions.Worker;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.SetLearnerReference;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 
@@ -13,7 +14,7 @@ public class SetLearnerReference
         _commandHandler = commandHandler;
     }
 
-    [FunctionName(nameof(SetLearnerReference))]
+    [Function(nameof(SetLearnerReference))]
     public async Task Set([ActivityTrigger] SetLearnerReferenceInput input)
     {
         await _commandHandler.Handle(new SetLearnerReferenceCommand(input.ApprenticeshipKey, input.LearnerReference));

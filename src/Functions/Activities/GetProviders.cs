@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Azure.Functions.Worker;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query.GetProviders;
 
@@ -13,7 +14,7 @@ public class GetProviders
         _queryHandler = queryHandler;
     }
 
-    [FunctionName(nameof(GetProviders))]
+    [Function(nameof(GetProviders))]
     public async Task<IEnumerable<long>> Get([ActivityTrigger] object input)
     {
         var providers = (await _queryHandler.Get(new GetProvidersQuery())).Providers;
