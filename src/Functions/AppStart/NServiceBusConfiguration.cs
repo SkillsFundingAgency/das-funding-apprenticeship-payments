@@ -4,10 +4,15 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.AppStart;
@@ -19,6 +24,22 @@ internal static class NServiceBusConfiguration
 
         hostBuilder.UseNServiceBus((config, endpointConfiguration) =>
         {
+            endpointConfiguration.LogDiagnostics();
+            endpointConfiguration.AdvancedConfiguration.EnableInstallers();
+
+            endpointConfiguration.Transport.SubscriptionRuleNamingConvention = AzureRuleNameShortener.Shorten;
+            endpointConfiguration.AdvancedConfiguration.SendFailedMessagesTo($"{Constants.EndpointName}-error");
+
+            
+            var serialization = endpointConfiguration.UseSerialization<SystemJsonSerializer>();
+            serialization.Options(new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Converters = { new JsonStringEnumConverter() }
+            });
+
+            
             endpointConfiguration.AdvancedConfiguration.Conventions().SetConventions();
 
             var value = config["ApplicationSettings:NServiceBusLicense"];
@@ -28,7 +49,7 @@ internal static class NServiceBusConfiguration
                 endpointConfiguration.AdvancedConfiguration.License(decodedLicence);
             }
 
-            CheckCreateQueues(config);
+            //CheckCreateQueues(config);
 
             if(postProcessing != null)
             {
@@ -37,6 +58,24 @@ internal static class NServiceBusConfiguration
         });
 
         return hostBuilder;
+    }
+
+    internal static class AzureRuleNameShortener
+    {
+        private const int AzureServiceBusRuleNameMaxLength = 50;
+
+        public static string Shorten(Type type)
+        {
+            var ruleName = type.FullName;
+            if (ruleName!.Length <= AzureServiceBusRuleNameMaxLength)
+            {
+                return ruleName;
+            }
+
+            var bytes = System.Text.Encoding.Default.GetBytes(ruleName);
+            var hash = MD5.HashData(bytes);
+            return new Guid(hash).ToString();
+        }
     }
 
     /// <summary>

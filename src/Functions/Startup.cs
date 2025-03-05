@@ -14,6 +14,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Microsoft.DurableTask.Client;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
@@ -45,20 +46,22 @@ public class Startup
 
     public void Configure(IHostBuilder builder)
     {
-        builder
-            .ConfigureAppConfiguration(PopulateConfig)
-            .ConfigureNServiceBusForSubscribe()
-            .ConfigureServices((c, s) =>
-            {
-                SetupServices(s);
-                s.ConfigureNServiceBusForSend<IDasServiceBusEndpoint>(
-                    ApplicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace(), 
-                    (endpointInstance) => new DasServiceBusEndpoint(endpointInstance));
+         builder
+        .ConfigureFunctionsWorkerDefaults(options => options.UseFunctionExecutionMiddleware())
+        .ConfigureAppConfiguration(PopulateConfig)
+        .ConfigureNServiceBusForSubscribe()
+        .ConfigureServices((c, s) =>
+        {
+            s.AddDurableTaskClient(x => x.UseGrpc());
+            SetupServices(s);
+            s.ConfigureNServiceBusForSend<IDasServiceBusEndpoint>(
+                ApplicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace(), 
+                (endpointInstance) => new DasServiceBusEndpoint(endpointInstance));
 
-                s.ConfigureNServiceBusForSend<IPaymentsV2ServiceBusEndpoint>(
-                    ApplicationSettings.DCServiceBusConnectionString.GetFullyQualifiedNamespace(),
-                    (endpointInstance) => new PaymentsV2ServiceBusEndpoint(endpointInstance));
-            });
+            s.ConfigureNServiceBusForSend<IPaymentsV2ServiceBusEndpoint>(
+                ApplicationSettings.DCServiceBusConnectionString.GetFullyQualifiedNamespace(),
+                (endpointInstance) => new PaymentsV2ServiceBusEndpoint(endpointInstance));
+        });
     }
 
     private void PopulateConfig(IConfigurationBuilder configurationBuilder)
@@ -85,7 +88,6 @@ public class Startup
 
     public void SetupServices(IServiceCollection services)
     {
-
         services.Configure<PaymentsOuterApi>(Configuration.GetSection(nameof(PaymentsOuterApi)));
         services.AddSingleton(cfg => cfg.GetService<IOptions<PaymentsOuterApi>>()!.Value);
 
