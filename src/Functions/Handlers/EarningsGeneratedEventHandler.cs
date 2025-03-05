@@ -1,14 +1,35 @@
 ﻿using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Functions.Worker;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
 {
-    public class EarningsGeneratedEventHandler(ILogger<EarningsGeneratedEventHandler> logger) : IHandleMessages<EarningsGeneratedEvent>
+    public class EarningsGeneratedEventHandler(
+        ICommandHandler<CalculateApprenticeshipPaymentsCommand> commandHandler,
+        ILogger<EarningsGeneratedEventHandler> logger) : IHandleMessages<EarningsGeneratedEvent>
     {
-        public Task Handle(EarningsGeneratedEvent message, IMessageHandlerContext context)
+        public async Task Handle(EarningsGeneratedEvent message, IMessageHandlerContext context)
         {
             logger.LogInformation("EarningsGeneratedEvent handled");
-            return Task.CompletedTask;
+            await commandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(message));
+        }
+    }
+
+    public class EarningsFunctions(
+        ICommandHandler<CalculateApprenticeshipPaymentsCommand> calculateApprenticeshipPaymentsCommandHandler,
+        ILogger<EarningsFunctions> logger)
+    {
+        private readonly ILogger<EarningsFunctions> _logger = logger;
+
+        [Function(nameof(EarningsGeneratedEventHttpTrigger))]
+        public async Task EarningsGeneratedEventHttpTrigger(
+            [HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
+        {
+            var earningsGeneratedEvent = new EarningsGeneratedEvent { ApprenticeshipKey = Guid.NewGuid() };
+            await calculateApprenticeshipPaymentsCommandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(earningsGeneratedEvent));
         }
     }
 }
