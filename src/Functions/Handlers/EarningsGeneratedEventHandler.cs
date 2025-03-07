@@ -16,7 +16,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
         {
             logger.LogInformation("EarningsGeneratedEvent handled");
 
-            var s = JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true };
+            var s = JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true });
             logger.LogInformation(s);
    
 
