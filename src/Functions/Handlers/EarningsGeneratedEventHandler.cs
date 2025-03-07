@@ -4,6 +4,7 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPaym
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
+using System.Text.Json;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
 {
@@ -14,6 +15,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
         public async Task Handle(EarningsGeneratedEvent message, IMessageHandlerContext context)
         {
             logger.LogInformation("EarningsGeneratedEvent handled");
+
+            var s = JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true };
+            logger.LogInformation(s);
+   
+
             await commandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(message));
         }
     }
