@@ -36,7 +36,8 @@ internal static class NServiceBusConfiguration
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                Converters = { new JsonStringEnumConverter() }
+                Converters = { new JsonStringEnumConverter() },
+                PropertyNameCaseInsensitive = true
             });
 
             
