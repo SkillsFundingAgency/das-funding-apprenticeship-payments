@@ -5,11 +5,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
 
 public class InMemoryTaskOrchestrationContext : TaskOrchestrationContext
 {
-    private List<object> _inputs;
+    private readonly List<object> _inputs;
     private TaskName _taskName;
-    private string _instanceId;
+    private readonly string _instanceId;
     private object _customStatus;
-    private FunctionInvoker _functionInvoker;
+    private readonly FunctionInvoker _functionInvoker;
     private bool _isFunctionCallCompleted = false;
     private readonly Dictionary<string, InMemoryTaskOrchestrationContext> _orchestrations = new();
     private readonly Dictionary<string, bool> _runningActivitiesCompleted = new();// The bool represents if the activity is completed
@@ -90,8 +90,7 @@ public class InMemoryTaskOrchestrationContext : TaskOrchestrationContext
 #pragma warning restore CS8603
     }
 
-#pragma warning disable CS4014, CS8603 // Intentionally not awaited and return type can be null
-    public override Task<TResult> CallSubOrchestratorAsync<TResult>(TaskName orchestratorName, object? input = null, TaskOptions? options = null)
+    public override async Task<TResult> CallSubOrchestratorAsync<TResult>(TaskName orchestratorName, object? input = null, TaskOptions? options = null)
     {
         var context = new InMemoryTaskOrchestrationContext(orchestratorName, Guid.NewGuid().ToString(), _functionInvoker);
         
@@ -101,15 +100,16 @@ public class InMemoryTaskOrchestrationContext : TaskOrchestrationContext
         _orchestrations[context.InstanceId] = context;
         try
         {
-            context.TriggerFunction(orchestratorName);
+            await context.TriggerFunction(orchestratorName);
         }
         catch (Exception e)
         {
             Console.WriteLine($"Error occured calling CallSubOrchestratorAsync for '{orchestratorName}' error:{e.Message}");
         }
+#pragma warning disable CS8603 // Return type can be null
         return default;
+#pragma warning restore CS8603
     }
-#pragma warning restore CS4014, CS8603
 
     public override void ContinueAsNew(object? newInput = null, bool preserveUnprocessedEvents = true)
     {

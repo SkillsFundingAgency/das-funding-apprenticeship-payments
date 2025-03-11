@@ -3,24 +3,15 @@ using Microsoft.DurableTask.Client;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
 
-public class InMemoryDurableTaskClient : DurableTaskClient
+public class InMemoryDurableTaskClient(string name, FunctionInvoker functionInvoker) : DurableTaskClient(name)
 {
     private readonly Dictionary<string, InMemoryTaskOrchestrationContext> _orchestrations = new();
-    private FunctionInvoker _functionInvoker;
 
-    public InMemoryDurableTaskClient(
-        string name,
-        FunctionInvoker functionInvoker) : base(name)
-    {
-        _functionInvoker = functionInvoker;
-    }
-
-#pragma warning disable CS4014 // Intentionally not awaited
-    public override Task<string> ScheduleNewOrchestrationInstanceAsync(TaskName orchestratorName, object? input = null, StartOrchestrationOptions? options = null, CancellationToken cancellation = default)
+    public override async Task<string> ScheduleNewOrchestrationInstanceAsync(TaskName orchestratorName, object? input = null, StartOrchestrationOptions? options = null, CancellationToken cancellation = default)
     {
         var instanceId = Guid.NewGuid().ToString();
         
-        var context = new InMemoryTaskOrchestrationContext(orchestratorName, instanceId, _functionInvoker);
+        var context = new InMemoryTaskOrchestrationContext(orchestratorName, instanceId, functionInvoker);
         _orchestrations[instanceId] = context;
 
         if(input != null)
@@ -28,11 +19,10 @@ public class InMemoryDurableTaskClient : DurableTaskClient
 
         var parameters = new List<object> { context };
 
-        context.TriggerFunction(orchestratorName); 
+        await context.TriggerFunction(orchestratorName); 
 
-        return Task.FromResult(instanceId);
+        return await Task.FromResult(instanceId);
     }
-#pragma warning restore CS4014
 
     public override async Task<OrchestrationMetadata> WaitForInstanceCompletionAsync(string instanceId, bool getInputsAndOutputs = false, CancellationToken cancellation = default)
     {
@@ -46,7 +36,7 @@ public class InMemoryDurableTaskClient : DurableTaskClient
                 return new OrchestrationMetadata(instanceId, orchestration.Name);
             }
 
-            await Task.Delay(1000);
+            await Task.Delay(100, cancellation);
         }
 
         return new OrchestrationMetadata(instanceId, orchestration.Name);
