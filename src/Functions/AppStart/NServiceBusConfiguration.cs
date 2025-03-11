@@ -12,7 +12,6 @@ internal static class NServiceBusConfiguration
 {
     internal static IHostBuilder ConfigureNServiceBusForSubscribe(this IHostBuilder hostBuilder, Action postProcessing = null)
     {
-
         hostBuilder.UseNServiceBus((config, endpointConfiguration) =>
         {
             endpointConfiguration.AdvancedConfiguration.EnableInstallers();

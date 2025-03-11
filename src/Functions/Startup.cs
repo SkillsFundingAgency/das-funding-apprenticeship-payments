@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
@@ -14,7 +16,6 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Query;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Microsoft.DurableTask.Client;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
@@ -41,7 +42,6 @@ public class Startup
 
     public Startup()
     {
-        ForceAssemblyLoad();
     }
 
     public void Configure(IHostBuilder builder)
@@ -52,7 +52,6 @@ public class Startup
         .ConfigureNServiceBusForSubscribe()
         .ConfigureServices((c, s) =>
         {
-            s.AddDurableTaskClient(x => x.UseGrpc());
             SetupServices(s);
             s.ConfigureNServiceBusForSend<IDasServiceBusEndpoint>(
                 ApplicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace(), 
@@ -82,7 +81,6 @@ public class Startup
             options.PreFixConfigurationKeys = false;
         });
 
-
         Configuration = configurationBuilder.Build();
     }
 
@@ -97,14 +95,17 @@ public class Startup
         services.AddEntityFrameworkForApprenticeships(ApplicationSettings, Configuration.NotLocalOrAcceptanceTests());
         services.AddCommandServices(Configuration).AddDomainServices().AddQueryServices();
 
-    }
+        services.AddLogging(builder =>
+        {
+            builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+            builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
 
-    /// <summary>
-    /// This method is used to force the assembly to load so that the NServiceBus assembly scanner can find the events.
-    /// This has to be called before builder configuration steps are called as these don't get executed until build() is called.
-    /// </summary>
-    private static void ForceAssemblyLoad()
-    {
-        var apprenticeshipEarningsTypes = new FinalisedOnProgammeLearningPaymentEvent();
+            builder.AddFilter(typeof(Program).Namespace, LogLevel.Information);
+            builder.SetMinimumLevel(LogLevel.Trace);
+        });
+
+        services
+            .AddApplicationInsightsTelemetryWorkerService()
+            .ConfigureFunctionsApplicationInsights();
     }
 }
