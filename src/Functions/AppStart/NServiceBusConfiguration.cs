@@ -24,7 +24,6 @@ internal static class NServiceBusConfiguration
 
         hostBuilder.UseNServiceBus((config, endpointConfiguration) =>
         {
-            endpointConfiguration.LogDiagnostics();
             endpointConfiguration.AdvancedConfiguration.EnableInstallers();
 
             endpointConfiguration.Transport.SubscriptionRuleNamingConvention = AzureRuleNameShortener.Shorten;

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Hosting;
+using NServiceBus.Testing;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
@@ -12,7 +13,7 @@ public class TestFunction : IDisposable
 {
     private readonly TestServer _testServer;
     private bool _isDisposed;
-    private readonly IEnumerable<QueueTriggeredFunction> _queueTriggeredFunctions;
+    private readonly IEnumerable<MessageHandler> _queueTriggeredFunctions;
     public string HubName { get; }
 
 
@@ -20,7 +21,7 @@ public class TestFunction : IDisposable
     {
         HubName = hubName;
         var _ = new Startup();// This forces the AzureFunction assembly to load
-        _queueTriggeredFunctions = QueueFunctionResolver.GetQueueTriggeredFunctions();
+        _queueTriggeredFunctions = MessageHandlerHelper.GetMessageHandlers();
 
         _testServer = new TestServer(new WebHostBuilder()
             .UseEnvironment(Environments.Development)
@@ -30,17 +31,22 @@ public class TestFunction : IDisposable
 
     public async Task PublishEvent<T>(T eventObject)
     {
-        await _queueTriggeredFunctions.PublishEvent<T>(_testServer.Services, eventObject);
+        var function = _queueTriggeredFunctions.FirstOrDefault(x => x.HandledEventType == typeof(T));
+        var handler = _testServer.Services.GetService(function.HandlerType) as IHandleMessages<T>;
+        var context = new TestableMessageHandlerContext
+        {
+            CancellationToken = new CancellationToken()
+        };
+        await handler.Handle(eventObject, context);
     }
 
 
     public async Task WaitUntilOrchestratorComplete(string orchestratorName)
     {
-        var orcherstrator = (DurableTaskClient)_testServer.Services.GetService(typeof(DurableTaskClient))!;
-        var orchestrations = orcherstrator!.GetAllInstancesAsync().ToList<OrchestrationMetadata>();
+        var orchestrator = (DurableTaskClient)_testServer.Services.GetService(typeof(DurableTaskClient))!;
+        var orchestrations = orchestrator!.GetAllInstancesAsync().ToList<OrchestrationMetadata>();
         var instanceId = orchestrations.First(x => x.Name == orchestratorName).InstanceId;
-        await orcherstrator.WaitForInstanceCompletionAsync(instanceId);
-        await orcherstrator.PurgeInstanceAsync(instanceId);
+        await orchestrator.WaitForInstanceCompletionAsync(instanceId);
     }
 
     public Task DisposeAsync()

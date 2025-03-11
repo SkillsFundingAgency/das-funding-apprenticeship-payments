@@ -31,6 +31,7 @@
     <PackageReference Include="AutoFixture" Version="4.18.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="NServiceBus.Testing" Version="9.0.1" />
     <PackageReference Include="SFA.DAS.Testing.AzureStorageEmulator" Version="3.0.169" />
     <PackageReference Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
     <PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />

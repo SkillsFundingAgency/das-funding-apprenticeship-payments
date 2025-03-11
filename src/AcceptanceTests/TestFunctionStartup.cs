@@ -15,13 +15,13 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 internal class TestFunctionStartup
 {
     private readonly Startup _startUp;
-    private readonly IEnumerable<QueueTriggeredFunction> _queueTriggeredFunctions;
+    private readonly IEnumerable<MessageHandler> _queueTriggeredFunctions;
     private readonly TestEndpointInstanceHandler _testEndpointInstanceHandler;
     private readonly TestOuterApi _testOuterApi;
 
     public TestFunctionStartup(
         TestContext testContext,
-        IEnumerable<QueueTriggeredFunction> queueTriggeredFunctions,
+        IEnumerable<MessageHandler> queueTriggeredFunctions,
         TestEndpointInstanceHandler testEndpointInstanceHandler)
     {
         _startUp = new Startup();
@@ -45,7 +45,7 @@ internal class TestFunctionStartup
 
         foreach (var queueTriggeredFunction in _queueTriggeredFunctions)
         {
-            collection.AddTransient(queueTriggeredFunction.ClassType);
+            collection.AddTransient(queueTriggeredFunction.HandlerType);
         }
 
         var orchestrationFunctions = OrchestrationFunctionResolver.GetTriggeredFunctions();
