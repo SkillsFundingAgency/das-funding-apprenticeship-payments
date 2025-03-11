@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
 {
     internal static class MessageHandlerHelper
     {
