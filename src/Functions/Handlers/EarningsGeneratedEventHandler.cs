@@ -18,7 +18,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
 
             var s = JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true });
             logger.LogInformation(s);
-   
 
             await commandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(message));
         }

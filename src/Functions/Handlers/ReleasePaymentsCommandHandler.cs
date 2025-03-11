@@ -1,10 +1,10 @@
 ﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask.Client;
-using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators;
-using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using System.Net.Http;
+using NServiceBus;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
 {
@@ -23,15 +23,8 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
     }
 }
 
-public class PaymentsFunctions
+public class PaymentsFunctions(ILogger<PaymentsFunctions> logger)
 {
-    private readonly ILogger<PaymentsFunctions> _logger;
-
-    public PaymentsFunctions(ILogger<PaymentsFunctions> logger)
-    {
-        _logger = logger;
-    }
-
     [Function(nameof(ReleasePaymentsHttpTrigger))]
     public async Task ReleasePaymentsHttpTrigger(
         [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "releasePayments/{collectionYear}/{collectionPeriod}")] HttpRequestMessage req,
@@ -44,6 +37,6 @@ public class PaymentsFunctions
             input: new CollectionDetails(collectionPeriod, collectionYear)
         );
 
-        _logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+        logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
     }
 }
