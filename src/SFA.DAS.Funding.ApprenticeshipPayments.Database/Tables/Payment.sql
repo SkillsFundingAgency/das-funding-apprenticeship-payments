@@ -12,3 +12,8 @@
 	[FundingLineType] NVARCHAR(50) NOT NULL,
 	[NotPaidDueToFreeze] BIT NOT NULL DEFAULT(0)
 )
+GO
+CREATE INDEX IX_Payment_ApprenticeshipKey ON [Domain].[Payment] (ApprenticeshipKey)
+GO
+CREATE INDEX IX_Payment_Collection ON [Domain].[Payment] (CollectionYear, CollectionPeriod)
+GO

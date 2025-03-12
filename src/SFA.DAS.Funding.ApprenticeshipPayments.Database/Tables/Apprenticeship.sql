@@ -14,3 +14,6 @@
 	[AgeAtStartOfApprenticeship] INT NOT NULL,
 	[LearnerReference] NVARCHAR(50) NULL
 )
+GO
+CREATE INDEX IDX_Apprenticeship_Provider_Uln ON [Domain].[Apprenticeship] (Ukprn, Uln)
+GO
