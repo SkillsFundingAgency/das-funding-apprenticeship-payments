@@ -23,7 +23,7 @@ public static class NServiceBusExtensions
     public static void SetConventions(this ConventionsBuilder conventions)
     {
         conventions.DefiningEventsAs(IsEvent);
-        conventions.DefiningCommandsAs(t => false);
+        conventions.DefiningCommandsAs(IsCommand);
         conventions.DefiningMessagesAs(t => false);
     }
 
@@ -49,11 +49,13 @@ public static class NServiceBusExtensions
 
     private static bool IsEvent(Type t)
     {
-        if (t.Namespace != null && (t.Namespace.StartsWith("SFA.", StringComparison.CurrentCultureIgnoreCase)) && Regex.IsMatch(t.Name, "Event(V\\d+)?$"))
-        {
-            return true;
-        }
-        return false;
+        return t.Namespace != null && ((t.Namespace.StartsWith("SFA.", StringComparison.CurrentCultureIgnoreCase)) &&
+                                       Regex.IsMatch(t.Name, "Event(V\\d+)?$"));
+    }
+
+    private static bool IsCommand(Type t)
+    {
+        return (t.Namespace != null && t.Namespace.StartsWith("SFA.DAS.Payments.FundingSource.Messages.Commands", StringComparison.CurrentCultureIgnoreCase));
     }
 
 }
