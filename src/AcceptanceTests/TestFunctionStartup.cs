@@ -1,5 +1,4 @@
 ﻿using Microsoft.DurableTask.Client;
-using Microsoft.DurableTask.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -75,7 +74,6 @@ internal class TestFunctionStartup
                 new KeyValuePair<string, string?>("ApplicationSettings:DCServiceBusConnectionString", "UseLearningEndpoint=true"),
                 new KeyValuePair<string, string?>("ApplicationSettings:LogLevel", "DEBUG"),
                 new KeyValuePair<string, string?>("ApplicationSettings:DbConnectionString", testContext.SqlDatabase?.DatabaseInfo.ConnectionString!)
-
             }
         };
 

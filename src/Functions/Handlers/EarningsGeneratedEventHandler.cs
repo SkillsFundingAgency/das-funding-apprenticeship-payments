@@ -6,35 +6,32 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using System.Text.Json;
 
-namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
+namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers;
+
+public class EarningsGeneratedEventHandler(
+    ICommandHandler<CalculateApprenticeshipPaymentsCommand> commandHandler,
+    ILogger<EarningsGeneratedEventHandler> logger) : IHandleMessages<EarningsGeneratedEvent>
 {
-    public class EarningsGeneratedEventHandler(
-        ICommandHandler<CalculateApprenticeshipPaymentsCommand> commandHandler,
-        ILogger<EarningsGeneratedEventHandler> logger) : IHandleMessages<EarningsGeneratedEvent>
+    public async Task Handle(EarningsGeneratedEvent message, IMessageHandlerContext context)
     {
-        public async Task Handle(EarningsGeneratedEvent message, IMessageHandlerContext context)
-        {
-            logger.LogInformation("EarningsGeneratedEvent handled");
-
-            var s = JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true });
-            logger.LogInformation(s);
-
-            await commandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(message));
-        }
+        logger.LogInformation("Handling EarningsGeneratedEvent");
+        logger.LogInformation(JsonSerializer.Serialize(message, new JsonSerializerOptions { WriteIndented = true }));
+        
+        await commandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(message));
     }
+}
 
-    public class EarningsFunctions(
-        ICommandHandler<CalculateApprenticeshipPaymentsCommand> calculateApprenticeshipPaymentsCommandHandler,
-        ILogger<EarningsFunctions> logger)
+public class EarningsFunctions(
+    ICommandHandler<CalculateApprenticeshipPaymentsCommand> calculateApprenticeshipPaymentsCommandHandler,
+    ILogger<EarningsFunctions> logger)
+{
+    private readonly ILogger<EarningsFunctions> _logger = logger;
+
+    [Function(nameof(EarningsGeneratedEventHttpTrigger))]
+    public async Task EarningsGeneratedEventHttpTrigger(
+        [HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
     {
-        private readonly ILogger<EarningsFunctions> _logger = logger;
-
-        [Function(nameof(EarningsGeneratedEventHttpTrigger))]
-        public async Task EarningsGeneratedEventHttpTrigger(
-            [HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
-        {
-            var earningsGeneratedEvent = new EarningsGeneratedEvent { ApprenticeshipKey = Guid.NewGuid() };
-            await calculateApprenticeshipPaymentsCommandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(earningsGeneratedEvent));
-        }
+        var earningsGeneratedEvent = new EarningsGeneratedEvent { ApprenticeshipKey = Guid.NewGuid() };
+        await calculateApprenticeshipPaymentsCommandHandler.Handle(new CalculateApprenticeshipPaymentsCommand(earningsGeneratedEvent));
     }
 }

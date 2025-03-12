@@ -1,7 +1,5 @@
-using Microsoft.Extensions.Logging;
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
-using System.Text.Json;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.CalculateApprenticeshipPayments;
@@ -40,4 +38,3 @@ public class CalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<Cal
         await _busEndpoint.Publish(@event);
     }
 }
-

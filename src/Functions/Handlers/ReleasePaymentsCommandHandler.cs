@@ -21,22 +21,22 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers
             logger.LogInformation($"Scheduled new orchestration instance Id {instanceId}");
         }
     }
-}
 
-public class PaymentsFunctions(ILogger<PaymentsFunctions> logger)
-{
-    [Function(nameof(ReleasePaymentsHttpTrigger))]
-    public async Task ReleasePaymentsHttpTrigger(
-        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "releasePayments/{collectionYear}/{collectionPeriod}")] HttpRequestMessage req,
-        [DurableClient] DurableTaskClient client,
-        short collectionYear,
-        byte collectionPeriod)
+    public class PaymentsFunctions(ILogger<PaymentsFunctions> logger)
     {
-        var instanceId = await client.ScheduleNewOrchestrationInstanceAsync(
-            nameof(ReleasePaymentsOrchestrator),
-            input: new CollectionDetails(collectionPeriod, collectionYear)
-        );
+        [Function(nameof(ReleasePaymentsHttpTrigger))]
+        public async Task ReleasePaymentsHttpTrigger(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "releasePayments/{collectionYear}/{collectionPeriod}")] HttpRequestMessage req,
+            [DurableClient] DurableTaskClient client,
+            short collectionYear,
+            byte collectionPeriod)
+        {
+            var instanceId = await client.ScheduleNewOrchestrationInstanceAsync(
+                nameof(ReleasePaymentsOrchestrator),
+                input: new CollectionDetails(collectionPeriod, collectionYear)
+            );
 
-        logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+            logger.LogInformation($"Started orchestration with ID = '{instanceId}'.");
+        }
     }
 }

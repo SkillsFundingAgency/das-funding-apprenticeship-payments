@@ -1,35 +1,34 @@
-﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers
+﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+
+internal static class MessageHandlerHelper
 {
-    internal static class MessageHandlerHelper
+    internal static IEnumerable<MessageHandler> GetMessageHandlers()
     {
-        internal static IEnumerable<MessageHandler> GetMessageHandlers()
-        {
-            var allAssemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(x => x.GetName().FullName.Contains("SFA.DAS"));
+        var allAssemblies = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(x => x.GetName().FullName.Contains("SFA.DAS"));
 
-            var result = allAssemblies
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => type.GetInterfaces()
-                    .Any(interfaceType =>
-                        interfaceType.IsGenericType &&
-                        interfaceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>)))
-                .SelectMany(matchingClass => matchingClass.GetInterfaces(),
-                    (matchingClass, handlerInterface) => new { matchingClass, handlerInterface })
-                .Where(t => t.handlerInterface.IsGenericType &&
-                            t.handlerInterface.GetGenericTypeDefinition() == typeof(IHandleMessages<>))
-                .Select(t => new MessageHandler
-                {
-                    HandlerType = t.matchingClass,
-                    HandledEventType = t.handlerInterface.GetGenericArguments()[0]
-                }).ToList();
+        var result = allAssemblies
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(type => type.GetInterfaces()
+                .Any(interfaceType =>
+                    interfaceType.IsGenericType &&
+                    interfaceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>)))
+            .SelectMany(matchingClass => matchingClass.GetInterfaces(),
+                (matchingClass, handlerInterface) => new { matchingClass, handlerInterface })
+            .Where(t => t.handlerInterface.IsGenericType &&
+                        t.handlerInterface.GetGenericTypeDefinition() == typeof(IHandleMessages<>))
+            .Select(t => new MessageHandler
+            {
+                HandlerType = t.matchingClass,
+                HandledEventType = t.handlerInterface.GetGenericArguments()[0]
+            }).ToList();
 
-            return result;
-        }
+        return result;
     }
+}
 
-    internal class MessageHandler
-    {
-        public Type HandlerType { get; set; }
-        public Type HandledEventType { get; set; }
-    }
+internal class MessageHandler
+{
+    public Type HandlerType { get; set; }
+    public Type HandledEventType { get; set; }
 }
