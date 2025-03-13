@@ -27,7 +27,14 @@ public class CalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<Cal
 
     public async Task Handle(CalculateApprenticeshipPaymentsCommand command)
     {
-       var apprenticeship = new Apprenticeship(command.EarningsGeneratedEvent);
+        var exists = await _apprenticeshipRepository.Exists(command.EarningsGeneratedEvent.ApprenticeshipKey);
+        if (exists)
+        {
+            _logger.LogInformation($"Apprenticeship {command.EarningsGeneratedEvent.ApprenticeshipKey} already exists. CalculateApprenticeshipPaymentsCommand will be ignored.");
+            return;
+        };
+
+        var apprenticeship = new Apprenticeship(command.EarningsGeneratedEvent);
         apprenticeship.CalculatePayments(_systemClockService.Now);
         _logger.LogInformation($"Publishing payments generated event for apprenticeship key {command.EarningsGeneratedEvent.ApprenticeshipKey}. Number of payments: {apprenticeship.Payments.Count}");
 
