@@ -47,9 +47,6 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
 
     public async Task<bool> Exists(Guid key)
     {
-        var apprenticeship = await DbContext.Apprenticeships
-            .SingleOrDefaultAsync(x => x.ApprenticeshipKey == key);
-
-        return apprenticeship != null;
+        return await DbContext.Apprenticeships.AnyAsync(x => x.ApprenticeshipKey == key);
     }
 }
