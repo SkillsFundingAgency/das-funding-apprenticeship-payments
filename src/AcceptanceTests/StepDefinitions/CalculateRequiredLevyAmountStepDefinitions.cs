@@ -1,7 +1,5 @@
 using AutoFixture;
-using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using SFA.DAS.Payments.FundingSource.Messages.Commands;
@@ -33,7 +31,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
 
         _scenarioContext[nameof(FinalisedOnProgammeLearningPaymentEvent)] = inboundEvent;
 
-        await _testContext.FinalisedOnProgammeLearningPaymentSendOnlyEndpoint.Publish(inboundEvent);
+        await _testContext.TestFunction.PublishEvent(inboundEvent);
     }
 
     [When(@"the associated data is used to generate a payment")]
@@ -45,7 +43,7 @@ public class CalculateRequiredLevyAmountStepDefinitions
     [Then(@"the CalculateRequiredLevyAmount event is published to Payments v2")]
     public async Task ThenTheCalculateRequiredLevyAmountEventIsPublishedToPaymentsV2()
     {
-        await WaitHelper.WaitForIt(() => CalculateOnProgrammePaymentEventHandler.ReceivedEvents.Any(CalculateOnProgrammePaymentExpectation), "Failed to find published event");
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<CalculateOnProgrammePayment>().Any(CalculateOnProgrammePaymentExpectation), "Failed to find published event");
     }
 
     private bool CalculateOnProgrammePaymentExpectation(CalculateOnProgrammePayment outboundEvent)

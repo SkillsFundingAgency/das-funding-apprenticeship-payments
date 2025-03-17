@@ -27,7 +27,7 @@ public class CalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<Cal
 
     public async Task Handle(CalculateApprenticeshipPaymentsCommand command)
     {
-        var apprenticeship = new Apprenticeship(command.EarningsGeneratedEvent);
+       var apprenticeship = new Apprenticeship(command.EarningsGeneratedEvent);
         apprenticeship.CalculatePayments(_systemClockService.Now);
         _logger.LogInformation($"Publishing payments generated event for apprenticeship key {command.EarningsGeneratedEvent.ApprenticeshipKey}. Number of payments: {apprenticeship.Payments.Count}");
 
@@ -38,4 +38,3 @@ public class CalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<Cal
         await _busEndpoint.Publish(@event);
     }
 }
-

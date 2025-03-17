@@ -1,5 +1,4 @@
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
@@ -11,23 +10,25 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
+    private readonly TestContext _testContext;
 
-    public FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions(ScenarioContext scenarioContext)
+    public FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions(ScenarioContext scenarioContext, TestContext testContext)
     {
         _scenarioContext = scenarioContext;
+        _testContext = testContext;
     }
 
     [When("the correct payments are released")]
     [Then("the correct payments are released")]
     public async Task AssertCorrectPaymentsAreReleased()
     {
-        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesExpectation), $"Failed to find expected published FinalisedOnProgammeLearningPaymentEvent when asserting correct payments are released");
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<FinalisedOnProgammeLearningPaymentEvent>().Any(ReleasedPaymentMatchesExpectation), $"Failed to find expected published FinalisedOnProgammeLearningPaymentEvent when asserting correct payments are released");
     }
 
     [Then("the correct payments are re-released")]
     public async Task AssertCorrectPaymentsAreReReleased()
     {
-        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Count(ReleasedPaymentMatchesExpectation) == 2, $"Failed to find expected published FinalisedOnProgammeLearningPaymentEvent(s) when asserting correct payments are re-released following a reset of the SentForPaymentsFlag");
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<FinalisedOnProgammeLearningPaymentEvent>().Count(ReleasedPaymentMatchesExpectation) == 2, $"Failed to find expected published FinalisedOnProgammeLearningPaymentEvent(s) when asserting correct payments are re-released following a reset of the SentForPaymentsFlag");
     }
 
     [Then("multiple copies of the same payment are not released")]
@@ -35,7 +36,7 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
     {
         await WaitHelper.WaitForUnexpected(() =>
         {
-            return FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Count(x =>
+            return _testContext.ReceivedEvents<FinalisedOnProgammeLearningPaymentEvent>().Count(x =>
                 x.ApprenticeshipKey == (Guid)_scenarioContext["apprenticeshipKey"] && x.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod()) > 1;
         }, $"Found unexpected event for apprenticeship");
     }
@@ -43,7 +44,7 @@ public class FinalisedOnProgammeLearningPaymentEventHandlingStepDefinitions
     [Then("the correct unfrozen payments are released")]
     public async Task AssertCorrectUnfrozenPaymentsAreReleased()
     {
-        await WaitHelper.WaitForIt(() => FinalisedOnProgammeLearningPaymentEventHandler.ReceivedEvents.Any(ReleasedPaymentMatchesUnfrozenExpectation), "Failed to find expected published FinalisedOnProgammeLearningPaymentEvent when asserting correct unfrozen payments are released");
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<FinalisedOnProgammeLearningPaymentEvent>().Any(ReleasedPaymentMatchesUnfrozenExpectation), "Failed to find expected published FinalisedOnProgammeLearningPaymentEvent when asserting correct unfrozen payments are released");
     }
 
     private bool ReleasedPaymentMatchesExpectation(FinalisedOnProgammeLearningPaymentEvent finalisedOnProgammeLearningPaymentEvent)

@@ -1,86 +1,111 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
+using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.AppStart;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Query;
+using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess;
-using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
-using SFA.DAS.Funding.ApprenticeshipPayments.Query;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
-[assembly: FunctionsStartup(typeof(Startup))]
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 
 [ExcludeFromCodeCoverage]
-public class Startup : FunctionsStartup
+public class Startup
 {
     public IConfiguration Configuration { get; set; }
 
-    public override void Configure(IFunctionsHostBuilder builder)
+    private ApplicationSettings _applicationSettings;
+
+    public ApplicationSettings ApplicationSettings
     {
-        var serviceProvider = builder.Services.BuildServiceProvider();
-
-        Configuration = GetConfiguration(serviceProvider);
-
-        var applicationSettings = new ApplicationSettings();
-        Configuration.Bind(nameof(ApplicationSettings), applicationSettings);
-        EnsureConfig(applicationSettings);
-        Environment.SetEnvironmentVariable("NServiceBusConnectionString", applicationSettings.NServiceBusConnectionString);
-
-        builder.Services.Configure<PaymentsOuterApi>(Configuration.GetSection(nameof(PaymentsOuterApi)));
-        builder.Services.AddSingleton(cfg => cfg.GetService<IOptions<PaymentsOuterApi>>()!.Value);
-
-        builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
-        builder.Services.AddSingleton(x => applicationSettings);
-
-        builder.Services.AddNServiceBus(applicationSettings);
-        builder.Services.AddEntityFrameworkForApprenticeships(applicationSettings, NotLocalOrAcceptanceTests(Configuration));
-        builder.Services.AddCommandServices(Configuration).AddDomainServices().AddQueryServices();
-    }
-
-    private static IConfiguration GetConfiguration(ServiceProvider serviceProvider)
-    {
-        var configuration = serviceProvider.GetService<IConfiguration>();
-
-        var configBuilder = new ConfigurationBuilder()
-            .AddConfiguration(configuration)
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddEnvironmentVariables();
-
-        if (NotAcceptanceTests(configuration))
+        get
         {
-            configBuilder.AddJsonFile("local.settings.json", true);
-            configBuilder.AddAzureTableStorage(options =>
+            if (_applicationSettings == null)
             {
-                options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-                options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                options.EnvironmentName = configuration["EnvironmentName"];
-                options.PreFixConfigurationKeys = false;
-            });
+                _applicationSettings = new ApplicationSettings();
+                Configuration.Bind(nameof(ApplicationSettings), _applicationSettings);
+            }
+            return _applicationSettings;
         }
-
-        return configBuilder.Build();
     }
 
-    private static void EnsureConfig(ApplicationSettings applicationSettings)
+    public Startup()
     {
-        if (string.IsNullOrWhiteSpace(applicationSettings.NServiceBusConnectionString))
-            throw new InvalidOperationException("NServiceBusConnectionString in ApplicationSettings should not be null.");
     }
 
-    private static bool NotAcceptanceTests(IConfiguration configuration)
+    public void Configure(IHostBuilder builder)
     {
-        return !configuration!["EnvironmentName"].Equals("LOCAL_ACCEPTANCE_TESTS", StringComparison.CurrentCultureIgnoreCase);
+         builder
+        .ConfigureFunctionsWorkerDefaults(options => options.UseFunctionExecutionMiddleware())
+        .ConfigureAppConfiguration(PopulateConfig)
+        .ConfigureNServiceBusForSubscribe()
+        .ConfigureServices((c, s) =>
+        {
+            SetupServices(s);
+            s.ConfigureNServiceBusForSend<IDasServiceBusEndpoint>(
+                ApplicationSettings.NServiceBusConnectionString.GetFullyQualifiedNamespace(), 
+                (endpointInstance) => new DasServiceBusEndpoint(endpointInstance));
+
+            s.ConfigureNServiceBusForSend<IPaymentsV2ServiceBusEndpoint>(
+                ApplicationSettings.DCServiceBusConnectionString.GetFullyQualifiedNamespace(),
+                (endpointInstance) => new PaymentsV2ServiceBusEndpoint(endpointInstance));
+        });
     }
 
-    private static bool NotLocalOrAcceptanceTests(IConfiguration configuration)
+    private void PopulateConfig(IConfigurationBuilder configurationBuilder)
     {
-        return !configuration!["EnvironmentName"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) && NotAcceptanceTests(configuration); 
+        Environment.SetEnvironmentVariable("ENDPOINT_NAME", "SFA.DAS.Funding.ApprenticeshipPayments");
+
+        configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddEnvironmentVariables()
+                .AddJsonFile("local.settings.json", true);
+
+        var configuration = configurationBuilder.Build();
+
+        configurationBuilder.AddAzureTableStorage(options =>
+        {
+            options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+            options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+            options.EnvironmentName = configuration["EnvironmentName"];
+            options.PreFixConfigurationKeys = false;
+        });
+
+        Configuration = configurationBuilder.Build();
+    }
+
+    public void SetupServices(IServiceCollection services)
+    {
+        services.Configure<PaymentsOuterApi>(Configuration.GetSection(nameof(PaymentsOuterApi)));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<PaymentsOuterApi>>()!.Value);
+
+        services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), Configuration));
+        services.AddSingleton(x => ApplicationSettings);
+
+        services.AddEntityFrameworkForApprenticeships(ApplicationSettings, Configuration.NotLocalOrAcceptanceTests());
+        services.AddCommandServices(Configuration).AddDomainServices().AddQueryServices();
+
+        services.AddLogging(builder =>
+        {
+            builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+            builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+
+            builder.AddFilter(typeof(Program).Namespace, LogLevel.Information);
+            builder.SetMinimumLevel(LogLevel.Trace);
+        });
+
+        services
+            .AddApplicationInsightsTelemetryWorkerService()
+            .ConfigureFunctionsApplicationInsights();
     }
 }

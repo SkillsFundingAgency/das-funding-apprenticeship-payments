@@ -29,6 +29,7 @@ public static class PeriodHelper
             calendarMonth.ToDeliveryPeriod(), 
             calendarYear.ToAcademicYear(calendarMonth), 
             learningAmount, 
-            "fundingLineType");
+            "fundingLineType",
+            "OnProgramme");
     }
 }
