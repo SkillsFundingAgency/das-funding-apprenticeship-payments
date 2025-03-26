@@ -44,4 +44,9 @@ public class ApprenticeshipRepository : IApprenticeshipRepository
 
         await transaction.CommitAsync();
     }
+
+    public async Task<bool> Exists(Guid key)
+    {
+        return await DbContext.Apprenticeships.AnyAsync(x => x.ApprenticeshipKey == key);
+    }
 }
