@@ -1,6 +1,7 @@
 using AutoFixture;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Command.ReleasePayment;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
@@ -146,13 +147,7 @@ public class PaymentsRecalculationStepDefinitions
 
     private async Task ReleasePayments(byte collectionPeriod, short collectionYear)
     {
-        var releasePaymentsCommand = new ReleasePaymentsCommand
-        {
-            CollectionPeriod = collectionPeriod,
-            CollectionYear = collectionYear
-        };
-        await _testContext.TestFunction!.PublishEvent(releasePaymentsCommand);
-
+        await _testContext.TestFunction!.PostReleasePayments(collectionYear, collectionPeriod);
         await _testContext.TestFunction.WaitUntilOrchestratorComplete(nameof(ReleasePaymentsOrchestrator));
     }
 

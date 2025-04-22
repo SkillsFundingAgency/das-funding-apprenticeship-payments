@@ -78,7 +78,7 @@ public class ReleasePaymentsCommandPublishingStepDefinitions
 
     private async Task ReleasePayments()
     {
-        await _testContext.TestFunction!.PublishEvent(_releasePaymentsCommand);
+        await _testContext.TestFunction!.PostReleasePayments(_releasePaymentsCommand.CollectionYear, _releasePaymentsCommand.CollectionPeriod);
         await _testContext.TestFunction.WaitUntilOrchestratorComplete(nameof(ReleasePaymentsOrchestrator));
     }
 }
