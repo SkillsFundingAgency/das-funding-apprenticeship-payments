@@ -28,19 +28,4 @@ public static class InstalmentTypes
         }
         return source;
     }
-
-    public static bool IsOnProgramme(this string? type)
-    {
-        if (string.IsNullOrWhiteSpace(type))
-        {
-            return true; // At the point InstalmentType was introduced, all existing records were OnProgramme
-        }
-
-        return type == OnProgramme;
-    }
-
-    public static bool IsIncentive(this string? type)
-    {
-        return type == ProviderIncentive || type == EmployerIncentive;
-    }
 }

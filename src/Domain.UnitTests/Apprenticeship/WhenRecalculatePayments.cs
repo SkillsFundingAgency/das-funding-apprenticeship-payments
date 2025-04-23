@@ -62,10 +62,10 @@ public class WhenRecalculatePayments
         //Delivery Period 4 - no existing payments, new one calculated for new learning amount
         _newEarnings = new List<Earning>
         {
-            new Earning(_sut.ApprenticeshipKey, 2223, 1, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, "OnProgramme"),
-            new Earning(_sut.ApprenticeshipKey, 2223, 2, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, "OnProgramme"),
-            new Earning(_sut.ApprenticeshipKey, 2223, 3, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, "OnProgramme"),
-            new Earning(_sut.ApprenticeshipKey, 2223, 4, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId, "OnProgramme")
+            new Earning(_sut.ApprenticeshipKey, 2223, 1, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme),
+            new Earning(_sut.ApprenticeshipKey, 2223, 2, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme),
+            new Earning(_sut.ApprenticeshipKey, 2223, 3, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme),
+            new Earning(_sut.ApprenticeshipKey, 2223, 4, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme)
         };
 
         foreach (var newEarning in _newEarnings)
