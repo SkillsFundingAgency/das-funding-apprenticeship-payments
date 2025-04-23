@@ -16,6 +16,19 @@ public static class InstalmentTypes
         EmployerIncentive
     };
 
+    /// <summary>
+    /// Returns a normalised value for the InstalmentType. 
+    /// This is because the InstalmentType is not always set in the source data and should default to OnProgramme.
+    /// </summary>
+    public static string ToInstalmentType(this string? source)
+    {
+        if(string.IsNullOrWhiteSpace(source))
+        {
+            return OnProgramme; // At the point InstalmentType was introduced, all existing records were OnProgramme
+        }
+        return source;
+    }
+
     public static bool IsOnProgramme(this string? type)
     {
         if (string.IsNullOrWhiteSpace(type))
