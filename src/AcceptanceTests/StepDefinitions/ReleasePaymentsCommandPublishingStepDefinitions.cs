@@ -8,6 +8,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 
 [Binding]
 [Scope(Feature = "Payments Release")]
+[Scope(Feature = "Incentive Payments")]
 public class ReleasePaymentsCommandPublishingStepDefinitions
 {
     private readonly TestContext _testContext;

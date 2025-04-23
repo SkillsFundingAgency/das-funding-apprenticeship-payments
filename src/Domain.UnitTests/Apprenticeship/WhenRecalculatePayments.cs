@@ -35,13 +35,16 @@ public class WhenRecalculatePayments
         {
             _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
                 .With(x => x.Period, 1).With(x => x.CalendarMonth, 10)
-                .With(x => x.LearningAmount, _currentMonthlyLearningAmount).Create(),
+                .With(x => x.LearningAmount, _currentMonthlyLearningAmount)
+                .With(x => x.InstalmentType, InstalmentTypes.OnProgramme).Create(),
             _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
                 .With(x => x.Period, 2).With(x => x.CalendarMonth, 11)
-                .With(x => x.LearningAmount, _currentMonthlyLearningAmount).Create(),
+                .With(x => x.LearningAmount, _currentMonthlyLearningAmount)
+                .With(x => x.InstalmentType, InstalmentTypes.OnProgramme).Create(),
             _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
                 .With(x => x.Period, 3).With(x => x.CalendarMonth, 12)
-                .With(x => x.LearningAmount, _currentMonthlyLearningAmount).Create(),
+                .With(x => x.LearningAmount, _currentMonthlyLearningAmount)
+                .With(x => x.InstalmentType, InstalmentTypes.OnProgramme).Create(),
         };
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
         _sut.CalculatePayments(DateTime.Now);

@@ -80,27 +80,52 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
 
         var earningsToProcess = GetEarningsToProcess(now);
 
-        foreach (var earning in earningsToProcess)
+        // Handle OnProgramme payments
+        foreach (var earning in earningsToProcess.Where(x=> x.InstalmentType.IsOnProgramme()))
         {
             var collectionPeriod = DetermineCollectionPeriod(earning);
 
             if (!_payments.Any(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear))
             {
-                var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, earning.InstalmentType);
+                var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, InstalmentTypes.OnProgramme);
                 _payments.Add(payment);
             }
             else
             {
                 var existingPaidForDeliveryPeriod = _payments
-                    .Where(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear)
+                    .Where(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear && p.PaymentType.IsOnProgramme())
                     .Sum(p => p.Amount);
 
                 if (earning.Amount - existingPaidForDeliveryPeriod == 0) continue;
 
-                var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, earning.InstalmentType);
+                var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, InstalmentTypes.OnProgramme);
                 _payments.Add(payment);
             }
         }
+
+        // Handle Incentive payments
+        var withdrawnIncentivePayments = _payments
+            .Where(p => p.PaymentType.IsIncentive() &&
+                        !Earnings.Any(e => e.AcademicYear == p.AcademicYear &&
+                                           e.DeliveryPeriod == p.DeliveryPeriod &&
+                                           e.FundingLineType == p.FundingLineType &&
+                                           e.InstalmentType == p.PaymentType))
+            .Select(p => new Payment(ApprenticeshipKey, p.AcademicYear, p.DeliveryPeriod, - p.Amount, p.CollectionYear, p.DeliveryPeriod, p.FundingLineType, p.EarningsProfileId, p.PaymentType))
+            .ToList();
+
+        _payments.AddRange(withdrawnIncentivePayments);
+
+        var missingPayments = Earnings
+            .Where(e => e.InstalmentType.IsIncentive() && 
+                        !_payments.Any(p => p.AcademicYear == e.AcademicYear &&
+                                            p.DeliveryPeriod == e.DeliveryPeriod &&
+                                            p.FundingLineType == e.FundingLineType &&
+                                            e.InstalmentType == p.PaymentType))
+            .Select(e => new Payment(ApprenticeshipKey, e.AcademicYear, e.DeliveryPeriod, e.Amount, DetermineCollectionPeriod(e).AcademicYear, e.CollectionMonth, e.FundingLineType, e.EarningsProfileId, e.InstalmentType))
+            .ToList();
+
+        _payments.AddRange(missingPayments.ToList());
+
     }
 
     public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId, string instalmentType)

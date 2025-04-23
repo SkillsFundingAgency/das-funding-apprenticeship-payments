@@ -1,20 +1,22 @@
 using AutoFixture;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.DataModels;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.ReleasePayment;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Orchestrators;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using TechTalk.SpecFlow.Assist;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
 [Scope(Feature = "Recalculate payments for earnings")]
+[Scope(Feature = "Incentive Payments")]
 public class PaymentsRecalculationStepDefinitions
 {
 	private readonly ScenarioContext _scenarioContext;
 	private readonly TestContext _testContext;
-	private static Guid _apprenticeshipKey;
 	private static int _expectedNumberOfEventsPublished = 0;
 	private static EarningsGeneratedEvent _previousEarningsGeneratedEvent;
 	private static ApprenticeshipEarningsRecalculatedEvent _earningsRecalculatedEvent;
@@ -87,7 +89,15 @@ public class PaymentsRecalculationStepDefinitions
 		await GenerateRecalculatedEarnings(periods);
 	}
 
-	[When("payments are recalculated")]
+    [When(@"payments are recalculated with the following earnings")]
+    public async Task PaymentsAreRecalculated(Table table)
+    {
+        var data = table.CreateSet<EarningsDataRow>().ToList();
+        var periods = data.Select(x => PeriodHelper.CreateDeliveryPeriod(x.Month, x.Year, x.Amount, x.InstalmenType)).ToList();
+        await GenerateRecalculatedEarnings(periods);
+    }
+
+    [When("payments are recalculated")]
     public async Task PaymentsAreRecalculated()
     {
 		await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Count == _expectedNumberOfEventsPublished, 
@@ -97,9 +107,11 @@ public class PaymentsRecalculationStepDefinitions
     [Then("new payments are generated with the correct learning amounts")]
     public async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmounts()
     {
+		var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];
+
         await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Any(e =>
             {
-                return e.ApprenticeshipKey == _apprenticeshipKey
+                return e.ApprenticeshipKey == apprenticeshipKey
                        && e.Payments.Count == 3
                        && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod() && x.Amount == 1000) //original payment
                        && e.Payments.Any(x => x.CollectionPeriod == ((byte)DateTime.Now.Month).ToDeliveryPeriod() && x.Amount == 200) //diff payment
@@ -107,9 +119,26 @@ public class PaymentsRecalculationStepDefinitions
             "Failed to find published PaymentsGenerated event for recalculated payments");
     }
 
-	private async Task GenerateExistingPayments(List<DeliveryPeriod> periods)
+    [Then("new payments are generated with the following amounts")]
+    public async Task NewPaymentsAreGeneratedWithTheCorrectLearningAmounts(Table table)
+    {
+        var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];
+        var expectedData = table.CreateSet<ExpectedPaymentDataRow>().ToList();
+
+        await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Any(e =>
+        {
+			return e.ApprenticeshipKey == apprenticeshipKey
+                   && e.Payments.Count == expectedData.Count
+				   && expectedData.All(x => e.Payments.Any(p => p.CollectionYear == x.Year && p.DeliveryPeriod == x.Month.ToDeliveryPeriod() && p.Amount == x.Amount));
+        }), 
+            "Failed to find published PaymentsGenerated event for recalculated payments");
+    }
+
+
+    private async Task GenerateExistingPayments(List<DeliveryPeriod> periods)
 	{
-		_apprenticeshipKey = Guid.NewGuid();
+		var apprenticeshipKey = Guid.NewGuid();
+        _scenarioContext["apprenticeshipKey"] = apprenticeshipKey;
         var uln = _testContext.Fixture.Create<long>();
 		_testContext.Ulns.Add(uln);
 
@@ -118,7 +147,7 @@ public class PaymentsRecalculationStepDefinitions
 			.With(x => x.DeliveryPeriods, periods)
 			.With(x => x.Uln, uln.ToString())
 			.With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
-			.With(x => x.ApprenticeshipKey, _apprenticeshipKey)
+			.With(x => x.ApprenticeshipKey, apprenticeshipKey)
 			.Create();
 
 		_scenarioContext[ContextKeys.EarningsGeneratedEvent] = _previousEarningsGeneratedEvent;
@@ -128,7 +157,7 @@ public class PaymentsRecalculationStepDefinitions
 
 		//wait for payments to be generated
 		await WaitHelper.WaitForIt(() => _testContext.ReceivedEvents<PaymentsGeneratedEvent>().Any(e =>
-			e.ApprenticeshipKey == _apprenticeshipKey
+			e.ApprenticeshipKey == apprenticeshipKey
 			&& e.Payments.Count == periods.Count), "Failed to find published PaymentsGenerated event for previously generated payments");
 
 		//release payments for this month
@@ -153,15 +182,16 @@ public class PaymentsRecalculationStepDefinitions
 
     private async Task GenerateRecalculatedEarnings(List<DeliveryPeriod> periods)
 	{
-		//build event for recalculated earnings
-		_earningsRecalculatedEvent = _testContext.Fixture
+        var apprenticeshipKey = (Guid)_scenarioContext["apprenticeshipKey"];
+
+        //build event for recalculated earnings
+        _earningsRecalculatedEvent = _testContext.Fixture
 			.Build<ApprenticeshipEarningsRecalculatedEvent>()
 			.With(x => x.DeliveryPeriods, periods)
-			.With(x => x.ApprenticeshipKey, _apprenticeshipKey)
+			.With(x => x.ApprenticeshipKey, apprenticeshipKey)
 			.Create();
 
 		_scenarioContext[ContextKeys.EarningsRecalculatedEvent] = _earningsRecalculatedEvent;
-        _scenarioContext["apprenticeshipKey"] = _earningsRecalculatedEvent.ApprenticeshipKey;
 
         //publish event for recalculated earnings
         await _testContext.TestFunction.PublishEvent(_earningsRecalculatedEvent);
