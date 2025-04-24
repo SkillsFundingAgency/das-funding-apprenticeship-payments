@@ -93,7 +93,7 @@ public class PaymentsRecalculationStepDefinitions
     public async Task PaymentsAreRecalculated(Table table)
     {
         var data = table.CreateSet<EarningsDataRow>().ToList();
-        var periods = data.Select(x => PeriodHelper.CreateDeliveryPeriod(x.Month, x.Year, x.Amount, x.InstalmenType)).ToList();
+        var periods = data.Select(x => PeriodHelper.CreateDeliveryPeriod(x.Month, x.Year, x.Amount, x.InstalmentType)).ToList();
         await GenerateRecalculatedEarnings(periods);
     }
 

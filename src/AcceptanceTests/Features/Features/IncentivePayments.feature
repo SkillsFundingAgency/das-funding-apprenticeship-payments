@@ -5,7 +5,7 @@ These tests verify that incentive payments are correctly handled
 Scenario: recalculated payments have relevant incentive payments removed
 	Given the date is now 2024-09-01
 	And The following earnings are generated
-	| Year | Month | Amount | InstalmenType     |
+	| Year | Month | Amount | InstalmentType     |
 	| 2024 | 9     | 200    | OnProgramme       |
 	| 2024 | 9     | 500    | ProviderIncentive |
 	| 2024 | 9     | 500    | EmployerIncentive |
@@ -18,7 +18,7 @@ Scenario: recalculated payments have relevant incentive payments removed
 	And the date is now 2024-11-01
 	And payments are released
 	When payments are recalculated with the following earnings
-	| Year | Month | Amount | InstalmenType     |
+	| Year | Month | Amount | InstalmentType     |
 	| 2024 | 9     | 200    | OnProgramme       |
 	| 2024 | 9     | 500    | ProviderIncentive |
 	| 2024 | 10    | 200    | OnProgramme       |
@@ -39,7 +39,7 @@ Scenario: recalculated payments have relevant incentive payments removed
 Scenario: recalculated payments have relevant incentive payments added
 	Given the date is now 2024-09-01
 	And The following earnings are generated
-	| Year | Month | Amount | InstalmenType     |
+	| Year | Month | Amount | InstalmentType     |
 	| 2024 | 9     | 200    | OnProgramme       |
 	| 2024 | 9     | 500    | ProviderIncentive |
 	| 2024 | 10    | 200    | OnProgramme       |
@@ -50,7 +50,7 @@ Scenario: recalculated payments have relevant incentive payments added
 	And the date is now 2024-11-01
 	And payments are released
 	When payments are recalculated with the following earnings
-	| Year | Month | Amount | InstalmenType     |
+	| Year | Month | Amount | InstalmentType     |
 	| 2024 | 9     | 200    | OnProgramme       |
 	| 2024 | 9     | 500    | ProviderIncentive |
 	| 2024 | 9     | 500    | EmployerIncentive |
@@ -73,7 +73,7 @@ Scenario: recalculated payments have relevant incentive payments added
 Scenario: recalculated payments have relevant incentive payments adjusted
 	Given the date is now 2024-09-01
 	And The following earnings are generated
-	| Year | Month | Amount | InstalmenType     |
+	| Year | Month | Amount | InstalmentType     |
 	| 2024 | 9     | 200    | OnProgramme       |
 	| 2024 | 9     | 500    | ProviderIncentive |
 	| 2024 | 9     | 500    | EmployerIncentive |
@@ -86,7 +86,7 @@ Scenario: recalculated payments have relevant incentive payments adjusted
 	And the date is now 2024-11-01
 	And payments are released
 	When payments are recalculated with the following earnings
-	| Year | Month | Amount | InstalmenType     |
+	| Year | Month | Amount | InstalmentType     |
 	| 2024 | 9     | 200    | OnProgramme       |
 	| 2024 | 9     | 600    | ProviderIncentive |
 	| 2024 | 9     | 400    | EmployerIncentive |
@@ -116,7 +116,7 @@ Scenario: recalculated payments have relevant incentive payments adjusted
 Scenario: Treat old records with no instalmentType set as onprogramme
 	Given the date is now 2024-09-01
 	And The following earnings are generated
-	| Year | Month | Amount | InstalmenType     |
+	| Year | Month | Amount | InstalmentType     |
 	| 2024 | 9     | 200    |                   |
 	| 2024 | 9     | 500    | ProviderIncentive |
 	| 2024 | 9     | 500    | EmployerIncentive |
@@ -129,7 +129,7 @@ Scenario: Treat old records with no instalmentType set as onprogramme
 	And the date is now 2024-11-01
 	And payments are released
 	When payments are recalculated with the following earnings
-	| Year | Month | Amount | InstalmenType     |
+	| Year | Month | Amount | InstalmentType     |
 	| 2024 | 9     | 200    | OnProgramme       |
 	| 2024 | 9     | 500    | ProviderIncentive |
 	| 2024 | 10    | 200    | OnProgramme       |

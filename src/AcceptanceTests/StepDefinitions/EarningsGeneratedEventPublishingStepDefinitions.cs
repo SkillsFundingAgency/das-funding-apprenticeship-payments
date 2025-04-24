@@ -87,7 +87,7 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     {
         var data = table.CreateSet<EarningsDataRow>().ToList();
 
-        var periods = data.Select(x => PeriodHelper.CreateDeliveryPeriod(x.Month, x.Year, x.Amount, x.InstalmenType)).ToList();
+        var periods = data.Select(x => PeriodHelper.CreateDeliveryPeriod(x.Month, x.Year, x.Amount, x.InstalmentType)).ToList();
 
         var uln = _testContext.Fixture.Create<long>();
         _testContext.Ulns.Add(uln);

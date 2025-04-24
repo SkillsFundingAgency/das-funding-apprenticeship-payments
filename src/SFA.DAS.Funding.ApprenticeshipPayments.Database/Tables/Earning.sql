@@ -9,7 +9,7 @@
 	[CollectionYear] SMALLINT NOT NULL,
 	[Amount] DECIMAL(15, 5) NOT NULL,
 	[FundingLineType] NVARCHAR(50) NOT NULL, 
-    [InstalmentType] NVARCHAR(20) NULL
+	[InstalmentType] NVARCHAR(20) NULL
 )
 GO
 CREATE INDEX IX_Earning_ApprenticeshipKey ON [Domain].[Earning] (ApprenticeshipKey)

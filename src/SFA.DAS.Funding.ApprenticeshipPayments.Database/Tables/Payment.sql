@@ -11,7 +11,7 @@
 	[SentForPayment] BIT NOT NULL DEFAULT(0),
 	[FundingLineType] NVARCHAR(50) NOT NULL,
 	[NotPaidDueToFreeze] BIT NOT NULL DEFAULT(0), 
-    [PaymentType] NVARCHAR(20) NULL
+	[PaymentType] NVARCHAR(20) NULL
 )
 GO
 CREATE INDEX IX_Payment_ApprenticeshipKey ON [Domain].[Payment] (ApprenticeshipKey)
