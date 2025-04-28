@@ -1,6 +1,5 @@
 ﻿using Azure.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.RegularExpressions;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
 
