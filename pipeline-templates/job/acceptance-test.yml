@@ -31,7 +31,7 @@ jobs:
     displayName: Copy Dacpac For Acceptance Tests
     inputs:
       Contents: '**'
-      TargetFolder: 'src/Database/bin/release'
+      TargetFolder: 'src/$(SolutionBaseName).Database/bin/release'
       flattenFolders : true
       SourceFolder : '$(build.artifactstagingdirectory)/download'
 
