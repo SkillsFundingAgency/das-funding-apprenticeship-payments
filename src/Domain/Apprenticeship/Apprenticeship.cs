@@ -186,11 +186,11 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
         LearnerReference = learnerReference;
     }
 
-    public void SendPayment(Guid paymentKey, short collectionYear, byte collectionPeriod, Func<Payment, IApprenticeship, IDomainEvent> eventBuilder)
+    public Payment SendPayment(Guid paymentKey, short collectionYear, byte collectionPeriod)
     {
         var payment = Payments.Single(x => x.Key == paymentKey);
         payment.MarkAsSent(collectionYear, collectionPeriod);
-        AddEvent(eventBuilder(payment, this));
+        return payment;
     }
 
     public void Update(DateTime startDate, DateTime plannedEndDate, int ageAtStartOfApprenticeship)

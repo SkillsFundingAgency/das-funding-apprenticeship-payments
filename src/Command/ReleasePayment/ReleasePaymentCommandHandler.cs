@@ -7,12 +7,14 @@ public class ReleasePaymentCommandHandler : ICommandHandler<ReleasePaymentComman
     private readonly IApprenticeshipRepository _apprenticeshipRepository;
     private readonly IFinalisedOnProgammeLearningPaymentEventBuilder _eventBuilder;
     private readonly ILogger<ReleasePaymentCommandHandler> _logger;
+    private readonly IDasServiceBusEndpoint _busEndpoint;
 
-    public ReleasePaymentCommandHandler(IApprenticeshipRepository apprenticeshipRepository, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ReleasePaymentCommandHandler> logger)
+    public ReleasePaymentCommandHandler(IApprenticeshipRepository apprenticeshipRepository, IFinalisedOnProgammeLearningPaymentEventBuilder eventBuilder, ILogger<ReleasePaymentCommandHandler> logger, IDasServiceBusEndpoint busEndpoint)
     {
         _apprenticeshipRepository = apprenticeshipRepository;
         _eventBuilder = eventBuilder;
         _logger = logger;
+        _busEndpoint = busEndpoint;
     }
 
     public async Task Handle(ReleasePaymentCommand command)
@@ -22,7 +24,8 @@ public class ReleasePaymentCommandHandler : ICommandHandler<ReleasePaymentComman
         
         _logger.LogInformation("Apprenticeship Key: {apprenticeshipKey} -  Publishing payment {paymentKey}", apprenticeshipKey, command.PaymentKey);
         
-        apprenticeship.SendPayment(command.PaymentKey, command.CollectionYear, command.CollectionPeriod, _eventBuilder.Build);
+        var payment = apprenticeship.SendPayment(command.PaymentKey, command.CollectionYear, command.CollectionPeriod);
         await _apprenticeshipRepository.Update(apprenticeship);
+        await _busEndpoint.Publish(_eventBuilder.Build(payment, apprenticeship));
     }
 }

@@ -31,6 +31,6 @@ public interface IApprenticeship : IAggregateRoot
     public void FreezePayments();
     public void UnfreezePayments();
     public void SetLearnerReference(string learnerReference);
-    public void SendPayment(Guid paymentKey, short collectionYear, byte collectionPeriod, Func<Payment, IApprenticeship, IDomainEvent> eventBuilder);
+    public Payment SendPayment(Guid paymentKey, short collectionYear, byte collectionPeriod);
     public void Update(DateTime startDate, DateTime plannedEndDate, int ageAtStartOfApprenticeship);
 }
