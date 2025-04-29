@@ -29,8 +29,6 @@ Scenario: recalculated payments have relevant incentive payments removed
 	| Year | Month | Amount |
 	| 2425 | 9     | 200    |
 	| 2425 | 9     | 500    |
-	| 2425 | 9     | 500    |
-	| 2425 | 9     | -500   |
 	| 2425 | 10    | 200    |
 	| 2425 | 11    | 200    |
 	| 2425 | 12    | 200    |
@@ -98,10 +96,8 @@ Scenario: recalculated payments have relevant incentive payments adjusted
 	Then new payments are generated with the following amounts
 	| Year | Month | Amount |
 	| 2425 | 9     | 200    |
-	| 2425 | 9     | 500    |
-	| 2425 | 9     | 500    |
-	| 2425 | 9     | 100    |
-	| 2425 | 9     | -100   |
+	| 2425 | 9     | 600    |
+	| 2425 | 9     | 400    |
 	| 2425 | 10    | 200    |
 	| 2425 | 11    | 200    |
 	| 2425 | 12    | 200    |
@@ -140,8 +136,6 @@ Scenario: Treat old records with no instalmentType set as onprogramme
 	| Year | Month | Amount |
 	| 2425 | 9     | 200    |
 	| 2425 | 9     | 500    |
-	| 2425 | 9     | 500    |
-	| 2425 | 9     | -500   |
 	| 2425 | 10    | 200    |
 	| 2425 | 11    | 200    |
 	| 2425 | 12    | 200    |

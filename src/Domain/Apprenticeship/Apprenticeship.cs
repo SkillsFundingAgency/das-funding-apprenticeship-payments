@@ -151,9 +151,14 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
         }
     }
 
-    public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod)
+    public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod, string? paymentType = null)
     {
-        return _payments.Where(x => x.CollectionPeriod <= collectionPeriod && x.CollectionYear == collectionYear && !x.SentForPayment && !x.NotPaidDueToFreeze).ToList().AsReadOnly();
+        return _payments.Where(x => 
+            x.CollectionPeriod <= collectionPeriod && 
+            x.CollectionYear == collectionYear && 
+            !x.SentForPayment && 
+            !x.NotPaidDueToFreeze &&
+            (paymentType == null || x.PaymentType.ToInstalmentType() == paymentType)).ToList().AsReadOnly();
     }
 
     public void UnfreezeFrozenPayments(short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate)
