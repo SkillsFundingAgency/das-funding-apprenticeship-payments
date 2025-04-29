@@ -23,7 +23,7 @@ public interface IApprenticeship : IAggregateRoot
 
     public void CalculatePayments(DateTime now);
     public void RecalculatePayments(DateTime now);
-    public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId);
+    public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId, string? instalmentType);
     public void ClearEarnings();
     public void MarkPaymentsAsFrozen(short collectionYear, byte collectionPeriod);
     public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod);
@@ -31,6 +31,6 @@ public interface IApprenticeship : IAggregateRoot
     public void FreezePayments();
     public void UnfreezePayments();
     public void SetLearnerReference(string learnerReference);
-    public void SendPayment(Guid paymentKey, short collectionYear, byte collectionPeriod, Func<Payment, IApprenticeship, IDomainEvent> eventBuilder);
+    public Payment SendPayment(Guid paymentKey, short collectionYear, byte collectionPeriod);
     public void Update(DateTime startDate, DateTime plannedEndDate, int ageAtStartOfApprenticeship);
 }

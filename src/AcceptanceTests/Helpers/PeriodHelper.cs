@@ -21,7 +21,7 @@ public static class PeriodHelper
         return short.Parse($"{calendarYearTwoDigit}{calendarYearTwoDigit + 1}");
     }
 
-    public static DeliveryPeriod CreateDeliveryPeriod(byte calendarMonth, short calendarYear, decimal learningAmount)
+    public static DeliveryPeriod CreateDeliveryPeriod(byte calendarMonth, short calendarYear, decimal learningAmount, string? instalmentType = "OnProgramme")
     {
         return new DeliveryPeriod(
             calendarMonth,
@@ -30,6 +30,6 @@ public static class PeriodHelper
             calendarYear.ToAcademicYear(calendarMonth), 
             learningAmount, 
             "fundingLineType",
-            "OnProgramme");
+            instalmentType);
     }
 }

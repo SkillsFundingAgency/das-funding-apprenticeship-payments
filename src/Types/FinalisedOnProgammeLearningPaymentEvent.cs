@@ -1,9 +1,8 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
-public class FinalisedOnProgammeLearningPaymentEvent : IDomainEvent
+public class FinalisedOnProgammeLearningPaymentEvent
 {
     public DateTime? ActualEndDate { get; set; }
     public Guid ApprenticeshipKey { get; set; }

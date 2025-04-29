@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NServiceBus.Testing;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
@@ -40,6 +42,16 @@ public class TestFunction : IDisposable
         await handler.Handle(eventObject, context);
     }
 
+    // I've kept this simple for now as its the only endpoint we post a request to
+    // if other endpoints are added then we may need to do something a bit smarter
+    public async Task PostReleasePayments(short collectionYear, byte collectionPeriod)
+    {
+        var logger = _testServer.Services.GetService(typeof(ILogger<PaymentsFunctions>)) as ILogger<PaymentsFunctions>;
+        var paymentsFunction = new PaymentsFunctions(logger);
+        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/releasePayments/{collectionYear}/{collectionPeriod}");
+        var client = (DurableTaskClient)_testServer.Services.GetService(typeof(DurableTaskClient))!;
+        await paymentsFunction.ReleasePaymentsHttpTrigger(request, client, collectionYear, collectionPeriod);
+    }
 
     public async Task WaitUntilOrchestratorComplete(string orchestratorName)
     {
