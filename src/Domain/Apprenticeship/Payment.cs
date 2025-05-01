@@ -8,7 +8,7 @@ public class Payment
 {
     private Payment() { }
 
-    public Payment(Guid apprenticeshipKey, short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionPeriod, string fundingLineType, Guid earningsProfileId)
+    public Payment(Guid apprenticeshipKey, short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionPeriod, string fundingLineType, Guid earningsProfileId, string? paymentType)
     {
         Key = Guid.NewGuid();
         ApprenticeshipKey = apprenticeshipKey;
@@ -20,6 +20,7 @@ public class Payment
         FundingLineType = fundingLineType;
         SentForPayment = false;
         EarningsProfileId = earningsProfileId;
+        PaymentType = paymentType;
     }
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -35,6 +36,7 @@ public class Payment
     public bool SentForPayment { get; private set; }
     public Guid EarningsProfileId { get; private set; }
     public bool NotPaidDueToFreeze { get; private set; }
+    public string? PaymentType { get; private set; }
 
     public void MarkAsNotPaid()
     {

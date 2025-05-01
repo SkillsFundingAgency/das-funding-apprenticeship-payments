@@ -66,14 +66,14 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
         _apprenticeship.Verify(x => x.ClearEarnings(), Times.Once);
         _apprenticeship.Verify(
             x => x.AddEarning(It.IsAny<short>(), It.IsAny<byte>(), It.IsAny<decimal>(), It.IsAny<short>(),
-                It.IsAny<byte>(), It.IsAny<string>(), It.IsAny<Guid>()), Times.Exactly(_newEarnings.Count));
+                It.IsAny<byte>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string?>()), Times.Exactly(_newEarnings.Count));
 
         foreach (var expectedEarning in _newEarnings)
         {
             _apprenticeship.Verify(
                 x => x.AddEarning(expectedEarning.AcademicYear, expectedEarning.DeliveryPeriod, expectedEarning.Amount,
                     expectedEarning.CollectionYear, expectedEarning.CollectionMonth, expectedEarning.FundingLineType,
-                    It.IsAny<Guid>()), Times.Once);
+                    It.IsAny<Guid>(), expectedEarning.InstalmentType), Times.Once);
         }
     }
 

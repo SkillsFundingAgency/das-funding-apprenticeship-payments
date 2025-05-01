@@ -34,7 +34,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler : ICommandHandler<R
         
         foreach (var earning in command.NewEarnings)
         {
-            apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, earning.FundingLineType, earning.EarningsProfileId);
+            apprenticeship.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, earning.FundingLineType, earning.EarningsProfileId, earning.InstalmentType);
         }
 
         apprenticeship.RecalculatePayments(_systemClockService.Now);

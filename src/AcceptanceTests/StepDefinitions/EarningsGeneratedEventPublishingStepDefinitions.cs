@@ -1,14 +1,19 @@
 using AutoFixture;
+using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.DataModels;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using TechTalk.SpecFlow.Assist;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions;
 
 [Binding]
 [Scope(Feature = "Calculate payments for earnings")]
 [Scope(Feature = "Payments Release")]
+[Scope(Feature = "Incentive Payments")]
 public class EarningsGeneratedEventPublishingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;
@@ -75,6 +80,24 @@ public class EarningsGeneratedEventPublishingStepDefinitions
     public void GivenNoPaymentsHavePreviouslyBeenGenerated()
     {
         // intentionally left blank
+    }
+
+    [Given(@"The following earnings are generated")]
+    public async Task EarningsAreGenerated(Table table)
+    {
+        var data = table.CreateSet<EarningsDataRow>().ToList();
+
+        var periods = data.Select(x => PeriodHelper.CreateDeliveryPeriod(x.Month, x.Year, x.Amount, x.InstalmentType)).ToList();
+
+        var uln = _testContext.Fixture.Create<long>();
+        _testContext.Ulns.Add(uln);
+
+        _earningsGeneratedEvent = _testContext.Fixture
+            .Build<EarningsGeneratedEvent>()
+            .With(x => x.DeliveryPeriods, periods)
+            .With(x => x.Uln, uln.ToString())
+            .With(x => x.TrainingCode, _testContext.Fixture.Create<int>().ToString())
+            .Create();
     }
 
     [Given(@"payments are calculated")]
