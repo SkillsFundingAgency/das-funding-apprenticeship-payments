@@ -31,13 +31,13 @@ public class WhenCalculatePayments
     {
         var earnings = new List<Earning>
         {
-            new (_sut.ApprenticeshipKey, (short)DateTime.Now.Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month,_fixture.Create<string>(), Guid.NewGuid()),
-            new (_sut.ApprenticeshipKey,(short)DateTime.Now.AddMonths(1).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month, _fixture.Create<string>(), Guid.NewGuid()),
-            new (_sut.ApprenticeshipKey,(short)DateTime.Now.AddMonths(2).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month, _fixture.Create<string>(), Guid.NewGuid())
+            new (_sut.ApprenticeshipKey, (short)DateTime.Now.Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.Year, (byte)DateTime.Now.Month,_fixture.Create<string>(), Guid.NewGuid(), InstalmentTypes.OnProgramme),
+            new (_sut.ApprenticeshipKey,(short)DateTime.Now.AddMonths(1).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month, _fixture.Create<string>(), Guid.NewGuid(), InstalmentTypes.OnProgramme),
+            new (_sut.ApprenticeshipKey,(short)DateTime.Now.AddMonths(2).Year, _fixture.Create<byte>(), _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(2).Year, (byte)DateTime.Now.AddMonths(2).Month, _fixture.Create<string>(), Guid.NewGuid(), InstalmentTypes.OnProgramme)
         };
         foreach (var earning in earnings)
         {
-            _sut.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, _fixture.Create<string>(), earning.EarningsProfileId);
+            _sut.AddEarning(earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, earning.CollectionYear, earning.CollectionMonth, _fixture.Create<string>(), earning.EarningsProfileId, InstalmentTypes.OnProgramme);
         }
 
         _sut.CalculatePayments(DateTime.Now);
@@ -53,7 +53,7 @@ public class WhenCalculatePayments
     [Test]
     public void CollectionPeriodShouldBeDeliveryPeriod()
     {
-        _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month,_fixture.Create<string>(), Guid.NewGuid());
+        _sut.AddEarning(2324, 1, _fixture.Create<decimal>(), (short)DateTime.Now.AddMonths(1).Year, (byte)DateTime.Now.AddMonths(1).Month,_fixture.Create<string>(), Guid.NewGuid(), InstalmentTypes.OnProgramme);
 
         _sut.CalculatePayments(DateTime.Now);
 

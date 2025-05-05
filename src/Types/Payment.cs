@@ -9,4 +9,5 @@ public class Payment
     public byte CollectionPeriod { get; set; }
     public string FundingLineType { get; set; }
     public Guid EarningsProfileId { get; set; }
+    public string? PaymentType { get; set; }
 }

@@ -32,7 +32,7 @@ public class GetPaymentsDueQueryHandlerTests
         var expectedPayments = _fixture.CreateMany<Payment>();
 
         var apprenticeship = new Mock<IApprenticeship>();
-        apprenticeship.Setup(x => x.DuePayments(query.CollectionYear, query.CollectionPeriod)).Returns(expectedPayments.ToList().AsReadOnly);
+        apprenticeship.Setup(x => x.DuePayments(query.CollectionYear, query.CollectionPeriod, query.PaymentType)).Returns(expectedPayments.ToList().AsReadOnly);
 
         repository.Setup(x => x.Get(query.ApprenticeshipKey)).ReturnsAsync(apprenticeship.Object);
 

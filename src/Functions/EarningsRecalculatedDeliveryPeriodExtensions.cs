@@ -8,7 +8,16 @@ public static class EarningsRecalculatedDeliveryPeriodExtensions
 {
     public static List<Earning> ToEarnings(this List<DeliveryPeriod> earningsRecalculatedDeliveryPeriods, Guid apprenticeshipKey, Guid earningsProfileId)
     {
-        return earningsRecalculatedDeliveryPeriods.Select(dp => new Earning(apprenticeshipKey, dp.AcademicYear, dp.Period,
-            dp.LearningAmount, dp.CalenderYear, dp.CalendarMonth, dp.FundingLineType, earningsProfileId)).ToList();
+        return earningsRecalculatedDeliveryPeriods.Select(dp => 
+            new Earning(
+                apprenticeshipKey, 
+                dp.AcademicYear, 
+                dp.Period,
+                dp.LearningAmount, 
+                dp.CalenderYear, 
+                dp.CalendarMonth, 
+                dp.FundingLineType, 
+                earningsProfileId,
+                dp.InstalmentType)).ToList();
     }
 }

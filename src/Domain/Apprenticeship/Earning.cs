@@ -8,7 +8,7 @@ public class Earning
 {
     private Earning() { }
 
-    public Earning(Guid apprenticeshipKey, short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId)
+    public Earning(Guid apprenticeshipKey, short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId, string instalmentType)
     {
         Key = Guid.NewGuid();
         ApprenticeshipKey = apprenticeshipKey;
@@ -19,6 +19,7 @@ public class Earning
         FundingLineType = fundingLineType;
         CollectionYear = collectionYear;
         EarningsProfileId = earningsProfileId;
+        InstalmentType = instalmentType;
     }
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -32,4 +33,5 @@ public class Earning
     public byte DeliveryPeriod { get; private set; }
     public string FundingLineType { get; private set; }
     public Guid EarningsProfileId { get; private set; }
+    public string? InstalmentType { get; private set; }
 }
