@@ -23,10 +23,11 @@ public class FinalisedOnProgammeLearningPaymentEventBuilder_BuildTests
         _sut = new FinalisedOnProgammeLearningPaymentEventBuilder();
         _fixture = new Fixture();
         _fixture.Customize(new EarningsGeneratedEventCustomization());
+        var academicYears = TestHelper.CreateAcademicYears(new DateTime(2022, 6, 1));
 
         _paymentEntityModel = _fixture.Create<Domain.Apprenticeship.Payment>();
         _apprenticeship = new Domain.Apprenticeship.Apprenticeship(_fixture.Create<EarningsGeneratedEvent>());
-        _apprenticeship.CalculatePayments(DateTime.Now);
+        _apprenticeship.CalculatePayments(DateTime.Now, academicYears);
 
         _result = _sut.Build(_paymentEntityModel, _apprenticeship);
     }

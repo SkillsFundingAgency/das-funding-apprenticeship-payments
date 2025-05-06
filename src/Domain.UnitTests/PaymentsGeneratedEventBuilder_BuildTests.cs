@@ -3,6 +3,7 @@ using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
@@ -23,7 +24,7 @@ public class PaymentsGeneratedEventBuilder_BuildTests
         _fixture.Customize(new EarningsGeneratedEventCustomization());
 
         _apprenticeship = _fixture.Create<Domain.Apprenticeship.Apprenticeship>();
-        _apprenticeship.CalculatePayments(DateTime.Now);
+        _apprenticeship.CalculatePayments(DateTime.Now, TestHelper.CreateAcademicYears(DateTime.Now.AddYears(-1)));
 
         _result = _sut.Build(_apprenticeship);
     }

@@ -6,9 +6,16 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Command.RecalculateApprenticeshipPa
 using SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Responses;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Interfaces;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.SystemTime;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
+using System.Net;
 using Apprenticeship = SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship.Apprenticeship;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Api.Requests;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Models;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Command.UnitTests;
 
@@ -22,6 +29,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
     private Mock<IApprenticeshipRepository> _apprenticeshipRepository = null!;
     private Mock<IDasServiceBusEndpoint> _busEndpoint = null!;
     private Mock<IPaymentsGeneratedEventBuilder> _paymentsGeneratedEventBuilder = null!;
+    private Mock<IOuterApiClient> _apiClient = null!;
     private Guid _apprenticeshipKey;
     private PaymentsGeneratedEvent _paymentsGeneratedEvent;
     private Mock<ISystemClockService> _mockSystemClockService;
@@ -51,11 +59,19 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
 
         _mockSystemClockService.Setup(x => x.Now).Returns(DateTime.UtcNow);
 
+        _apiClient = new Mock<IOuterApiClient>();
+        _apiClient.Setup(x => x.Get<GetAcademicYearsResponse>(It.IsAny<GetAcademicYearsRequest>()))
+            .ReturnsAsync(
+                new ApiResponse<GetAcademicYearsResponse>(
+                    AcademicYearHelper.GetMockedAcademicYear<GetAcademicYearsResponse>(DateTime.Now.AddYears(-1)), HttpStatusCode.OK, ""));
+
+
         _sut = new RecalculateApprenticeshipPaymentsCommandHandler(
             _apprenticeshipRepository.Object,
             _busEndpoint.Object,
             _paymentsGeneratedEventBuilder.Object,
             _mockSystemClockService.Object,
+            _apiClient.Object,
             Mock.Of<ILogger<CalculateApprenticeshipPaymentsCommandHandler>>());
         await _sut.Handle(_command);
     }
@@ -86,7 +102,7 @@ public class RecalculateApprenticeshipPaymentsCommandHandler_CalculateTests
     [Test]
     public void PaymentsAreRecalculated()
     {
-        _apprenticeship.Verify(x => x.RecalculatePayments(It.IsAny<DateTime>()), Times.Once);
+        _apprenticeship.Verify(x => x.RecalculatePayments(It.IsAny<DateTime>(), It.IsAny<AcademicYears>()), Times.Once);
     }
 
     [Test]
