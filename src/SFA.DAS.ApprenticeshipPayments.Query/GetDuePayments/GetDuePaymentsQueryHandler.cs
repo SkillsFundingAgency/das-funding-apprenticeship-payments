@@ -14,7 +14,7 @@ public class GetDuePaymentsQueryHandler : IQueryHandler<GetDuePaymentsResponse, 
     public async Task<GetDuePaymentsResponse> Get(GetDuePaymentsQuery query)
     {
         var apprenticeship = await _repository.Get(query.ApprenticeshipKey);
-        var payments = apprenticeship.DuePayments(query.CollectionYear, query.CollectionPeriod);
+        var payments = apprenticeship.DuePayments(query.CollectionYear, query.CollectionPeriod, query.PaymentType);
         return new GetDuePaymentsResponse(payments.Select(x => new Payment(x.Key)));
     }
 }

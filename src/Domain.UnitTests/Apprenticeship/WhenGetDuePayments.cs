@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using AutoFixture;
+using AutoFixture.Dsl;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
@@ -28,16 +29,16 @@ public class WhenGetDuePayments
         earningGeneratedEvent.DeliveryPeriods = new List<DeliveryPeriod>
         {
             _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2122).With(x => x.CalenderYear, 2022)
-                .With(x => x.Period, 12).With(x => x.CalendarMonth, 7)
+                .With(x => x.Period, 12).With(x => x.CalendarMonth, 7).With(x=> x.InstalmentType, InstalmentTypes.OnProgramme)
                 .With(x => x.LearningAmount, currentMonthlyLearningAmount).Create(),
             _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
-                .With(x => x.Period, 1).With(x => x.CalendarMonth, 8)
+                .With(x => x.Period, 1).With(x => x.CalendarMonth, 8).With(x=> x.InstalmentType, InstalmentTypes.OnProgramme)
                 .With(x => x.LearningAmount, currentMonthlyLearningAmount).Create(),
             _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
-                .With(x => x.Period, 2).With(x => x.CalendarMonth, 9)
+                .With(x => x.Period, 2).With(x => x.CalendarMonth, 9).With(x=> x.InstalmentType, InstalmentTypes.OnProgramme)
                 .With(x => x.LearningAmount, currentMonthlyLearningAmount).Create(),
             _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
-                .With(x => x.Period, 3).With(x => x.CalendarMonth, 10)
+                .With(x => x.Period, 3).With(x => x.CalendarMonth, 10).With(x=> x.InstalmentType, InstalmentTypes.OnProgramme)
                 .With(x => x.LearningAmount, currentMonthlyLearningAmount).Create(),
         };
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);

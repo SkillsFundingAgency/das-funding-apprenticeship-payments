@@ -1,6 +1,5 @@
 ﻿using Azure.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.RegularExpressions;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
 
@@ -47,15 +46,10 @@ public static class NServiceBusExtensions
         throw new FormatException("Invalid Service Bus connection string: Fully Qualified Namespace not found.");
     }
 
-    private static bool IsEvent(Type t)
-    {
-        return t.Namespace != null && ((t.Namespace.StartsWith("SFA.", StringComparison.CurrentCultureIgnoreCase)) &&
-                                       Regex.IsMatch(t.Name, "Event(V\\d+)?$"));
-    }
+    private static bool IsEvent(Type t) => t.Name.EndsWith("Event");
 
     private static bool IsCommand(Type t)
     {
         return (t.Namespace != null && t.Namespace.StartsWith("SFA.DAS.Payments.FundingSource.Messages.Commands", StringComparison.CurrentCultureIgnoreCase));
     }
-
 }

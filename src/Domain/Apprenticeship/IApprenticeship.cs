@@ -26,7 +26,7 @@ public interface IApprenticeship : IAggregateRoot
     public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId, string? instalmentType);
     public void ClearEarnings();
     public void MarkPaymentsAsFrozen(short collectionYear, byte collectionPeriod);
-    public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod);
+    public ReadOnlyCollection<Payment> DuePayments(short collectionYear, byte collectionPeriod, string? paymentType = null);
     public void UnfreezeFrozenPayments(short currentAcademicYear, short previousAcademicYear, DateTime previousAcademicYearHardClose, DateTime currentDate);
     public void FreezePayments();
     public void UnfreezePayments();
