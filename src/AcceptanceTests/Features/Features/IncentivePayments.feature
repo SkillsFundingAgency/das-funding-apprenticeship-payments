@@ -26,13 +26,13 @@ Scenario: recalculated payments have relevant incentive payments removed
 	| 2024 | 12    | 200    | OnProgramme       |
 	| 2024 | 12    | 500    | ProviderIncentive |
 	Then new payments are generated with the following amounts
-	| Year | Month | Amount |
-	| 2425 | 9     | 200    |
-	| 2425 | 9     | 500    |
-	| 2425 | 10    | 200    |
-	| 2425 | 11    | 200    |
-	| 2425 | 12    | 200    |
-	| 2425 | 12    | 500    |
+	| AcademicYear | Month | Amount |
+	| 2425         | 9     | 200    |
+	| 2425         | 9     | 500    |
+	| 2425         | 10    | 200    |
+	| 2425         | 11    | 200    |
+	| 2425         | 12    | 200    |
+	| 2425         | 12    | 500    |
 
 Scenario: recalculated payments have relevant incentive payments added
 	Given the date is now 2024-09-01
@@ -58,15 +58,15 @@ Scenario: recalculated payments have relevant incentive payments added
 	| 2024 | 12    | 500    | ProviderIncentive |
 	| 2024 | 12    | 500    | EmployerIncentive |
 	Then new payments are generated with the following amounts
-	| Year | Month | Amount |
-	| 2425 | 9     | 200    |
-	| 2425 | 9     | 500    |
-	| 2425 | 9     | 500    |
-	| 2425 | 10    | 200    |
-	| 2425 | 11    | 200    |
-	| 2425 | 12    | 200    |
-	| 2425 | 12    | 500    |
-	| 2425 | 12    | 500    |
+	| AcademicYear | Month | Amount |
+	| 2425         | 9     | 200    |
+	| 2425         | 9     | 500    |
+	| 2425         | 9     | 500    |
+	| 2425         | 10    | 200    |
+	| 2425         | 11    | 200    |
+	| 2425         | 12    | 200    |
+	| 2425         | 12    | 500    |
+	| 2425         | 12    | 500    |
 
 Scenario: recalculated payments have relevant incentive payments adjusted
 	Given the date is now 2024-09-01
@@ -94,15 +94,15 @@ Scenario: recalculated payments have relevant incentive payments adjusted
 	| 2024 | 12    | 600    | ProviderIncentive |
 	| 2024 | 12    | 400    | EmployerIncentive |
 	Then new payments are generated with the following amounts
-	| Year | Month | Amount |
-	| 2425 | 9     | 200    |
-	| 2425 | 9     | 600    |
-	| 2425 | 9     | 400    |
-	| 2425 | 10    | 200    |
-	| 2425 | 11    | 200    |
-	| 2425 | 12    | 200    |
-	| 2425 | 12    | 600    |
-	| 2425 | 12    | 400    |
+	| AcademicYear | Month | Amount |
+	| 2425         | 9     | 200    |
+	| 2425         | 9     | 600    |
+	| 2425         | 9     | 400    |
+	| 2425         | 10    | 200    |
+	| 2425         | 11    | 200    |
+	| 2425         | 12    | 200    |
+	| 2425         | 12    | 600    |
+	| 2425         | 12    | 400    |
 
 
 # Before FLP-1036 InstalmentType and PaymentType fields did not exist in the database
@@ -133,13 +133,13 @@ Scenario: Treat old records with no instalmentType set as onprogramme
 	| 2024 | 12    | 200    | OnProgramme       |
 	| 2024 | 12    | 500    | ProviderIncentive |
 	Then new payments are generated with the following amounts
-	| Year | Month | Amount |
-	| 2425 | 9     | 200    |
-	| 2425 | 9     | 500    |
-	| 2425 | 10    | 200    |
-	| 2425 | 11    | 200    |
-	| 2425 | 12    | 200    |
-	| 2425 | 12    | 500    |
+	| AcademicYear | Month | Amount |
+	| 2425         | 9     | 200    |
+	| 2425         | 9     | 500    |
+	| 2425         | 10    | 200    |
+	| 2425         | 11    | 200    |
+	| 2425         | 12    | 200    |
+	| 2425         | 12    | 500    |
 
 
 Scenario: Payments are not generated for incentives in a hard closed year
@@ -166,13 +166,13 @@ Scenario: Payments are not generated for incentives in a hard closed year
 	| 2024 | 12    | 500    | ProviderIncentive |
 	| 2024 | 12    | 500    | EmployerIncentive |
 	Then new payments are generated with the following amounts
-	| Year | Month | Amount |
-	| 2425 | 9     | 500    |
-	| 2425 | 10    | 200    |
-	| 2425 | 11    | 200    |
-	| 2425 | 12    | 200    |
-	| 2425 | 12    | 500    |
-	| 2425 | 12    | 500    |
+	| AcademicYear | Month | Amount |
+	| 2425         | 9     | 500    |
+	| 2425         | 10    | 200    |
+	| 2425         | 11    | 200    |
+	| 2425         | 12    | 200    |
+	| 2425         | 12    | 500    |
+	| 2425         | 12    | 500    |
 
 Scenario: Payments in a previous year are generated because not hardClosed
 	Given the date is now 2024-09-01
@@ -198,12 +198,12 @@ Scenario: Payments in a previous year are generated because not hardClosed
 	| 2024 | 12    | 500    | ProviderIncentive |
 	| 2024 | 12    | 500    | EmployerIncentive |
 	Then new payments are generated with the following amounts
-	| Year | Month | Amount |
-	| 2324 | 9     | 200    |
-	| 2324 | 9     | 500    |
-	| 2425 | 9     | 500    |
-	| 2425 | 10    | 200    |
-	| 2425 | 11    | 200    |
-	| 2425 | 12    | 200    |
-	| 2425 | 12    | 500    |
-	| 2425 | 12    | 500    |
+	| AcademicYear | Month | Amount |
+	| 2324         | 9     | 200    |
+	| 2324         | 9     | 500    |
+	| 2425         | 9     | 500    |
+	| 2425         | 10    | 200    |
+	| 2425         | 11    | 200    |
+	| 2425         | 12    | 200    |
+	| 2425         | 12    | 500    |
+	| 2425         | 12    | 500    |
