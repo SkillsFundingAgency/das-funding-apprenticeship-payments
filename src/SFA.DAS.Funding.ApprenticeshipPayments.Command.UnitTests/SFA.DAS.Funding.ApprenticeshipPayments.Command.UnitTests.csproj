@@ -40,6 +40,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Command\SFA.DAS.Funding.ApprenticeshipPayments.Command.csproj" />
+    <ProjectReference Include="..\TestHelpers\SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.csproj" />
   </ItemGroup>
 
 </Project>

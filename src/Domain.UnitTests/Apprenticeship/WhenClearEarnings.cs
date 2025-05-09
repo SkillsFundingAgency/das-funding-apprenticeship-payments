@@ -19,8 +19,9 @@ public class WhenClearEarnings
         _fixture = new Fixture();
         _fixture.Customize(new EarningsGeneratedEventCustomization());
         var earningGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
+        var academicYears = TestHelper.CreateAcademicYears(DateTime.Now.AddYears(-1));
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
-        _sut.CalculatePayments(DateTime.Now);
+        _sut.CalculatePayments(DateTime.Now, academicYears);
     }
 
     [Test]

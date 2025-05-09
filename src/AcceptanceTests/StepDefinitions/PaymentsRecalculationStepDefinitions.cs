@@ -129,7 +129,7 @@ public class PaymentsRecalculationStepDefinitions
         {
 			return e.ApprenticeshipKey == apprenticeshipKey
                    && e.Payments.Count == expectedData.Count
-				   && expectedData.All(x => e.Payments.Any(p => p.CollectionYear == x.Year && p.DeliveryPeriod == x.Month.ToDeliveryPeriod() && p.Amount == x.Amount));
+				   && expectedData.All(x => e.Payments.Any(p => p.CollectionYear == x.AcademicYear && p.DeliveryPeriod == x.Month.ToDeliveryPeriod() && p.Amount == x.Amount));
         }), 
             "Failed to find published PaymentsGenerated event for recalculated payments");
     }

@@ -5,4 +5,5 @@ internal class ExpectedPaymentDataRow
     public int Amount { get; set; }
     public short Year { get; set; }
     public byte Month { get; set; }
+    public short AcademicYear { get; set; }
 }

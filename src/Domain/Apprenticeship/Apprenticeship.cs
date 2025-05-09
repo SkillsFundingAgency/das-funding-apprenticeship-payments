@@ -1,4 +1,6 @@
 ﻿using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Extensions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -63,18 +65,18 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
     private List<Payment> _payments = new List<Payment>();
     public IReadOnlyCollection<Payment> Payments => _payments.AsReadOnly();
 
-    public void CalculatePayments(DateTime now)
+    public void CalculatePayments(DateTime now, AcademicYears academicYears)
     {
         _payments.Clear();
         foreach (var earning in Earnings)
         {
             var collectionPeriod = DetermineCollectionPeriod(earning);
             var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, earning.InstalmentType);
-            _payments.Add(payment);
+            _payments.AddPayment(payment, now, academicYears);
         }
     }
 
-    public void RecalculatePayments(DateTime now)
+    public void RecalculatePayments(DateTime now, AcademicYears academicYears)
     {
         _payments.RemoveAll(p => !p.SentForPayment);
 
@@ -87,7 +89,7 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
             if (!_payments.Any(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear && p.PaymentType.ToInstalmentType() == earning.InstalmentType))
             {
                 var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, earning.InstalmentType);
-                _payments.Add(payment);
+                _payments.AddPayment(payment, now, academicYears);
             }
             else
             {
@@ -98,7 +100,7 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
                 if (earning.Amount - existingPaidForDeliveryPeriod == 0) continue;
 
                 var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, earning.InstalmentType);
-                _payments.Add(payment);
+                _payments.AddPayment(payment, now, academicYears);
             }
         }
 

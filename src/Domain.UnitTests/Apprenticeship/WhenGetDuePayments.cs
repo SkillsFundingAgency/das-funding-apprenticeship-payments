@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using AutoFixture;
-using AutoFixture.Dsl;
+﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship;
 
@@ -42,7 +41,9 @@ public class WhenGetDuePayments
                 .With(x => x.LearningAmount, currentMonthlyLearningAmount).Create(),
         };
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
-        _sut.CalculatePayments(new DateTime(2022, 8, 1));
+
+        var academicYears = TestHelper.CreateAcademicYears(new DateTime(2021, 8, 1));
+        _sut.CalculatePayments(new DateTime(2022, 8, 1), academicYears);
 
         _duePayments = _sut.DuePayments(2223, 2);
     }

@@ -6,7 +6,9 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Models;
 using SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.AutoFixture;
+using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Domain.UnitTests.Apprenticeship;
 
@@ -20,6 +22,7 @@ public class WhenRecalculatePayments
     private Guid _newEarningsProfileId;
     private Domain.Apprenticeship.Apprenticeship _sut;
     private List<Payment> _originalPayments;
+    private DateTime _previousAcademicYearHardClose;
 
     [SetUp]
     public void SetUp()
@@ -29,6 +32,8 @@ public class WhenRecalculatePayments
         _currentMonthlyLearningAmount = _fixture.Create<decimal>();
         _newMonthlyLearningAmount = _fixture.Create<decimal>();
         _newEarningsProfileId = Guid.NewGuid();
+        _previousAcademicYearHardClose = new DateTime(2021,1,1);
+        var academicYear = TestHelper.CreateAcademicYears(new DateTime(2022, 1, 1));
 
         var earningGeneratedEvent = _fixture.Create<EarningsGeneratedEvent>();
         earningGeneratedEvent.DeliveryPeriods = new List<DeliveryPeriod>
@@ -47,7 +52,7 @@ public class WhenRecalculatePayments
                 .With(x => x.InstalmentType, InstalmentTypes.OnProgramme).Create(),
         };
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
-        _sut.CalculatePayments(DateTime.Now);
+        _sut.CalculatePayments(DateTime.Now, academicYear);
         _sut.Payments.First().MarkAsSent(2223, 2);
         _sut.Payments.ElementAt(1).MarkAsSent(2223, 3);
 
@@ -73,7 +78,7 @@ public class WhenRecalculatePayments
             _sut.AddEarning(newEarning.AcademicYear, newEarning.DeliveryPeriod, newEarning.Amount, newEarning.CollectionYear, newEarning.CollectionMonth, newEarning.FundingLineType, newEarning.EarningsProfileId, newEarning.InstalmentType);
         }
 
-        _sut.RecalculatePayments(DateTime.Now);
+        _sut.RecalculatePayments(DateTime.Now, academicYear);
     }
 
     [Test]
