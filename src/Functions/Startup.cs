@@ -13,7 +13,6 @@ using SFA.DAS.Funding.ApprenticeshipPayments.Functions.AppStart;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Configuration;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
 using SFA.DAS.Funding.ApprenticeshipPayments.Query;
-using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
@@ -60,6 +59,8 @@ public class Startup
             s.ConfigureNServiceBusForSend<IPaymentsV2ServiceBusEndpoint>(
                 ApplicationSettings.DCServiceBusConnectionString.GetFullyQualifiedNamespace(),
                 (endpointInstance) => new PaymentsV2ServiceBusEndpoint(endpointInstance));
+
+            s.AddFunctionHealthChecks(ApplicationSettings);
         });
     }
 
