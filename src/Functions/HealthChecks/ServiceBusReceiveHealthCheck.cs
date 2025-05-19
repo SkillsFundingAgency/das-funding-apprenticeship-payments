@@ -7,12 +7,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.HealthChecks;
 
 [ExcludeFromCodeCoverage]
-internal class ServiceBusHealthCheck : BaseHealthCheck<ServiceBusHealthCheck>
+internal class ServiceBusReceiveHealthCheck : BaseHealthCheck<ServiceBusReceiveHealthCheck>
 {
     private readonly string _connectionString;
-    private string _serviceBusDisplayName;
+    private readonly string _serviceBusDisplayName;
 
-    internal ServiceBusHealthCheck(string connectionString, string serviceBusDisplayName, ILogger<ServiceBusHealthCheck> logger) : base(logger)
+    internal ServiceBusReceiveHealthCheck(string connectionString, string serviceBusDisplayName, ILogger<ServiceBusReceiveHealthCheck> logger) : base(logger)
     {
         _connectionString = connectionString;
         _serviceBusDisplayName = serviceBusDisplayName;
@@ -33,8 +33,8 @@ internal class ServiceBusHealthCheck : BaseHealthCheck<ServiceBusHealthCheck>
         }
         catch (Exception ex)
         {
-            LogError($"{_serviceBusDisplayName} Azure Service Bus check failed.", ex);
-            return HealthCheckResult.Unhealthy($"{_serviceBusDisplayName} Azure Service Bus check failed.");
+            LogError("Azure Service Bus 'Receive' failed.", ex);
+            return HealthCheckResult.Unhealthy("Azure Service Bus 'Receive' failed.");
         }
     }
 }

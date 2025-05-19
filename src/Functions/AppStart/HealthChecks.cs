@@ -10,8 +10,7 @@ public static class HealthChecks
     {
         services.AddSingleton(sp => new FunctionHealthChecker(
             new DbHealthCheck(applicationSettings.DbConnectionString, sp.GetService<ILogger<DbHealthCheck>>()!),
-            new ServiceBusHealthCheck(applicationSettings.NServiceBusConnectionString, "DasServiceBus", sp.GetService<ILogger<ServiceBusHealthCheck>>()!),
-            new ServiceBusHealthCheck(applicationSettings.DCServiceBusConnectionString, "Pv2ServiceBus", sp.GetService<ILogger<ServiceBusHealthCheck>>()!)
+            new ServiceBusReceiveHealthCheck(applicationSettings.NServiceBusConnectionString, "DasServiceBus", sp.GetService<ILogger<ServiceBusReceiveHealthCheck>>()!)
             ));
 
 
