@@ -60,7 +60,7 @@ public class Startup
                 ApplicationSettings.DCServiceBusConnectionString.GetFullyQualifiedNamespace(),
                 (endpointInstance) => new PaymentsV2ServiceBusEndpoint(endpointInstance));
 
-            s.AddFunctionHealthChecks(ApplicationSettings);
+            s.AddFunctionHealthChecks(ApplicationSettings, Configuration.NotLocalOrAcceptanceTests());
         });
     }
 
