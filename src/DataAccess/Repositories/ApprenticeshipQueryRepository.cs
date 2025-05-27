@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SFA.DAS.Funding.ApprenticeshipPayments.Domain.Apprenticeship;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.DataAccess.Repositories;
 
@@ -11,6 +12,17 @@ public class ApprenticeshipQueryRepository : IApprenticeshipQueryRepository
     {
         _lazyContext = dbContext;
     }
+
+    public async Task<IEnumerable<Apprenticeship>> GetApprenticeshipsWithDuePayments(short collectionYear,
+        byte collectionPeriod)
+    {
+        return await DbContext.Apprenticeships.Where(x => x.Payments.Any(payment =>
+                !payment.SentForPayment && (
+                (payment.CollectionYear == collectionYear && payment.CollectionPeriod <= collectionPeriod) ||
+                payment.CollectionYear < collectionYear)))
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Guid>> GetWithDuePayments(short collectionYear, byte collectionPeriod)
     {
         return await DbContext.Apprenticeships.Where(x => x.Payments.Any(payment => (payment.CollectionYear == collectionYear && payment.CollectionPeriod <= collectionPeriod) || payment.CollectionYear < collectionYear)).Select(x => x.ApprenticeshipKey).ToListAsync();

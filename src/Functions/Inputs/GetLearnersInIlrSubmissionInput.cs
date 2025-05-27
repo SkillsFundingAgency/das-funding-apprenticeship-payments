@@ -2,12 +2,12 @@
 
 public class GetLearnersInIlrSubmissionInput
 {
-    public long Ukprn { get; }
+    public byte DeliveryPeriod { get; }
     public short AcademicYear { get; }
 
-    public GetLearnersInIlrSubmissionInput(long ukprn, short academicYear)
+    public GetLearnersInIlrSubmissionInput(byte deliveryPeriod, short academicYear)
     {
-        Ukprn = ukprn;
+        DeliveryPeriod = deliveryPeriod;
         AcademicYear = academicYear;
     }
 }
