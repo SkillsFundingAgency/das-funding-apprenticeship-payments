@@ -1,9 +1,7 @@
 using AutoFixture;
-using SFA.DAS.Apprenticeships.Types;
 using SFA.DAS.Funding.ApprenticeshipEarnings.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.DataModels;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
-using SFA.DAS.Funding.ApprenticeshipPayments.Domain;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 using TechTalk.SpecFlow.Assist;
@@ -14,6 +12,7 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.StepDefinitions
 [Scope(Feature = "Calculate payments for earnings")]
 [Scope(Feature = "Payments Release")]
 [Scope(Feature = "Incentive Payments")]
+[Scope(Feature = "Recalculate payments for earnings")]
 public class EarningsGeneratedEventPublishingStepDefinitions
 {
     private readonly ScenarioContext _scenarioContext;

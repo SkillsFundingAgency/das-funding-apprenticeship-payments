@@ -8,6 +8,7 @@ public static class InstalmentTypes
     public const string OnProgramme = "OnProgramme";
     public const string ProviderIncentive = "ProviderIncentive";
     public const string EmployerIncentive = "EmployerIncentive";
+    public const string MathsAndEnglish = "MathsAndEnglish";
 
     public static readonly List<string> AllTypes = new()
     {

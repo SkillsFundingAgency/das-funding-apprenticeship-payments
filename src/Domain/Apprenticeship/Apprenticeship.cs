@@ -82,6 +82,8 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
 
         var earningsToProcess = GetEarningsToProcess(now);
 
+        var paymentsToAdd = new List<Payment>();
+
         foreach (var earning in earningsToProcess)
         {
             var collectionPeriod = DetermineCollectionPeriod(earning);
@@ -89,7 +91,7 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
             if (!_payments.Any(p => p.DeliveryPeriod == earning.DeliveryPeriod && p.AcademicYear == earning.AcademicYear && p.PaymentType.ToInstalmentType() == earning.InstalmentType))
             {
                 var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, earning.InstalmentType);
-                _payments.AddPayment(payment, now, academicYears);
+                paymentsToAdd.AddPayment(payment, now, academicYears);
             }
             else
             {
@@ -100,10 +102,11 @@ public class Apprenticeship : AggregateRoot, IApprenticeship
                 if (earning.Amount - existingPaidForDeliveryPeriod == 0) continue;
 
                 var payment = new Payment(ApprenticeshipKey, earning.AcademicYear, earning.DeliveryPeriod, earning.Amount - existingPaidForDeliveryPeriod, collectionPeriod.AcademicYear, collectionPeriod.Period, earning.FundingLineType, earning.EarningsProfileId, earning.InstalmentType);
-                _payments.AddPayment(payment, now, academicYears);
+                paymentsToAdd.AddPayment(payment, now, academicYears);
             }
         }
 
+        _payments.AddRange(paymentsToAdd);
     }
 
     public void AddEarning(short academicYear, byte deliveryPeriod, decimal amount, short collectionYear, byte collectionMonth, string fundingLineType, Guid earningsProfileId, string instalmentType)

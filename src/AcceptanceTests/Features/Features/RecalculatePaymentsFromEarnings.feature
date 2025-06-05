@@ -28,3 +28,17 @@ Scenario: Payments Recalculation when start date is changed to later date
 	Then there are 10 payments of 729.41
 	Then there are 7 payments of 109.41
 	Then there are 3 payments of -620
+
+Scenario: Multiple Payments of the same type in a delivery period
+	Given the date is now 2024-09-01
+	And The following earnings are generated
+	| Year | Month | Amount | InstalmentType  |
+	And payments are calculated
+	When payments are recalculated with the following earnings
+	| Year | Month | Amount | InstalmentType  |
+	| 2024 | 9     | 300    | MathsAndEnglish |
+	| 2024 | 9     | 100    | MathsAndEnglish |
+	Then new payments are generated with the following amounts
+	| AcademicYear | Month | Amount |
+	| 2425         | 9     | 300    |
+	| 2425         | 9     | 100    |
