@@ -50,6 +50,10 @@ public class WhenRecalculatePayments
                 .With(x => x.Period, 3).With(x => x.CalendarMonth, 12)
                 .With(x => x.LearningAmount, _currentMonthlyLearningAmount)
                 .With(x => x.InstalmentType, InstalmentTypes.OnProgramme).Create(),
+            _fixture.Build<DeliveryPeriod>().With(x => x.AcademicYear, 2223).With(x => x.CalenderYear, 2022)
+                .With(x => x.Period, 5).With(x => x.CalendarMonth, 12)
+                .With(x => x.LearningAmount, _currentMonthlyLearningAmount)
+                .With(x => x.InstalmentType, InstalmentTypes.MathsAndEnglish).Create(),
         };
         _sut = new Domain.Apprenticeship.Apprenticeship(earningGeneratedEvent);
         _sut.CalculatePayments(DateTime.Now, academicYear);
@@ -65,12 +69,15 @@ public class WhenRecalculatePayments
         //Delivery Period 2 - diff payment calculated
         //Delivery Period 3 - unpaid payment removed and new one calculated for new learning amount
         //Delivery Period 4 - no existing payments, new one calculated for new learning amount
+        //Delivery Period 5 - multiple payments of the same type
         _newEarnings = new List<Earning>
         {
             new Earning(_sut.ApprenticeshipKey, 2223, 1, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme),
             new Earning(_sut.ApprenticeshipKey, 2223, 2, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme),
             new Earning(_sut.ApprenticeshipKey, 2223, 3, _newMonthlyLearningAmount, 2022, 10, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme),
-            new Earning(_sut.ApprenticeshipKey, 2223, 4, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme)
+            new Earning(_sut.ApprenticeshipKey, 2223, 4, _newMonthlyLearningAmount, 2022, 11, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.OnProgramme),
+            new Earning(_sut.ApprenticeshipKey, 2223, 5, _newMonthlyLearningAmount, 2022, 12, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.MathsAndEnglish),
+            new Earning(_sut.ApprenticeshipKey, 2223, 5, _newMonthlyLearningAmount, 2022, 12, _fixture.Create<string>(), _newEarningsProfileId, InstalmentTypes.MathsAndEnglish)
         };
 
         foreach (var newEarning in _newEarnings)
@@ -115,5 +122,11 @@ public class WhenRecalculatePayments
     public void PaymentsForPreviouslyPaidPaymentPeriodsWithNoChangeShouldNotBeAdded()
     {
         _sut.Payments.Should().NotContain(p => p.AcademicYear == 2223 && p.DeliveryPeriod == 1 && p.Amount == 0);
+    }
+
+    [Test]
+    public void MultiplePaymentsOfTheSameTypeShouldBeAdded()
+    {
+        _sut.Payments.Where(p => p.AcademicYear == 2223 && p.Amount == _newMonthlyLearningAmount && p.EarningsProfileId == _newEarningsProfileId && p.DeliveryPeriod == 5).Should().HaveCount(2);
     }
 }
