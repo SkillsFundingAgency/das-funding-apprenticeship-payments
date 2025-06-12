@@ -1,18 +1,13 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Moq;
 using NServiceBus.Testing;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
-using System.Net;
-using System.Security.Claims;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
