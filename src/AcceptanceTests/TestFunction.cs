@@ -1,13 +1,18 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Moq;
 using NServiceBus.Testing;
 using SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions;
 using SFA.DAS.Funding.ApprenticeshipPayments.Functions.Handlers;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers.Orchestration;
+using System.Net;
+using System.Security.Claims;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests;
 
@@ -48,7 +53,7 @@ public class TestFunction : IDisposable
     {
         var logger = _testServer.Services.GetService(typeof(ILogger<PaymentsFunctions>)) as ILogger<PaymentsFunctions>;
         var paymentsFunction = new PaymentsFunctions(logger);
-        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/releasePayments/{collectionYear}/{collectionPeriod}");
+        var request = TestHttpRequestData.New();
         var client = (DurableTaskClient)_testServer.Services.GetService(typeof(DurableTaskClient))!;
         await paymentsFunction.ReleasePaymentsHttpTrigger(request, client, collectionYear, collectionPeriod);
     }
