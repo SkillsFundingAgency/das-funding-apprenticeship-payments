@@ -35,21 +35,21 @@ public class ReleasePaymentsForLearnerOrchestrator
 
         context.SetCustomStatus("SettingLearnerReference");
 
-        await context.CallActivityAsync(nameof(SetLearnerReference), new SetLearnerReferenceInput(apprenticeshipKey.Value, input.Learner.LearnerRef));
+        await context.CallActivityAsync(nameof(SetLearnerReference), new SetLearnerReferenceInput(apprenticeshipKey.Value, input.Learner.LearnerRef, input.OrchestrationInstanceId));
 
         context.SetCustomStatus("ApplyingFreeAndUnfreeze");
 
-        await context.CallActivityAsync(nameof(ApplyFreezeAndUnfreeze), new ApplyFreezeAndUnfreezeInput(input.CollectionDetails, apprenticeshipKey.Value));
+        await context.CallActivityAsync(nameof(ApplyFreezeAndUnfreeze), new ApplyFreezeAndUnfreezeInput(input.CollectionDetails, apprenticeshipKey.Value, input.OrchestrationInstanceId));
 
         context.SetCustomStatus("GettingDuePayments");
 
-        var duePayments = await context.CallActivityAsync<IEnumerable<Guid>>(nameof(GetDuePayments), new GetDuePaymentsInput(input.CollectionDetails, apprenticeshipKey.Value));
+        var duePayments = await context.CallActivityAsync<IEnumerable<Guid>>(nameof(GetDuePayments), new GetDuePaymentsInput(input.CollectionDetails, apprenticeshipKey.Value, input.OrchestrationInstanceId));
 
         context.SetCustomStatus("ReleasingPayments");
         var releasePaymentsTasks = new List<Task>();
         foreach (var payment in duePayments)
         {
-            var releasePaymentsTask = context.CallActivityAsync(nameof(ReleasePayment), new ReleasePaymentInput(apprenticeshipKey.Value, payment, input.CollectionDetails));
+            var releasePaymentsTask = context.CallActivityAsync(nameof(ReleasePayment), new ReleasePaymentInput(apprenticeshipKey.Value, payment, input.CollectionDetails, input.OrchestrationInstanceId));
             releasePaymentsTasks.Add(releasePaymentsTask);
         }
 

@@ -2,9 +2,9 @@
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 
-public class ReleasePaymentsForLearnerInput
+public class ReleasePaymentsForLearnerInput :InputBase
 {
-    public ReleasePaymentsForLearnerInput(CollectionDetails collectionDetails, Learner learner)
+    public ReleasePaymentsForLearnerInput(CollectionDetails collectionDetails, Learner learner, string instanceId) : base(instanceId)
     {
         CollectionDetails = collectionDetails;
         Learner = learner;

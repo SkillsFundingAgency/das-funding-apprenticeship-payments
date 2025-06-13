@@ -25,13 +25,14 @@ public class ReleasePaymentsForProviderOrchestratorTests
     {
         _loggerMock = new Mock<ILogger<ReleasePaymentsForProviderOrchestrator>>();
         _orchestrationContextMock = new Mock<TaskOrchestrationContext>();
+        var orchestrationInstanceId = "test-instance-id";
 
         var collectionDetails = new CollectionDetails(
             collectionPeriod: 12,
             collectionYear: 2025
         );
 
-        _input = new ReleasePaymentsForProviderInput(collectionDetails, 12345678);
+        _input = new ReleasePaymentsForProviderInput(collectionDetails, 12345678, orchestrationInstanceId);
 
         _learnersInIlr = new List<Learner>
         {
@@ -41,7 +42,8 @@ public class ReleasePaymentsForProviderOrchestratorTests
 
         var ilrInput = new GetLearnersInIlrSubmissionInput(
             ukprn: _input.Ukprn,
-            academicYear: collectionDetails.CollectionYear
+            academicYear: collectionDetails.CollectionYear,
+            orchestrationInstanceId
         );
 
         _orchestrationContextMock
