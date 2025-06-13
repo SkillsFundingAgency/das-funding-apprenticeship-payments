@@ -48,7 +48,7 @@ public class TestFunction : IDisposable
     {
         var logger = _testServer.Services.GetService(typeof(ILogger<PaymentsFunctions>)) as ILogger<PaymentsFunctions>;
         var paymentsFunction = new PaymentsFunctions(logger);
-        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/releasePayments/{collectionYear}/{collectionPeriod}");
+        var request = TestHttpRequestData.New();
         var client = (DurableTaskClient)_testServer.Services.GetService(typeof(DurableTaskClient))!;
         await paymentsFunction.ReleasePaymentsHttpTrigger(request, client, collectionYear, collectionPeriod);
     }

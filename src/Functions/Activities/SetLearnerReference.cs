@@ -7,16 +7,23 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities;
 
 public class SetLearnerReference
 {
+    private readonly ILogger<SetLearnerReference> _logger;
     private readonly ICommandHandler<SetLearnerReferenceCommand> _commandHandler;
 
-    public SetLearnerReference(ICommandHandler<SetLearnerReferenceCommand> commandHandler)
+    public SetLearnerReference(
+        ILogger<SetLearnerReference> logger,
+        ICommandHandler<SetLearnerReferenceCommand> commandHandler)
     {
+        _logger = logger;
         _commandHandler = commandHandler;
     }
 
     [Function(nameof(SetLearnerReference))]
     public async Task Set([ActivityTrigger] SetLearnerReferenceInput input)
     {
-        await _commandHandler.Handle(new SetLearnerReferenceCommand(input.ApprenticeshipKey, input.LearnerReference));
+        using (_logger.BeginScope(input.GetLoggingScope()))
+        {
+            await _commandHandler.Handle(new SetLearnerReferenceCommand(input.ApprenticeshipKey, input.LearnerReference));
+        }    
     }
 }

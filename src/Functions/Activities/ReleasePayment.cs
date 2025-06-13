@@ -7,16 +7,23 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities;
 
 public class ReleasePayment
 {
+    private readonly ILogger<ReleasePayment> _logger;
     private readonly ICommandHandler<ReleasePaymentCommand> _commandHandler;
 
-    public ReleasePayment(ICommandHandler<ReleasePaymentCommand> commandHandler)
+    public ReleasePayment(
+        ILogger<ReleasePayment> logger,
+        ICommandHandler<ReleasePaymentCommand> commandHandler)
     {
+        _logger = logger;
         _commandHandler = commandHandler;
     }
 
     [Function(nameof(ReleasePayment))]
     public async Task Set([ActivityTrigger] ReleasePaymentInput input)
     {
-        await _commandHandler.Handle(new ReleasePaymentCommand(input.ApprenticeshipKey, input.PaymentKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod));
+        using (_logger.BeginScope(input.GetLoggingScope()))
+        {
+            await _commandHandler.Handle(new ReleasePaymentCommand(input.ApprenticeshipKey, input.PaymentKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod));
+        }      
     }
 }

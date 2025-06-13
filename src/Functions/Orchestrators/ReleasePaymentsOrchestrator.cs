@@ -31,7 +31,7 @@ public class ReleasePaymentsOrchestrator
         var releasePaymentsTasks = new List<Task>();
         foreach (var provider in providers)
         {
-            var releaseProviderPaymentsTask = context.CallSubOrchestratorAsync(nameof(ReleasePaymentsForProviderOrchestrator), new ReleasePaymentsForProviderInput(input, provider));
+            var releaseProviderPaymentsTask = context.CallSubOrchestratorAsync(nameof(ReleasePaymentsForProviderOrchestrator), new ReleasePaymentsForProviderInput(input, provider, context.InstanceId));
             releasePaymentsTasks.Add(releaseProviderPaymentsTask);
         }
 

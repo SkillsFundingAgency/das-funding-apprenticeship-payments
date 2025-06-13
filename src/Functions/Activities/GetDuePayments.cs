@@ -9,17 +9,25 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Activities;
 
 public class GetDuePayments
 {
+    private readonly ILogger<GetDuePayments> _logger;
     private readonly IQueryHandler<GetDuePaymentsResponse, GetDuePaymentsQuery> _queryHandler;
 
-    public GetDuePayments(IQueryHandler<GetDuePaymentsResponse, GetDuePaymentsQuery> queryHandler)
+    public GetDuePayments(
+        ILogger<GetDuePayments> logger,
+        IQueryHandler<GetDuePaymentsResponse, GetDuePaymentsQuery> queryHandler)
     {
+        _logger = logger;
         _queryHandler = queryHandler;
     }
 
     [Function(nameof(GetDuePayments))]
     public async Task<IEnumerable<Guid>> Get([ActivityTrigger] GetDuePaymentsInput input)
     {
-        var payments = (await _queryHandler.Get(new GetDuePaymentsQuery(input.ApprenticeshipKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod, InstalmentTypes.OnProgramme))).Payments;
-        return payments.Select(x => x.Key);
+        using (_logger.BeginScope(input.GetLoggingScope()))
+        {
+            var payments = (await _queryHandler.Get(new GetDuePaymentsQuery(input.ApprenticeshipKey, input.CollectionDetails.CollectionYear, input.CollectionDetails.CollectionPeriod, InstalmentTypes.OnProgramme))).Payments;
+            return payments.Select(x => x.Key);
+        }
+
     }
 }
