@@ -1,8 +1,8 @@
 ﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 
-public class ReleasePaymentsForProviderInput
+public class ReleasePaymentsForProviderInput : InputBase
 {
-    public ReleasePaymentsForProviderInput(CollectionDetails collectionDetails, long ukprn)
+    public ReleasePaymentsForProviderInput(CollectionDetails collectionDetails, long ukprn, string orchestrationInstanceId) : base(orchestrationInstanceId)
     {
         CollectionDetails = collectionDetails;
         Ukprn = ukprn;

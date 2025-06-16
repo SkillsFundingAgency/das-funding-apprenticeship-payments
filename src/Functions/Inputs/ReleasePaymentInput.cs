@@ -1,8 +1,12 @@
 ﻿namespace SFA.DAS.Funding.ApprenticeshipPayments.Functions.Inputs;
 
-public class ReleasePaymentInput
+public class ReleasePaymentInput : InputBase
 {
-    public ReleasePaymentInput(Guid apprenticeshipKey, Guid paymentKey, CollectionDetails collectionDetails)
+    public ReleasePaymentInput(
+        Guid apprenticeshipKey, 
+        Guid paymentKey, 
+        CollectionDetails collectionDetails, 
+        string orchestrationInstanceId) :base(orchestrationInstanceId)
     {
         ApprenticeshipKey = apprenticeshipKey;
         PaymentKey = paymentKey;
