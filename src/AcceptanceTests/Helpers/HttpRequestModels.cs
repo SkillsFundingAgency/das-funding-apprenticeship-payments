@@ -7,8 +7,6 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.AcceptanceTests.Helpers;
 
 public class TestFunctionContext : FunctionContext
 {
-    // You can mock required properties/methods here as needed
-    // or forward calls to a real context
     public override string InvocationId => throw new NotImplementedException();
 
     public override string FunctionId => throw new NotImplementedException();

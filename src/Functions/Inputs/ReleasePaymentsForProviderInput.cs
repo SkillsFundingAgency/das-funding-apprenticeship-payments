@@ -2,7 +2,7 @@
 
 public class ReleasePaymentsForProviderInput : InputBase
 {
-    public ReleasePaymentsForProviderInput(CollectionDetails collectionDetails, long ukprn, string instanceId) : base(instanceId)
+    public ReleasePaymentsForProviderInput(CollectionDetails collectionDetails, long ukprn, string orchestrationInstanceId) : base(orchestrationInstanceId)
     {
         CollectionDetails = collectionDetails;
         Ukprn = ukprn;

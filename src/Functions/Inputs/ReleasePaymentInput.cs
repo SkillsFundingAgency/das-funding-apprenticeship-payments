@@ -6,7 +6,7 @@ public class ReleasePaymentInput : InputBase
         Guid apprenticeshipKey, 
         Guid paymentKey, 
         CollectionDetails collectionDetails, 
-        string instanceId):base(instanceId)
+        string orchestrationInstanceId) :base(orchestrationInstanceId)
     {
         ApprenticeshipKey = apprenticeshipKey;
         PaymentKey = paymentKey;
