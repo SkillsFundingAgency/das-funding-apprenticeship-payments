@@ -25,6 +25,7 @@ public class PaymentsFunctions(ILogger<PaymentsFunctions> logger)
 
         var response = req.CreateResponse(HttpStatusCode.OK);
         response.Headers.Add("InstanceId", instanceId);
+        response.Headers.Add("Access-Control-Expose-Headers", "InstanceId");
         return response;
     }
 }
