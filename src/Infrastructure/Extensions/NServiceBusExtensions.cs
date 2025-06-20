@@ -1,5 +1,6 @@
 ﻿using Azure.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.LogCorrelation;
 
 namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
 
@@ -14,6 +15,10 @@ public static class NServiceBusExtensions
         var transport = endpointConfiguration.UseTransport<AzureServiceBusTransport>();
         transport.CustomTokenCredential(fullyQualifiedNamespace, new DefaultAzureCredential());
         endpointConfiguration.Conventions().SetConventions();
+
+        endpointConfiguration.Pipeline.Register(
+            behavior: typeof(OutgoingCorrelationIdBehavior),
+            description: "Populates Correlation ID for outgoing messages");
 
         var endpointInstance = Endpoint.Start(endpointConfiguration).GetAwaiter().GetResult();
         services.AddSingleton(endpointDiWrapper(endpointInstance));
