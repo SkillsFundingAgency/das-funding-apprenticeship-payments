@@ -52,12 +52,11 @@ namespace SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.LogCorrelation
     {
         public void Initialize(ITelemetry telemetry)
         {
-            var correlationId = CorrelationContext.CorrelationId;
+            var correlationId = CorrelationContext.CorrelationId ?? Guid.NewGuid().ToString();
 
             if (!string.IsNullOrEmpty(correlationId))
             {
                 telemetry.Context.GlobalProperties["x-correlation-id"] = correlationId;
-                //telemetry.Context.Operation.Id = correlationId;
             }
         }
     }
