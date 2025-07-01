@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.2.0" />
-    <PackageReference Include="SFA.DAS.Apprenticeships.Types" Version="6.8.14" />
+    <PackageReference Include="SFA.DAS.Learning.Types" Version="6.8.38-prerelease-34" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
   </ItemGroup>
 
