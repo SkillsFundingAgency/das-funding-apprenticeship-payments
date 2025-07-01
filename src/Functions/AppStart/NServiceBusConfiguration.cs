@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using NServiceBus;
 using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.Extensions;
+using SFA.DAS.Funding.ApprenticeshipPayments.Infrastructure.LogCorrelation;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -29,6 +30,10 @@ internal static class NServiceBusConfiguration
             });
             
             endpointConfiguration.AdvancedConfiguration.Conventions().SetConventions();
+
+            endpointConfiguration.AdvancedConfiguration.Pipeline.Register(
+                behavior: typeof(IncomingCorrelationIdBehavior),
+                description: "Populates Correlation ID from incoming message");
 
             var value = config["ApplicationSettings:NServiceBusLicense"];
             if (!string.IsNullOrEmpty(value))
