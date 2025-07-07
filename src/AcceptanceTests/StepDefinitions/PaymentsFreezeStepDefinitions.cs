@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Apprenticeships.Types;
+﻿using SFA.DAS.Learning.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.TestHelpers;
 using SFA.DAS.Funding.ApprenticeshipPayments.Types;
 
@@ -29,7 +29,7 @@ public class PaymentsFreezeStepDefinitions
 
         await _testContext.TestFunction!.PublishEvent(new PaymentsFrozenEvent
         {
-            ApprenticeshipKey = apprenticeshipKey
+            LearningKey = apprenticeshipKey
         });
         
         await WaitHelper.WaitForItAsync(async () => await ApprenticeshipFrozen(apprenticeshipKey), "Payments have not been frozen");
@@ -54,7 +54,7 @@ public class PaymentsFreezeStepDefinitions
 
         await _testContext.TestFunction!.PublishEvent(new PaymentsUnfrozenEvent
         {
-            ApprenticeshipKey = apprenticeshipKey
+            LearningKey = apprenticeshipKey
         });
 
         await WaitHelper.WaitForItAsync(async () => await ApprenticeshipUnfrozen(apprenticeshipKey), "Payments have not been defrosted");

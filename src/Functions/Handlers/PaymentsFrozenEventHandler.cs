@@ -1,5 +1,5 @@
 ﻿using NServiceBus;
-using SFA.DAS.Apprenticeships.Types;
+using SFA.DAS.Learning.Types;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.FreezePayments;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command;
 using SFA.DAS.Funding.ApprenticeshipPayments.Command.UnfreezePayments;
@@ -10,9 +10,9 @@ public class PaymentsFrozenEventHandler(ICommandHandler<FreezePaymentsCommand> c
 {
     public async Task Handle(PaymentsFrozenEvent message, IMessageHandlerContext context)
     {
-        logger.LogInformation("Received PaymentsFrozenEvent for apprenticeship {apprenticeshipKey}", message.ApprenticeshipKey);
+        logger.LogInformation("Received PaymentsFrozenEvent for learning {learningKey}", message.LearningKey);
 
-        var command = new FreezePaymentsCommand(message.ApprenticeshipKey);
+        var command = new FreezePaymentsCommand(message.LearningKey);
         await commandHandler.Handle(command);
     }
 }
@@ -21,9 +21,9 @@ public class PaymentsUnfrozenEventHandler(ICommandHandler<UnfreezePaymentsComman
 {
     public async Task Handle(PaymentsUnfrozenEvent message, IMessageHandlerContext context)
     {
-        logger.LogInformation("Received {eventName} for apprenticeship {apprenticeshipKey}", nameof(PaymentsUnfrozenEvent), message.ApprenticeshipKey);
+        logger.LogInformation("Received {eventName} for learning {LearningKey}", nameof(PaymentsUnfrozenEvent), message.LearningKey);
 
-        var command = new UnfreezePaymentsCommand(message.ApprenticeshipKey);
+        var command = new UnfreezePaymentsCommand(message.LearningKey);
         await commandHandler.Handle(command);
     }
 }
